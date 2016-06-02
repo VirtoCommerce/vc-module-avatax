@@ -57,7 +57,7 @@ namespace AvaTax.TaxModule.Web.Converters
                 var addresses = new List<Address>{
                     new Address
                     {
-                        AddressCode = evalContext.Address.AddressType.ToString(),
+                        AddressCode = destinationAddressIndex,
                         Line1 = evalContext.Address.Line1,
                         City = evalContext.Address.City,
                         Region = evalContext.Address.RegionName ?? evalContext.Address.RegionId,

@@ -24,12 +24,14 @@ using CartDiscount = VirtoCommerce.Domain.Cart.Model.Discount;
 using CartLineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
 using CartShipment = VirtoCommerce.Domain.Cart.Model.Shipment;
 using CartPayment = VirtoCommerce.Domain.Cart.Model.Payment;
+using coreTax = VirtoCommerce.Domain.Tax.Model;
 using Common.Logging;
 using AvaTaxCalcREST;
 using AvaTax.TaxModule.Web;
 using VirtoCommerce.Domain.Customer.Services;
 using Moq;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Tax.Model;
 
 namespace AvaTax.TaxModule.Test
 {
@@ -150,6 +152,36 @@ namespace AvaTax.TaxModule.Test
             Assert.All(validOrder.Items, item => Assert.True(item.Tax > 0));
         }
 
+        [Fact]
+        public void Valid_evaluation_context_successfull_tax_calcualtion()
+        {
+            //arrange
+            var memberService = new Mock<IMemberService>();
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) => {
+                return new[] { new Contact() };
+            });
+
+            var logService = new Mock<ILog>();
+
+            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, _settings.ToArray());
+
+            var context = new TaxEvaluationContext
+            {
+                Address = GetValidAddress(),
+                Customer = new Contact { Id = Guid.NewGuid().ToString() },
+                Lines = GetContextTaxLines(),
+                Currency = "USD",
+                Id = Guid.NewGuid().ToString(),
+            };
+            
+
+            //act
+            var rates = avaTaxRateProvider.CalculateRates(context);
+
+            //assert
+            Assert.NotEmpty(rates);
+        }
+
         //[Fact]
         //public void Invalid_cart_address_error_tax_calcualtion()
         //{
@@ -209,6 +241,28 @@ namespace AvaTax.TaxModule.Test
                 RegionName = "California",
                 Organization = "org1"
             };
+        }
+
+        private static ICollection<coreTax.TaxLine> GetContextTaxLines()
+        {
+            var item1 = new coreTax.TaxLine
+            {
+                Id = Guid.NewGuid().ToString(),
+                Price = 20,
+                Name = "shoes",
+                Code = "SKU1",
+                Amount = 1
+            };
+            var item2 = new coreTax.TaxLine
+            {
+                Id = Guid.NewGuid().ToString(),
+                Price = 100,
+                Name = "t-shirt",
+                Code = "SKU2",
+                Amount = 1
+            };
+
+            return new[] { item1, item2 };
         }
 
         private static CustomerOrder GetTestOrder(string id)
