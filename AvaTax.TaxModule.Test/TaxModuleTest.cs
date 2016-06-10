@@ -2,36 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.Results;
+using AvaTax.TaxModule.Web;
 using AvaTax.TaxModule.Web.Controller;
 using AvaTax.TaxModule.Web.Services;
+using AvaTaxCalcREST;
+using Common.Logging;
+using Moq;
 using VirtoCommerce.Domain.Cart.Model;
+using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Order.Model;
-using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
 using Xunit;
-
 using Address = VirtoCommerce.Domain.Commerce.Model.Address;
 using AddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
+using CartAddress = VirtoCommerce.Domain.Commerce.Model.Address;
+using CartAddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
+using CartDiscount = VirtoCommerce.Domain.Cart.Model.Discount;
+using CartLineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
+using CartPayment = VirtoCommerce.Domain.Cart.Model.Payment;
+using CartShipment = VirtoCommerce.Domain.Cart.Model.Shipment;
+using coreTax = VirtoCommerce.Domain.Tax.Model;
 using Coupon = VirtoCommerce.Domain.Order.Model.Coupon;
 using Discount = VirtoCommerce.Domain.Order.Model.Discount;
 using LineItem = VirtoCommerce.Domain.Order.Model.LineItem;
 using Shipment = VirtoCommerce.Domain.Order.Model.Shipment;
-
-using CartAddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
-using CartAddress = VirtoCommerce.Domain.Commerce.Model.Address;
-using CartCoupon = VirtoCommerce.Domain.Marketing.Model.Coupon;
-using CartDiscount = VirtoCommerce.Domain.Cart.Model.Discount;
-using CartLineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
-using CartShipment = VirtoCommerce.Domain.Cart.Model.Shipment;
-using CartPayment = VirtoCommerce.Domain.Cart.Model.Payment;
-using coreTax = VirtoCommerce.Domain.Tax.Model;
-using Common.Logging;
-using AvaTaxCalcREST;
-using AvaTax.TaxModule.Web;
-using VirtoCommerce.Domain.Customer.Services;
-using Moq;
-using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Tax.Model;
 
 namespace AvaTax.TaxModule.Test
 {
@@ -115,7 +111,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) => {
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) =>
+            {
                 return new[] { new Contact() };
             });
 
@@ -136,7 +133,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) => {
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) =>
+            {
                 return new[] { new Contact() };
             });
 
@@ -157,7 +155,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) => {
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) =>
+            {
                 return new[] { new Contact() };
             });
 
@@ -173,7 +172,7 @@ namespace AvaTax.TaxModule.Test
                 Currency = "USD",
                 Id = Guid.NewGuid().ToString(),
             };
-            
+
 
             //act
             var rates = avaTaxRateProvider.CalculateRates(context);
