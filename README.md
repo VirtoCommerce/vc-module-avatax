@@ -9,7 +9,7 @@ User guide: <a href="http://docs.virtocommerce.com/x/8gHr" target="_blank">Worki
 # Installation
 Installing the module:
 * Automatically: in VC Manager go to Configuration -> Modules -> Avalara tax -> Install
-* Manually: download module zip package from https://github.com/VirtoCommerce/vc-module-avatax/releases. In VC Manager go to Configuration -> Modules -> Advanced -> upload module package -> Install.
+* Manually: download module zip package from https://github.com/VirtoCommerce/vc-module-avatax/releases. In VC Manager go to Configuration -> Modules -> Advanced -> upload module package -> Install
 
 # Settings
 * **Avalara.Tax.Credentials.AccountNumber** - Account number provided by Avalara during registration process
