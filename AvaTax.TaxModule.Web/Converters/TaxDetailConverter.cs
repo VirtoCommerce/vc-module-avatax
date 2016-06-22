@@ -1,11 +1,10 @@
-﻿using System;
+﻿using AvaTaxCalcREST;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using AvaTaxCalcREST;
+using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.DynamicProperties;
 using Address = AvaTaxCalcREST.Address;
-using VirtoCommerce.Domain.Tax.Model;
 
 namespace AvaTax.TaxModule.Web.Converters
 {
@@ -73,7 +72,7 @@ namespace AvaTax.TaxModule.Web.Converters
                 getTaxRequest.Lines = evalContext.Lines.Select(li =>
                     new Line
                     {
-                        LineNo = li.Id,
+                        LineNo = li.Id + li.Code,
                         ItemCode = li.Code,
                         Qty = li.Amount,
                         Amount = li.Price * li.Amount,

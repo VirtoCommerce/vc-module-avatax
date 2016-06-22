@@ -16,9 +16,9 @@
         <owner>Virto Commerce</owner>
     </owners>
     <projectUrl>http://virtocommerce.com/</projectUrl>
-    <iconUrl>Modules/$(Avalara.Tax)/Content/400.png</iconUrl>
+    <iconUrl>https://raw.githubusercontent.com/VirtoCommerce/vc-module-avatax/master/AvaTax.TaxModule.Web/Content/400.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2015 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011-2016 Virto Commerce. All rights reserved</copyright>
     <tags>avalara tax</tags>
 
     <assemblyFile>AvaTax.TaxModule.Web.dll</assemblyFile>

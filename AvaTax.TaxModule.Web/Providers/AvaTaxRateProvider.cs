@@ -435,7 +435,7 @@ namespace AvaTax.TaxModule.Web
                                     Rate = taxLine.Tax,
                                     Currency = evalContext.Currency,
                                     TaxProvider = this,
-                                    Line = evalContext.Lines.First(l => l.Id == taxLine.LineNo)
+                                    Line = evalContext.Lines.First(l => l.Id + l.Code == taxLine.LineNo)
                                 };
                                 retVal.Add(rate);                            
                         }
