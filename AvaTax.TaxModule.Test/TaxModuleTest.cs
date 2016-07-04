@@ -107,7 +107,7 @@ namespace AvaTax.TaxModule.Test
         }
 
         [Fact]
-        public void Valid_cart_successfull_tax_calcualtion()
+        public void Valid_cart_successfull_tax_calculation()
         {
             //arrange
             var memberService = new Mock<IMemberService>();
@@ -129,7 +129,7 @@ namespace AvaTax.TaxModule.Test
         }
 
         [Fact]
-        public void Valid_order_successfull_tax_calcualtion()
+        public void Valid_order_successfull_tax_calculation()
         {
             //arrange
             var memberService = new Mock<IMemberService>();
@@ -151,7 +151,7 @@ namespace AvaTax.TaxModule.Test
         }
 
         [Fact]
-        public void Valid_evaluation_context_successfull_tax_calcualtion()
+        public void Valid_evaluation_context_successfull_tax_calculation()
         {
             //arrange
             var memberService = new Mock<IMemberService>();
@@ -182,7 +182,7 @@ namespace AvaTax.TaxModule.Test
         }
 
         //[Fact]
-        //public void Invalid_cart_address_error_tax_calcualtion()
+        //public void Invalid_cart_address_error_tax_calculation()
         //{
         //    //arrange
         //    var memberService = new Mock<IMemberService>();
@@ -217,7 +217,7 @@ namespace AvaTax.TaxModule.Test
                 Line1 = "6025 Greenway Ave",
                 City = "Philadelphia",
                 RegionId = "PA",
-                RegionName = "Philadelphia",
+                RegionName = "Pennsylvania",
                 Organization = "org1"
             };
         }
