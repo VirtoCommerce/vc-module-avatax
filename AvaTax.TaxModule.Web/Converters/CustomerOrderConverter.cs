@@ -86,9 +86,9 @@ namespace AvaTax.TaxModule.Web.Converters
                 getTaxRequest.Lines = order.Items.Select(li =>
                     new Line
                     {
-                        LineNo = li.Id,
-                        ItemCode = li.ProductId,
-                        Qty = li.Quantity,
+                        LineNo = li.ProductId,
+                        ItemCode = li.Sku,
+                        Qty = li.Quantity,                         
                         Amount = li.Price * li.Quantity,
                         OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
                         DestinationCode = destinationAddressIndex,

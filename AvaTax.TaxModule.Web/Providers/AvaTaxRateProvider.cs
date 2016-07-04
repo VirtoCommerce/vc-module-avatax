@@ -59,7 +59,7 @@ namespace AvaTax.TaxModule.Web
         {
             get
             {
-                return GetSetting(licenseKeyPropertyName);                
+                return GetSetting(licenseKeyPropertyName);
             }
         }
 
@@ -111,44 +111,32 @@ namespace AvaTax.TaxModule.Web
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (IsEnabled && !string.IsNullOrEmpty(AccountNumber) && !string.IsNullOrEmpty(LicenseKey)
-                    && !string.IsNullOrEmpty(ServiceUrl)
-                    && !string.IsNullOrEmpty(CompanyCode))
+                Validate();
+                Member member = null;
+                if (cart.CustomerId != null)
+                    member = _memberService.GetByIds(new[] { cart.CustomerId }).FirstOrDefault();
+
+                var request = cart.ToAvaTaxRequest(CompanyCode, member);
+                if (request != null)
                 {
-                    Member member = null;
-                    if (cart.CustomerId != null)
-                        member = _memberService.GetByIds(new[] { cart.CustomerId }).FirstOrDefault();
+                    log.docCode = request.DocCode;
+                    log.customerCode = request.CustomerCode;
+                    log.docType = request.DocType.ToString();
+                    log.amount = (double)cart.Total;
 
-                    var request = cart.ToAvaTaxRequest(CompanyCode, member);
-                    if (request != null)
+                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
+                    //register in avalara SalesOrder transaction
+                    var getTaxResult = taxSvc.GetTax(request);
+
+                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
                     {
-                        log.docCode = request.DocCode;
-                        log.customerCode = request.CustomerCode;
-                        log.docType = request.DocType.ToString();
-                        log.amount = (double)cart.Total;
-
-                        var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                        var getTaxResult = taxSvc.GetTax(request);
-
-                        if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                        {
-                            //if tax calculation failed create exception with provided error info
-                            var error = string.Join(Environment.NewLine,
-                                getTaxResult.Messages.Select(m => m.Summary));
-                            throw new Exception(error);
-                        }
-
-                        UpdateCartTaxes(getTaxResult.TaxLines, cart);
-                    }
-                    else
-                    {
-                        throw new Exception("Failed to create get tax request");
+                        //if tax calculation failed create exception with provided error info
+                        var error = string.Join(Environment.NewLine,
+                            getTaxResult.Messages.Select(m => m.Summary));
+                        throw new Exception(error);
                     }
                 }
-                else
-                {
-                    throw new Exception("Tax calculation disabled or credentials not provided");
-                }
+
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
@@ -158,51 +146,35 @@ namespace AvaTax.TaxModule.Web
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (IsEnabled && !string.IsNullOrEmpty(AccountNumber)
-                    && !string.IsNullOrEmpty(LicenseKey)
-                    && !string.IsNullOrEmpty(ServiceUrl)
-                    && !string.IsNullOrEmpty(CompanyCode))
+                Validate();
+
+                Member member = null;
+                if (order.CustomerId != null)
+                    member = _memberService.GetByIds(new[] { order.CustomerId }).FirstOrDefault();
+                //if all payments completed commit tax document in avalara
+                var isCommit = order.InPayments != null && order.InPayments.Any() && order.InPayments.All(pi => pi.IsApproved);
+                //update transaction in avalara
+                var request = order.ToAvaTaxRequest(CompanyCode, member, isCommit);
+                if (request != null)
                 {
-                    //if all payments completed commit tax document in avalara
-                    var isCommit = order.InPayments != null && order.InPayments.Any()
-                        && order.InPayments.All(pi => pi.IsApproved);
+                    log.docCode = request.DocCode;
+                    log.docType = request.DocType.ToString();
+                    log.customerCode = request.CustomerCode;
+                    log.amount = (double)order.Sum;
+                    log.isCommit = isCommit;
 
-                    Member member = null;
-                    if (order.CustomerId != null)
-                        member = _memberService.GetByIds(new[] { order.CustomerId }).FirstOrDefault();
+                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
+                    //register in avalara SalesInvoice transaction
+                    var getTaxResult = taxSvc.GetTax(request);
 
-                    var request = order.ToAvaTaxRequest(CompanyCode, member, isCommit);
-                    if (request != null)
+                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
                     {
-                        log.docCode = request.DocCode;
-                        log.docType = request.DocType.ToString();
-                        log.customerCode = request.CustomerCode;
-                        log.amount = (double)order.Sum;
-                        log.isCommit = isCommit;
-
-                        var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                        var getTaxResult = taxSvc.GetTax(request);
-
-                        if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                        {
-                            //if tax calculation failed create exception with provided error info
-                            var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
-                            throw new Exception(error);
-                        }
-                        
-                        UpdateOrderTaxes(getTaxResult.TaxLines, order);
-
-                        order.Tax = getTaxResult.TotalTax;
+                        //if tax calculation failed create exception with provided error info
+                        var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
+                        throw new Exception(error);
                     }
-                    else
-                    {
-                        throw new Exception("Failed to create get tax request");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Failed to create get tax request");
-                }
+                }              
+
             })
                 .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
                 .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
@@ -212,60 +184,33 @@ namespace AvaTax.TaxModule.Web
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (IsEnabled && !string.IsNullOrEmpty(AccountNumber)
-                    && !string.IsNullOrEmpty(LicenseKey)
-                    && !string.IsNullOrEmpty(ServiceUrl)
-                    && !string.IsNullOrEmpty(CompanyCode))
+                Validate();
+
+                //if all payments completed commit tax document in avalara
+                var isCommit = modifiedOrder.InPayments != null && modifiedOrder.InPayments.Any()
+                    && modifiedOrder.InPayments.All(pi => pi.IsApproved);
+
+                Member member = null;
+                if (modifiedOrder.CustomerId != null)
+                    member = _memberService.GetByIds(new[] { modifiedOrder.CustomerId }).FirstOrDefault();
+
+                var request = modifiedOrder.ToAvaTaxAdjustmentRequest(CompanyCode, member, originalOrder, isCommit);
+                if (request != null)
                 {
-                    //if all payments completed commit tax document in avalara
-                    var isCommit = modifiedOrder.InPayments != null && modifiedOrder.InPayments.Any()
-                        && modifiedOrder.InPayments.All(pi => pi.IsApproved);
+                    log.docCode = request.ReferenceCode;
+                    log.docType = request.DocType.ToString();
+                    log.customerCode = request.CustomerCode;
+                    log.amount = (double)originalOrder.Sum;
 
-                    Member member = null;
-                    if (modifiedOrder.CustomerId != null)
-                        member = _memberService.GetByIds(new[] { modifiedOrder.CustomerId }).FirstOrDefault();
+                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
+                    var getTaxResult = taxSvc.GetTax(request);
 
-                    var request = modifiedOrder.ToAvaTaxAdjustmentRequest(CompanyCode, member, originalOrder, isCommit);
-                    if (request != null)
+                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
                     {
-                        log.docCode = request.ReferenceCode;
-                        log.docType = request.DocType.ToString();
-                        log.customerCode = request.CustomerCode;
-                        log.amount = (double)originalOrder.Sum;
-
-                        var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                        var getTaxResult = taxSvc.GetTax(request);
-
-                        if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                        {
-                            var error = string.Join(Environment.NewLine,
-                                getTaxResult.Messages.Select(m => m.Summary));
-                            throw new Exception(error);
-                        }
-                        
-                        foreach (var taxLine in getTaxResult.TaxLines ?? Enumerable.Empty<AvaTaxCalcREST.TaxLine>())
-                        {
-                            var lineItem = modifiedOrder.Items.FirstOrDefault(x => x.Id == taxLine.LineNo);
-                            if (lineItem != null)
-                            {
-                                lineItem.Tax += taxLine.Tax;
-                                if (taxLine.TaxDetails != null && taxLine.TaxDetails.Any(td => !string.IsNullOrEmpty(td.TaxName)))
-                                {
-
-                                    var taxLines =
-                                        taxLine.TaxDetails.Where(td => !string.IsNullOrEmpty(td.TaxName)).Select(taxDetail => taxDetail.ToDomainTaxDetail()).ToList();
-
-                                    lineItem.TaxDetails = lineItem.TaxDetails == null ? taxLines : lineItem.TaxDetails.AddRange(taxLines);
-                                }
-                            }
-                        }
-
-                        modifiedOrder.Tax = 0;
+                        var error = string.Join(Environment.NewLine,
+                            getTaxResult.Messages.Select(m => m.Summary));
+                        throw new Exception(error);
                     }
-                }
-                else
-                {
-                    throw new Exception("AvaTax credentials not provided or tax calculation disabled");
                 }
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
@@ -276,184 +221,82 @@ namespace AvaTax.TaxModule.Web
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (IsEnabled && !string.IsNullOrEmpty(AccountNumber) && !string.IsNullOrEmpty(LicenseKey)
-                    && !string.IsNullOrEmpty(ServiceUrl)
-                    && !string.IsNullOrEmpty(CompanyCode))
-                {                    
-                    var request = order.ToAvaTaxCancelRequest(CompanyCode, CancelCode.DocDeleted);
-                    if (request != null)
-                    {
-                        log.docCode = request.DocCode;
-                        log.docType = request.DocType.ToString();
-
-                        var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                        var getTaxResult = taxSvc.CancelTax(request);
-
-                        if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                        {
-                            var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
-                            throw new Exception(error);
-                        }
-                    }
-                }
-                else
+                Validate();
+                var request = order.ToAvaTaxCancelRequest(CompanyCode, CancelCode.DocDeleted);
+                if (request != null)
                 {
-                    throw new Exception("AvaTax credentials not provided or tax calculation disabled");
+                    log.docCode = request.DocCode;
+                    log.docType = request.DocType.ToString();
+
+                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
+                    var getTaxResult = taxSvc.CancelTax(request);
+
+                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
+                    {
+                        var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
+                        throw new Exception(error);
+                    }
                 }
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
         }
 
-        private void UpdateCartTaxes(IEnumerable<AvaTaxCalcREST.TaxLine> taxLines, ShoppingCart cart)
-        {
-            //reset all cart items taxes
-            if (cart.Items.Any())
-            {
-                cart.Items.ForEach(x =>
-                {
-                    x.TaxTotal = 0;
-                    x.TaxDetails = null;
-                });
-            }
 
-            //reset all cart shipments taxes
-            if (cart.Shipments.Any())
-            {
-                cart.Shipments.ForEach(x =>
-                {
-                    x.TaxTotal = 0;
-                    x.TaxDetails = null;
-                });
-            }
-
-            foreach (var taxLine in taxLines ?? Enumerable.Empty<AvaTaxCalcREST.TaxLine>())
-            {
-                var lineItem = cart.Items.FirstOrDefault(x => x.Id == taxLine.LineNo);
-                if (lineItem != null)
-                {
-                    lineItem.TaxTotal = taxLine.Tax;
-                    if (taxLine.TaxDetails != null && taxLine.TaxDetails.Any(td => !string.IsNullOrEmpty(td.TaxName)))
-                    {
-                        lineItem.TaxDetails =
-                            taxLine.TaxDetails.Where(td => !string.IsNullOrEmpty(td.TaxName)).Select(taxDetail => taxDetail.ToDomainTaxDetail()).ToList();
-                    }
-                }
-                else
-                {
-                    var shipment = cart.Shipments.FirstOrDefault(s => s.Id != null ? s.Id.Equals(taxLine.LineNo) : s.ShipmentMethodCode.Equals(taxLine.LineNo));
-                    if (shipment != null)
-                    {
-                        shipment.TaxTotal = taxLine.Tax;
-                        if (taxLine.TaxDetails != null && taxLine.TaxDetails.Any(td => !string.IsNullOrEmpty(td.TaxName)))
-                        {
-                            shipment.TaxDetails =
-                                taxLine.TaxDetails.Where(td => !string.IsNullOrEmpty(td.TaxName)).Select(taxDetail => taxDetail.ToDomainTaxDetail()).ToList();
-                        }
-                    }
-                }
-            }
-        }
-
-        private void UpdateOrderTaxes(IEnumerable<AvaTaxCalcREST.TaxLine> taxLines, CustomerOrder order)
-        {
-            //reset items taxes
-            if (order.Items.Any())
-                order.Items.ForEach(x =>
-                {
-                    x.Tax = 0;
-                    x.TaxDetails = null;
-                });
-
-            //reset order shipments taxes
-            if (order.Shipments.Any())
-                order.Shipments.ForEach(x =>
-                {
-                    x.Tax = 0;
-                    x.TaxDetails = null;
-                });
-
-            foreach (var taxLine in taxLines ?? Enumerable.Empty<AvaTaxCalcREST.TaxLine>())
-            {
-                var lineItem = order.Items.FirstOrDefault(x => x.Id == taxLine.LineNo);
-                if (lineItem != null)
-                {
-                    lineItem.Tax = taxLine.Tax;
-                    if (taxLine.TaxDetails != null && taxLine.TaxDetails.Any(td => !string.IsNullOrEmpty(td.TaxName)))
-                    {
-                        lineItem.TaxDetails =
-                            taxLine.TaxDetails.Where(td => !string.IsNullOrEmpty(td.TaxName)).Select(taxDetail => taxDetail.ToDomainTaxDetail()).ToList();
-                    }
-                }
-                else
-                {
-                    var shipment = order.Shipments.FirstOrDefault(s => s.Id != null ? s.Id.Equals(taxLine.LineNo) : s.ShipmentMethodCode.Equals(taxLine.LineNo));
-                    if (shipment != null)
-                    {
-                        shipment.Tax = taxLine.Tax;
-                        if (taxLine.TaxDetails != null && taxLine.TaxDetails.Any(td => !string.IsNullOrEmpty(td.TaxName)))
-                        {
-                            shipment.TaxDetails =
-                                taxLine.TaxDetails.Where(td => !string.IsNullOrEmpty(td.TaxName)).Select(taxDetail => taxDetail.ToDomainTaxDetail()).ToList();
-                        }
-                    }
-                }
-            }
-        }
 
         private List<TaxRate> GetTaxRates(TaxEvaluationContext evalContext)
         {
             List<TaxRate> retVal = new List<TaxRate>();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (IsEnabled && !string.IsNullOrEmpty(AccountNumber)
-                    && !string.IsNullOrEmpty(LicenseKey)
-                    && !string.IsNullOrEmpty(ServiceUrl)
-                    && !string.IsNullOrEmpty(CompanyCode))
-                {                    
-                    var request = evalContext.ToAvaTaxRequest(CompanyCode, false);
-                    if (request != null)
-                    {
-                        log.docCode = request.DocCode;
-                        log.docType = request.DocType.ToString();
-                        log.customerCode = request.CustomerCode;                        
+                Validate();
 
-                        var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                        var getTaxResult = taxSvc.GetTax(request);
-
-                        if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                        {
-                            //if tax calculation failed create exception with provided error info
-                            var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
-                            throw new Exception(error);
-                        }
-                        
-                        foreach (var taxLine in getTaxResult.TaxLines ?? Enumerable.Empty<AvaTaxCalcREST.TaxLine>())
-                        {                            
-                                var rate = new TaxRate
-                                {
-                                    Rate = taxLine.Tax,
-                                    Currency = evalContext.Currency,
-                                    TaxProvider = this,
-                                    Line = evalContext.Lines.First(l => l.Id == taxLine.LineNo)
-                                };
-                                retVal.Add(rate);                            
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Failed to create get tax request");
-                    }
-                }
-                else
+                var request = evalContext.ToAvaTaxRequest(CompanyCode, false);
+                //Evaluate taxes only for cart to preventing registration redundant transactions in avalara
+                if (evalContext.Type.EqualsInvariant("cart") && request != null)
                 {
-                    throw new Exception("Failed to create get tax request");
+                    log.docCode = request.DocCode;
+                    log.docType = request.DocType.ToString();
+                    log.customerCode = request.CustomerCode;
+
+                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
+                    var getTaxResult = taxSvc.GetTax(request);
+
+                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
+                    {
+                        //if tax calculation failed create exception with provided error info
+                        var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
+                        throw new Exception(error);
+                    }
+
+                    foreach (var taxLine in getTaxResult.TaxLines ?? Enumerable.Empty<AvaTaxCalcREST.TaxLine>())
+                    {
+                        var rate = new TaxRate
+                        {
+                            Rate = taxLine.Tax,
+                            Currency = evalContext.Currency,
+                            TaxProvider = this,
+                            Line = evalContext.Lines.First(l => l.Id == taxLine.LineNo)
+                        };
+                        retVal.Add(rate);
+                    }
                 }
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
 
             return retVal;
-        }        
+        }
+
+        private void Validate()
+        {
+            if (!IsEnabled || string.IsNullOrEmpty(AccountNumber)
+                    || string.IsNullOrEmpty(LicenseKey)
+                    || string.IsNullOrEmpty(ServiceUrl)
+                    || string.IsNullOrEmpty(CompanyCode))
+            {
+                throw new Exception("Tax calculation disabled or credentials not provided");
+            }
+        }
     }
 }
