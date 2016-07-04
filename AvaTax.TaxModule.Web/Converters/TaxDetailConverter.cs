@@ -75,8 +75,8 @@ namespace AvaTax.TaxModule.Web.Converters
                     {
                         LineNo = li.Id,
                         ItemCode = li.Code,
-                        Qty = li.Amount,
-                        Amount = li.Price * li.Amount,
+                        Qty = li.Quantity,
+                        Amount = li.Amount,
                         OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
                         DestinationCode = destinationAddressIndex,
                         Description = li.Name,
