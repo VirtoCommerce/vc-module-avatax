@@ -1,8 +1,12 @@
-﻿using AvaTax.TaxModule.Web.Controller;
+﻿using System;
+using AvaTax.TaxModule.Web.Controller;
+using AvaTax.TaxModule.Web.Observers;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
+using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Customer.Services;
+using VirtoCommerce.Domain.Order.Events;
 using VirtoCommerce.Domain.Tax.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
@@ -39,17 +43,14 @@ namespace AvaTax.TaxModule.Web
 
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
-            //Subscribe to cart changes. Calculate taxes   
-            // _container.RegisterType<IObserver<CartChangeEvent>, CalculateCartTaxesObserver>("CalculateCartTaxesObserver");
+            //Subscribe to cart changes. Register in avalara  SalesOrder transaction 
+            _container.RegisterType<IObserver<CartChangeEvent>, CartTaxAdjustmentObserver>("CartTaxAdjustmentObserver");
 
-            //Subscribe to order changes. Calculate taxes   
-            //_container.RegisterType<IObserver<OrderChangeEvent>, CalculateOrderTaxesObserver>("CalculateOrderTaxesObserver");
+            //Subscribe to cart changes. Register in avalara  SalesInvoice transaction 
+            _container.RegisterType<IObserver<OrderChangeEvent>, OrderTaxAdjustmentObserver>("PlacedOrderObserver");
 
-            //Subscribe to order changes. Calculate taxes   
-            //_container.RegisterType<IObserver<OrderChangeEvent>, CancelOrderTaxesObserver>("CancelOrderTaxesObserver");
-
-            //Subscribe to order changes. Adjust taxes   
-            // _container.RegisterType<IObserver<OrderChangeEvent>, CalculateTaxAdjustmentObserver>("CalculateTaxAdjustmentObserver");
+            //Subscribe to order changes. Cancel SalesInvoice transaction
+            _container.RegisterType<IObserver<OrderChangeEvent>, CancelOrderTaxesObserver>("CancelOrderTaxesObserver");
         }
 
         public override void PostInitialize()

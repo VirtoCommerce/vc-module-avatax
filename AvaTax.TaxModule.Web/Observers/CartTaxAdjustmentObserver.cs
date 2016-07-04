@@ -6,16 +6,12 @@ using VirtoCommerce.Domain.Store.Services;
 
 namespace AvaTax.TaxModule.Web.Observers
 {
-    /// <summary>
-    /// TODO: deprecated because tax calculation occur by implicit request
-    /// Need remove this in future
-    /// </summary>
-    [Obsolete]
-    public class CalculateCartTaxesObserver : IObserver<CartChangeEvent>
+  
+    public class CartTaxAdjustmentObserver : IObserver<CartChangeEvent>
 	{
         private readonly IStoreService _storeService;
 
-        public CalculateCartTaxesObserver(IStoreService storeService)
+        public CartTaxAdjustmentObserver(IStoreService storeService)
         {
             _storeService = storeService;
         }
@@ -32,7 +28,7 @@ namespace AvaTax.TaxModule.Web.Observers
 
 		public void OnNext(CartChangeEvent value)
 		{
-            if (value.ChangeState == EntryState.Modified)
+            if (value.ChangeState == EntryState.Modified || value.ChangeState == EntryState.Added)
 			    CalculateCustomerOrderTaxes(value);
 		}
 
