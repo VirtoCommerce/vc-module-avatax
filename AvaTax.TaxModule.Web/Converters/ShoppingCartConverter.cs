@@ -29,7 +29,7 @@ namespace AvaTax.TaxModule.Web.Converters
                     DocCode = cart.Id,
                     DetailLevel = DetailLevel.Tax,
                     Commit = false,
-                    DocType = DocType.SalesOrder,
+                    DocType = DocType.SalesInvoice,
                     CurrencyCode = cart.Currency.ToString()
                 };
 
@@ -91,8 +91,8 @@ namespace AvaTax.TaxModule.Web.Converters
                 getTaxRequest.Lines = cart.Items.Select(li =>
                     new Line
                     {
-                        LineNo = li.Id,
-                        ItemCode = li.ProductId,
+                        LineNo = li.ProductId,
+                        ItemCode = li.Sku,
                         Qty = li.Quantity,
                         Amount = li.ExtendedPrice,
                         OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)

@@ -96,12 +96,12 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="VirtoCommerce.Domain, Version=2.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Domain.2.11.0\lib\net451\VirtoCommerce.Domain.dll</HintPath>
+    <Reference Include="VirtoCommerce.Domain, Version=2.14.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Domain.2.14.1\lib\net451\VirtoCommerce.Domain.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="VirtoCommerce.Platform.Core, Version=2.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.11.0\lib\net451\VirtoCommerce.Platform.Core.dll</HintPath>
+    <Reference Include="VirtoCommerce.Platform.Core, Version=2.11.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\VirtoCommerce.Platform.Core.2.11.2\lib\net451\VirtoCommerce.Platform.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
@@ -148,8 +148,8 @@
     <Compile Include="AvaTaxClasses\TaxSvc.cs" />
     <Compile Include="AvaTaxClasses\ValidateResult.cs" />
     <Compile Include="Converters\TaxDetailConverter.cs" />
-    <Compile Include="Observers\CalculateCartTaxesObserver.cs" />
-    <Compile Include="Observers\CalculateOrderTaxesObserver.cs" />
+    <Compile Include="Observers\CartTaxAdjustmentObserver.cs" />
+    <Compile Include="Observers\OrderTaxAdjustmentObserver.cs" />
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
     <Compile Include="Converters\CustomerAddressConverter.cs" />
@@ -164,7 +164,6 @@
     <Compile Include="Logging\LogExtendedException.cs" />
     <Compile Include="Logging\LogInvoker.cs" />
     <Compile Include="Logging\AvalaraLogger.cs" />
-    <Compile Include="Observers\CalculateTaxAdjustmentObserver.cs" />
     <Compile Include="Observers\CancelOrderTaxesObserver.cs" />
     <Compile Include="Services\AvaTaxSettings.cs" />
     <Compile Include="Module.cs" />
@@ -202,12 +201,12 @@
       </FlavorProperties>
     </VisualStudio>
   </ProjectExtensions>
-  <Import Project="..\packages\VirtoCommerce.Module.0.6.0\build\VirtoCommerce.Module.targets" Condition="Exists('..\packages\VirtoCommerce.Module.0.6.0\build\VirtoCommerce.Module.targets')" />
+  <Import Project="..\packages\VirtoCommerce.Module.0.7.0\build\VirtoCommerce.Module.targets" Condition="Exists('..\packages\VirtoCommerce.Module.0.7.0\build\VirtoCommerce.Module.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\VirtoCommerce.Module.0.6.0\build\VirtoCommerce.Module.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VirtoCommerce.Module.0.6.0\build\VirtoCommerce.Module.targets'))" />
+    <Error Condition="!Exists('..\packages\VirtoCommerce.Module.0.7.0\build\VirtoCommerce.Module.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\VirtoCommerce.Module.0.7.0\build\VirtoCommerce.Module.targets'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
