@@ -4,7 +4,7 @@ Avalara.Tax module provides real time integration with Avalara Tax automation. T
 ![Avalara Tax UI](https://cloud.githubusercontent.com/assets/5801549/16107931/729581a8-33a8-11e6-9374-fde0b0233d94.png)
 
 # Documentation
-User guide: <a href="http://docs.virtocommerce.com/x/8gHr" target="_blank">Working with taxes in Avalara tax module</a>.
+User guide: <a href="https://virtocommerce.com/docs/vc2userguide/order-management/working-with-taxes" target="_blank">Working with taxes in Avalara tax module</a>.
 
 # Installation
 Installing the module:
