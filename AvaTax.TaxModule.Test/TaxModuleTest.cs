@@ -111,7 +111,7 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) =>
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null)).Returns<string[]>(ids =>
             {
                 return new[] { new Contact() };
             });
@@ -133,7 +133,7 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) =>
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null)).Returns<string[]>((ids) =>
             {
                 return new[] { new Contact() };
             });
@@ -147,7 +147,7 @@ namespace AvaTax.TaxModule.Test
             avaTaxRateProvider.CalculateOrderTax(validOrder);
 
             //assert
-            Assert.All(validOrder.Items, item => Assert.True(item.Tax > 0));
+            Assert.All(validOrder.Items, item => Assert.True(item.TaxTotal > 0));
         }
 
         [Fact]
@@ -155,7 +155,7 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), It.IsAny<string[]>())).Returns<string[], string[]>((ids, types) =>
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null)).Returns<string[]>((ids) =>
             {
                 return new[] { new Contact() };
             });
@@ -292,21 +292,11 @@ namespace AvaTax.TaxModule.Test
                     Organization = "org1"
                     }
                 }.ToList(),
-                Discount = new Discount
-                {
-                    PromotionId = "testPromotion",
-                    Currency = "USD",
-                    DiscountAmount = 12,
-                    Coupon = new Coupon
-                    {
-                        Code = "ssss"
-                    }
-                }
+             
             };
             var item1 = new LineItem
             {
-                Id = Guid.NewGuid().ToString(),
-                BasePrice = 10,
+                Id = Guid.NewGuid().ToString(),                
                 Price = 20,
                 ProductId = "shoes",
                 CatalogId = "catalog",
@@ -315,21 +305,11 @@ namespace AvaTax.TaxModule.Test
                 Name = "shoes",
                 Quantity = 2,
                 ShippingMethodCode = "EMS",
-                Discount = new Discount
-                {
-                    PromotionId = "itemPromotion",
-                    Currency = "USD",
-                    DiscountAmount = 12,
-                    Coupon = new Coupon
-                    {
-                        Code = "ssss"
-                    }
-                }
+              
             };
             var item2 = new LineItem
             {
                 Id = Guid.NewGuid().ToString(),
-                BasePrice = 100,
                 Price = 100,
                 ProductId = "t-shirt",
                 CatalogId = "catalog",
@@ -337,17 +317,7 @@ namespace AvaTax.TaxModule.Test
                 Currency = "USD",
                 Name = "t-shirt",
                 Quantity = 2,
-                ShippingMethodCode = "EMS",
-                Discount = new Discount
-                {
-                    PromotionId = "testPromotion",
-                    Currency = "USD",
-                    DiscountAmount = 12,
-                    Coupon = new Coupon
-                    {
-                        Code = "ssss"
-                    }
-                }
+                ShippingMethodCode = "EMS",             
             };
             order.Items = new List<LineItem>();
             order.Items.Add(item1);
@@ -369,17 +339,7 @@ namespace AvaTax.TaxModule.Test
                     LastName = "last name",
                     Line1 = "line 1",
                     Organization = "org1"
-                },
-                Discount = new Discount
-                {
-                    PromotionId = "testPromotion",
-                    Currency = "USD",
-                    DiscountAmount = 12,
-                    Coupon = new Coupon
-                    {
-                        Code = "ssss"
-                    }
-                }
+                },               
             };
             order.Shipments = new List<Shipment>();
             order.Shipments.Add(shipment);
@@ -432,14 +392,13 @@ namespace AvaTax.TaxModule.Test
 
                     }
                 },
-                Coupon = "ssss"
 
             };
             var item1 = new CartLineItem
             {
                 Id = Guid.NewGuid().ToString(),
-                ListPrice = 10,
-                ExtendedPrice = 20,
+                ListPrice = 20,
+                DiscountAmount = 10,
                 ProductId = "shoes",
                 CatalogId = "catalog",
                 Currency = "USD",
@@ -461,7 +420,7 @@ namespace AvaTax.TaxModule.Test
             {
                 Id = Guid.NewGuid().ToString(),
                 ListPrice = 100,
-                ExtendedPrice = 200,
+                SalePrice = 200,
                 ProductId = "t-shirt",
                 CatalogId = "catalog",
                 CategoryId = "category",
@@ -557,14 +516,13 @@ namespace AvaTax.TaxModule.Test
 
                     }
                 },
-                Coupon = "ssss"
 
             };
             var item1 = new CartLineItem
             {
                 Id = Guid.NewGuid().ToString(),
                 ListPrice = 10,
-                ExtendedPrice = 20,
+                SalePrice = 20,
                 ProductId = "shoes",
                 CatalogId = "catalog",
                 Currency = "USD",
@@ -586,7 +544,7 @@ namespace AvaTax.TaxModule.Test
             {
                 Id = Guid.NewGuid().ToString(),
                 ListPrice = 100,
-                ExtendedPrice = 200,
+                SalePrice = 200,
                 ProductId = "t-shirt",
                 CatalogId = "catalog",
                 CategoryId = "category",
