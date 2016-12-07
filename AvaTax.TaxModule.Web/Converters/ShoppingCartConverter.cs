@@ -111,7 +111,7 @@ namespace AvaTax.TaxModule.Web.Converters
                         LineNo = sh.Id ?? sh.ShipmentMethodCode,
                         ItemCode = sh.ShipmentMethodCode,
                         Qty = 1,
-                        Amount = sh.ShippingPrice,
+                        Amount = sh.Price,
                         OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
                         DestinationCode = destinationAddressIndex,
                         Description = sh.ShipmentMethodCode,
