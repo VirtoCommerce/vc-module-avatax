@@ -61,7 +61,7 @@ namespace AvaTax.TaxModule.Test
                 {
                     Value = avalaraPassword,
                     Name = _passwordPropertyName,
-                    ValueType = SettingValueType.ShortText
+                    ValueType = SettingValueType.SecureString
                 },
                 new SettingEntry
                 {
