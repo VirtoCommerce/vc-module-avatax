@@ -109,10 +109,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null)).Returns<string[]>(ids =>
-            {
-                return new[] { new Contact() };
-            });
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null))
+                .Returns<string[], string, string[]>((ids, responseGroup, memberTypes) => new Member[] { new Contact() });
 
             var logService = new Mock<ILog>();
 
@@ -131,10 +129,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null)).Returns<string[]>((ids) =>
-            {
-                return new[] { new Contact() };
-            });
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null))
+                .Returns<string[], string, string[]>((ids, responseGroup, memberTypes) => new Member[] { new Contact() });
 
             var logService = new Mock<ILog>();
 
@@ -153,10 +149,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null)).Returns<string[]>((ids) =>
-            {
-                return new[] { new Contact() };
-            });
+            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null))
+                .Returns<string[], string, string[]>((ids, responseGroup, memberTypes) => new Member[] { new Contact() });
 
             var logService = new Mock<ILog>();
 
