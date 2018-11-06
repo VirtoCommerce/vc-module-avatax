@@ -9,6 +9,7 @@ using AvaTaxCalcREST;
 using Common.Logging;
 using Moq;
 using VirtoCommerce.Domain.Cart.Model;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Order.Model;
@@ -19,13 +20,10 @@ using Address = VirtoCommerce.Domain.Commerce.Model.Address;
 using AddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
 using CartAddress = VirtoCommerce.Domain.Commerce.Model.Address;
 using CartAddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
-using CartDiscount = VirtoCommerce.Domain.Cart.Model.Discount;
 using CartLineItem = VirtoCommerce.Domain.Cart.Model.LineItem;
 using CartPayment = VirtoCommerce.Domain.Cart.Model.Payment;
 using CartShipment = VirtoCommerce.Domain.Cart.Model.Shipment;
 using coreTax = VirtoCommerce.Domain.Tax.Model;
-using Coupon = VirtoCommerce.Domain.Order.Model.Coupon;
-using Discount = VirtoCommerce.Domain.Order.Model.Discount;
 using LineItem = VirtoCommerce.Domain.Order.Model.LineItem;
 using Shipment = VirtoCommerce.Domain.Order.Model.Shipment;
 
@@ -384,7 +382,7 @@ namespace AvaTax.TaxModule.Test
                     Organization = "org1"
                     }
                 }.ToList(),
-                Discounts = new[] { new CartDiscount
+                Discounts = new[] { new Discount
                     {
                         PromotionId = "testPromotion",
                         Currency = "USD",
@@ -407,7 +405,7 @@ namespace AvaTax.TaxModule.Test
                 Quantity = 2,
                 ShipmentMethodCode = "EMS",
                 Discounts = new[] {
-                    new CartDiscount
+                    new Discount
                     {
                         PromotionId = "itemPromotion",
                         Currency = "USD",
@@ -429,7 +427,7 @@ namespace AvaTax.TaxModule.Test
                 Quantity = 2,
                 ShipmentMethodCode = "EMS",
                 Discounts = new[]{
-                    new CartDiscount
+                    new Discount
                     {
                         PromotionId = "testPromotion",
                         Currency = "USD",
@@ -457,7 +455,7 @@ namespace AvaTax.TaxModule.Test
                     Organization = "org1"
                 },
                 Discounts = new[] {
-                    new CartDiscount
+                    new Discount
                     {
                         PromotionId = "testPromotion",
                         Currency = "USD",
@@ -508,7 +506,7 @@ namespace AvaTax.TaxModule.Test
                     Organization = "org1"
                     }
                 }.ToList(),
-                Discounts = new[] { new CartDiscount
+                Discounts = new[] { new Discount
                     {
                         PromotionId = "testPromotion",
                         Currency = "USD",
@@ -531,7 +529,7 @@ namespace AvaTax.TaxModule.Test
                 Quantity = 2,
                 ShipmentMethodCode = "EMS",
                 Discounts = new[] {
-                    new CartDiscount
+                    new Discount
                     {
                         PromotionId = "itemPromotion",
                         Currency = "USD",
@@ -553,7 +551,7 @@ namespace AvaTax.TaxModule.Test
                 Quantity = 2,
                 ShipmentMethodCode = "EMS",
                 Discounts = new[]{
-                    new CartDiscount
+                    new Discount
                     {
                         PromotionId = "testPromotion",
                         Currency = "USD",
@@ -583,7 +581,7 @@ namespace AvaTax.TaxModule.Test
                     Organization = "org1"
                 },
                 Discounts = new[] {
-                    new CartDiscount
+                    new Discount
                     {
                         PromotionId = "testPromotion",
                         Currency = "USD",

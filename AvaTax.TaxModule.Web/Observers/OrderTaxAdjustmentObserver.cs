@@ -30,14 +30,17 @@ namespace AvaTax.TaxModule.Web.Observers
 
         public void OnNext(OrderChangeEvent value)
         {
-            if (value.ChangeState == EntryState.Added || value.ChangeState == EntryState.Modified)
+            foreach (var entry in value.ChangedEntries)
             {
-                var order = value.ModifiedOrder;
-                var store = _storeService.GetById(order.StoreId);
-                var taxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == typeof(AvaTaxRateProvider).Name);
-                if (taxProvider != null && taxProvider.IsActive)
+                if (entry.EntryState == EntryState.Added || entry.EntryState == EntryState.Modified)
                 {
-                    (taxProvider as AvaTaxRateProvider).CalculateOrderTax(order);
+                    var order = entry.NewEntry;
+                    var store = _storeService.GetById(order.StoreId);
+                    var taxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == typeof(AvaTaxRateProvider).Name);
+                    if (taxProvider != null && taxProvider.IsActive)
+                    {
+                        (taxProvider as AvaTaxRateProvider).CalculateOrderTax(order);
+                    }
                 }
             }
         }
