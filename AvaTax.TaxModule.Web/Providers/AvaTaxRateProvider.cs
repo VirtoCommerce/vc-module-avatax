@@ -47,53 +47,17 @@ namespace AvaTax.TaxModule.Web
             _memberService = memberService;
         }
 
-        private string AccountNumber
-        {
-            get
-            {
-                return GetSetting(accountNumberPropertyName);
-            }
-        }
+        private string AccountNumber => GetSetting(accountNumberPropertyName);
 
-        private string LicenseKey
-        {
-            get
-            {
-                return GetSetting(licenseKeyPropertyName);
-            }
-        }
+        private string LicenseKey => GetSetting(licenseKeyPropertyName);
 
-        private string CompanyCode
-        {
-            get
-            {
-                return GetSetting(companyCodePropertyName);
-            }
-        }
+        private string CompanyCode => GetSetting(companyCodePropertyName);
 
-        private string ServiceUrl
-        {
-            get
-            {
-                return GetSetting(serviceUrlPropertyName);
-            }
-        }
+        private string ServiceUrl => GetSetting(serviceUrlPropertyName);
 
-        private bool IsEnabled
-        {
-            get
-            {
-                return bool.Parse(GetSetting(isEnabledPropertyName));
-            }
-        }
+        private bool IsEnabled => bool.Parse(GetSetting(isEnabledPropertyName));
 
-        private bool IsValidateAddressEnabled
-        {
-            get
-            {
-                return bool.Parse(GetSetting(isValidateAddressPropertyName));
-            }
-        }
+        private bool IsValidateAddressEnabled => bool.Parse(GetSetting(isValidateAddressPropertyName));
 
         public override IEnumerable<TaxRate> CalculateRates(IEvaluationContext context)
         {
