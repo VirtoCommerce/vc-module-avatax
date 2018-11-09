@@ -16,6 +16,8 @@ namespace AvaTax.TaxModule.Web.Converters
         public static CreateTransactionModel ToAvaTaxCreateTransactionModel(this ShoppingCart cart,
             string companyCode, Member member, bool commit = false)
         {
+            CreateTransactionModel result = null;
+
             if (!cart.Addresses.IsNullOrEmpty() && !cart.Items.IsNullOrEmpty())
             {
                 Address shippingAddress = null;
@@ -28,32 +30,35 @@ namespace AvaTax.TaxModule.Web.Converters
                     }
                 }
 
-                var result = new CreateTransactionModel
+                if (shippingAddress != null)
                 {
-                    customerCode = cart.CustomerId,
-                    date = cart.CreatedDate,
-                    companyCode = companyCode,
-                    code = cart.Id,
-                    commit = commit,
-                    type = DocumentType.SalesInvoice,
-                    currencyCode = cart.Currency,
-                    exemptionNo = member.GetDynamicPropertyValue("Tax exempt", string.Empty),
-                    addresses = new AddressesModel()
+                    result = new CreateTransactionModel
                     {
-                        shipTo = shippingAddress?.ToAvaTaxAddressLocationInfo()
+                        customerCode = cart.CustomerId,
+                        date = cart.CreatedDate,
+                        companyCode = companyCode,
+                        code = cart.Id,
+                        commit = commit,
+                        type = DocumentType.SalesInvoice,
+                        currencyCode = cart.Currency,
+                        exemptionNo = member.GetDynamicPropertyValue("Tax exempt", string.Empty),
+                        addresses = new AddressesModel()
+                        {
+                            // TODO: set actual origin address (fulfillment center)?
+                            shipFrom = shippingAddress.ToAvaTaxAddressLocationInfo(),
+                            shipTo = shippingAddress?.ToAvaTaxAddressLocationInfo()
+                        },
+                        lines = cart.Items.Select(item => item.ToAvaTaxLineItemModel(shippingAddress)).ToList()
+                    };
+
+                    if (!cart.Shipments.IsNullOrEmpty())
+                    {
+                        result.lines.AddRange(cart.Shipments.Select(shipment => shipment.ToAvaTaxLineItemModel()));
                     }
-                };
-
-                result.lines = cart.Items.Select(item => item.ToAvaTaxLineItemModel(shippingAddress)).ToList();
-                if (!cart.Shipments.IsNullOrEmpty())
-                {
-                    result.lines.AddRange(cart.Shipments.Select(shipment => shipment.ToAvaTaxLineItemModel()));
                 }
-
-                return result;
             }
 
-            return null;
+            return result;
         }
     }
 }

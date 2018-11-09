@@ -21,6 +21,7 @@ namespace AvaTax.TaxModule.Web.Converters
                 addresses = new AddressesModel
                 {
                     // TODO: set actual origin address (fulfillment center?)
+                    shipFrom = shippingAddress.ToAvaTaxAddressLocationInfo(),
                     shipTo = shippingAddress.ToAvaTaxAddressLocationInfo()
                 }
             };

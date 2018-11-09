@@ -1,4 +1,5 @@
-﻿using Avalara.AvaTax.RestClient;
+﻿using System;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Commerce.Model;
 
@@ -6,6 +7,7 @@ namespace AvaTax.TaxModule.Web.Converters
 {
     public static class CartLineItemConverter
     {
+        [CLSCompliant(false)]
         public static LineItemModel ToAvaTaxLineItemModel(this LineItem lineItem, Address shippingAddress)
         {
             return new LineItemModel
@@ -18,7 +20,8 @@ namespace AvaTax.TaxModule.Web.Converters
                 taxCode = lineItem.TaxType,
                 addresses = new AddressesModel
                 {
-                    // TODO: set actual origin address (fulfillment center?)
+                    // TODO: set actual origin address (fulfillment center)?
+                    shipFrom = shippingAddress.ToAvaTaxAddressLocationInfo(),
                     shipTo = shippingAddress.ToAvaTaxAddressLocationInfo()
                 }
             };

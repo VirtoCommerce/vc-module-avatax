@@ -17,7 +17,8 @@ namespace AvaTax.TaxModule.Web.Converters
                 var result = new CreateTransactionModel()
                 {
                     code = evalContext.Id,
-                    customerCode = evalContext.Customer.Id,
+                    // TODO: customerCode is required by AvaTax API, but using stub values when the customer is not specified doesn't seem right...
+                    customerCode = evalContext.Customer?.Id ?? "(not specified)",
                     date = DateTime.UtcNow,
                     companyCode = companyCode,
                     type = DocumentType.SalesOrder,
@@ -25,6 +26,8 @@ namespace AvaTax.TaxModule.Web.Converters
                     currencyCode = evalContext.Currency,
                     addresses = new AddressesModel
                     {
+                        // TODO: set actual origin address (fulfillment center/store owner)?
+                        shipFrom = evalContext.Address.ToAvaTaxAddressLocationInfo(),
                         shipTo = evalContext.Address.ToAvaTaxAddressLocationInfo()
                     },
                     lines = evalContext.Lines.Select(line => new LineItemModel
