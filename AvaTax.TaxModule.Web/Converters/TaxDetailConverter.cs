@@ -1,91 +1,47 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using AvaTaxCalcREST;
-using VirtoCommerce.Platform.Core.DynamicProperties;
-using Address = AvaTaxCalcREST.Address;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Tax.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace AvaTax.TaxModule.Web.Converters
 {
     public static class TaxRequestConverter
     {
-        public static GetTaxRequest ToAvaTaxRequest(this TaxEvaluationContext evalContext, string companyCode, bool commit = false)
+        [CLSCompliant(false)]
+        public static CreateTransactionModel ToAvaTaxCreateTransactionModel(this TaxEvaluationContext evalContext,
+            string companyCode, bool commit = false)
         {
-            if (evalContext.Address != null && evalContext.Lines != null && evalContext.Lines.Any())
+            if (evalContext.Address != null && !evalContext.Lines.IsNullOrEmpty())
             {
-                // Document Level Elements
-                // Required Request Parameters
-                var getTaxRequest = new GetTaxRequest
+                var result = new CreateTransactionModel()
                 {
-                    CustomerCode = evalContext.Customer.Id,
-                    DocDate = DateTime.UtcNow.ToString("yyyy-MM-dd"),
-                    CompanyCode = companyCode,
-                    Client = "VirtoCommerce,2.x,VirtoCommerce",
-                    DetailLevel = DetailLevel.Tax,
-                    Commit = commit,
-                    DocType = DocType.SalesInvoice,
-                    DocCode = evalContext.Id,
-                    CurrencyCode = evalContext.Currency.ToString()
+                    code = evalContext.Id,
+                    customerCode = evalContext.Customer.Id,
+                    date = DateTime.UtcNow,
+                    companyCode = companyCode,
+                    type = DocumentType.SalesOrder,
+                    commit = commit,
+                    currencyCode = evalContext.Currency,
+                    addresses = new AddressesModel
+                    {
+                        shipTo = evalContext.Address.ToAvaTaxAddressLocationInfo()
+                    },
+                    lines = evalContext.Lines.Select(line => new LineItemModel
+                    {
+                        number = line.Id,
+                        itemCode = line.Code,
+                        description = line.Name,
+                        taxCode = line.TaxType,
+                        amount = line.Amount,
+                        quantity = line.Quantity,
+                    }).ToList()
                 };
 
-                // Best Practice Request Parameters
-
-                // Situational Request Parameters
-                // getTaxRequest.CustomerUsageType = "G";
-                // getTaxRequest.ExemptionNo = "12345";
-                // getTaxRequest.BusinessIdentificationNo = "234243";
-                // getTaxRequest.Discount = 50;
-                // getTaxRequest.TaxOverride = new TaxOverrideDef();
-                // getTaxRequest.TaxOverride.TaxOverrideType = "TaxDate";
-                // getTaxRequest.TaxOverride.Reason = "Adjustment for return";
-                // getTaxRequest.TaxOverride.TaxDate = "2013-07-01";
-                // getTaxRequest.TaxOverride.TaxAmount = "0";
-
-                // Optional Request Parameters
-                //getTaxRequest.PurchaseOrderNo = order.Number;
-                //getTaxRequest.ReferenceCode = "ref123456";
-                //getTaxRequest.PosLaneCode = "09";
-
-                //add customer tax exemption code to cart if exists
-                getTaxRequest.ExemptionNo = evalContext.Customer.GetDynamicPropertyValue("Tax exempt", string.Empty);
-
-                string destinationAddressIndex = "0";
-
-                // Address Data
-                var addresses = new List<Address>{
-                    new Address
-                    {
-                        AddressCode = destinationAddressIndex,
-                        Line1 = evalContext.Address.Line1,
-                        City = evalContext.Address.City,
-                        Region = evalContext.Address.RegionName ?? evalContext.Address.RegionId,
-                        PostalCode = evalContext.Address.PostalCode,
-                        Country = evalContext.Address.CountryName
-                    } };
-                
-                getTaxRequest.Addresses = addresses.ToArray();
-
-                // Line Data
-                // Required Parameters
-
-                getTaxRequest.Lines = evalContext.Lines.Select(li =>
-                    new Line
-                    {
-                        LineNo = li.Id,
-                        ItemCode = li.Code,
-                        Qty = li.Quantity,
-                        Amount = li.Amount,
-                        OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
-                        DestinationCode = destinationAddressIndex,
-                        Description = li.Name,
-                        TaxCode = li.TaxType
-                    }
-                    ).ToList();
-                
-                return getTaxRequest;
+                // TODO: fill some more info?
+                return result;
             }
+
             return null;
         }
     }

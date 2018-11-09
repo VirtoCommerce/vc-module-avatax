@@ -1,11 +1,10 @@
 ﻿using AvaTax.TaxModule.Web.Converters;
 using AvaTax.TaxModule.Web.Logging;
-using AvaTaxCalcREST;
 using Common.Logging;
-using Microsoft.Practices.ObjectBuilder2;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Customer.Model;
@@ -14,7 +13,6 @@ using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
-using domainModel = VirtoCommerce.Domain.Commerce.Model;
 
 namespace AvaTax.TaxModule.Web
 {
@@ -33,21 +31,23 @@ namespace AvaTax.TaxModule.Web
 
         private readonly AvalaraLogger _logger;
         private readonly IMemberService _memberService;
+        private readonly Func<AvaTaxClient> _avaTaxClientFactory;
 
         public AvaTaxRateProvider()
             : base("AvaTaxRateProvider")
         {
         }
 
-        public AvaTaxRateProvider(IMemberService memberService, ILog log, params SettingEntry[] settings)
+        public AvaTaxRateProvider(IMemberService memberService, ILog log, Func<AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
             : this()
         {
             Settings = settings;
             _logger = new AvalaraLogger(log);
             _memberService = memberService;
+            _avaTaxClientFactory = avaTaxClientFactory;
         }
 
-        private string AccountNumber => GetSetting(accountNumberPropertyName);
+        private int AccountNumber => int.Parse(GetSetting(accountNumberPropertyName));
 
         private string LicenseKey => GetSetting(licenseKeyPropertyName);
 
@@ -71,6 +71,7 @@ namespace AvaTax.TaxModule.Web
             return retVal;
         }
 
+        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void CalculateCartTax(ShoppingCart cart)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
@@ -80,32 +81,24 @@ namespace AvaTax.TaxModule.Web
                 if (cart.CustomerId != null)
                     member = _memberService.GetByIds(new[] { cart.CustomerId }).FirstOrDefault();
 
-                var request = cart.ToAvaTaxRequest(CompanyCode, member);
-                if (request != null)
+                var createTransactionModel = cart.ToAvaTaxCreateTransactionModel(CompanyCode, member);
+                if (createTransactionModel != null)
                 {
-                    log.docCode = request.DocCode;
-                    log.customerCode = request.CustomerCode;
-                    log.docType = request.DocType.ToString();
+                    log.docCode = createTransactionModel.code;
+                    log.customerCode = createTransactionModel.customerCode;
+                    log.docType = createTransactionModel.type.ToString();
                     log.amount = (double)cart.Total;
 
-                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                    //register in avalara SalesOrder transaction
-                    var getTaxResult = taxSvc.GetTax(request);
-
-                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                    {
-                        //if tax calculation failed create exception with provided error info
-                        var error = string.Join(Environment.NewLine,
-                            getTaxResult.Messages.Select(m => m.Summary));
-                        throw new Exception(error);
-                    }
+                    var avaTaxClient = _avaTaxClientFactory();
+                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
+                    // TODO: error handling?
                 }
-
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
         }
 
+        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void CalculateOrderTax(CustomerOrder order)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
@@ -115,35 +108,30 @@ namespace AvaTax.TaxModule.Web
                 Member member = null;
                 if (order.CustomerId != null)
                     member = _memberService.GetByIds(new[] { order.CustomerId }).FirstOrDefault();
+
                 //if all payments completed commit tax document in avalara
                 var isCommit = order.InPayments != null && order.InPayments.Any() && order.InPayments.All(pi => pi.IsApproved);
+
                 //update transaction in avalara
-                var request = order.ToAvaTaxRequest(CompanyCode, member, isCommit);
-                if (request != null)
+                var createTransactionModel = order.ToAvaTaxCreateTransactionModel(CompanyCode, member, DocumentType.SalesInvoice, isCommit);
+                if (createTransactionModel != null)
                 {
-                    log.docCode = request.DocCode;
-                    log.docType = request.DocType.ToString();
-                    log.customerCode = request.CustomerCode;
+                    log.docCode = createTransactionModel.code;
+                    log.docType = createTransactionModel.type.ToString();
+                    log.customerCode = createTransactionModel.customerCode;
                     log.amount = (double)order.Sum;
                     log.isCommit = isCommit;
 
-                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                    //register in avalara SalesInvoice transaction
-                    var getTaxResult = taxSvc.GetTax(request);
-
-                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                    {
-                        //if tax calculation failed create exception with provided error info
-                        var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
-                        throw new Exception(error);
-                    }
-                }              
-
+                    var avaTaxClient = _avaTaxClientFactory();
+                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
+                    // TODO: error handling?
+                }
             })
-                .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
-                .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
+            .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
+            .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
         }
 
+        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void AdjustOrderTax(CustomerOrder originalOrder, CustomerOrder modifiedOrder)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
@@ -158,48 +146,40 @@ namespace AvaTax.TaxModule.Web
                 if (modifiedOrder.CustomerId != null)
                     member = _memberService.GetByIds(new[] { modifiedOrder.CustomerId }).FirstOrDefault();
 
-                var request = modifiedOrder.ToAvaTaxAdjustmentRequest(CompanyCode, member, originalOrder, isCommit);
-                if (request != null)
+                var transactionModel = modifiedOrder.ToAvaTaxCreateOrAdjustTransactionModel(originalOrder, CompanyCode,
+                    member, DocumentType.ReturnInvoice, isCommit);
+                if (transactionModel != null)
                 {
-                    log.docCode = request.ReferenceCode;
-                    log.docType = request.DocType.ToString();
-                    log.customerCode = request.CustomerCode;
+                    log.docCode = transactionModel.createTransactionModel.referenceCode;
+                    log.docType = transactionModel.createTransactionModel.type.ToString();
+                    log.customerCode = transactionModel.createTransactionModel.customerCode;
                     log.amount = (double)originalOrder.Sum;
 
-                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                    var getTaxResult = taxSvc.GetTax(request);
-
-                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                    {
-                        var error = string.Join(Environment.NewLine,
-                            getTaxResult.Messages.Select(m => m.Summary));
-                        throw new Exception(error);
-                    }
+                    var avaTaxClient = _avaTaxClientFactory();
+                    var transaction = avaTaxClient.CreateOrAdjustTransaction(string.Empty, transactionModel);
+                    // TODO: handle errors?
                 }
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
         }
 
+        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void CancelTaxDocument(CustomerOrder order)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
                 Validate();
-                var request = order.ToAvaTaxCancelRequest(CompanyCode, CancelCode.DocDeleted);
-                if (request != null)
+
+                var voidTransactionModel = order.ToAvaTaxVoidTransactionModel(VoidReasonCode.DocDeleted);
+                if (voidTransactionModel != null)
                 {
-                    log.docCode = request.DocCode;
-                    log.docType = request.DocType.ToString();
+                    log.docCode = order.Number;
+                    log.docType = DocumentType.Any.ToString();
 
-                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                    var getTaxResult = taxSvc.CancelTax(request);
-
-                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
-                    {
-                        var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
-                        throw new Exception(error);
-                    }
+                    var avaTaxClient = _avaTaxClientFactory();
+                    var transaction = avaTaxClient.VoidTransaction(CompanyCode, order.Number, null, voidTransactionModel);
+                    // TODO: error handling?
                 }
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
@@ -207,42 +187,38 @@ namespace AvaTax.TaxModule.Web
         }
 
 
-
-        private List<TaxRate> GetTaxRates(TaxEvaluationContext evalContext)
+        protected virtual List<TaxRate> GetTaxRates(TaxEvaluationContext evalContext)
         {
             List<TaxRate> retVal = new List<TaxRate>();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
                 Validate();
 
-                var request = evalContext.ToAvaTaxRequest(CompanyCode, false);
                 //Evaluate taxes only for cart to preventing registration redundant transactions in avalara
-                if (evalContext.Type.EqualsInvariant("cart") && request != null)
+                var createTransactionModel = evalContext.ToAvaTaxCreateTransactionModel(CompanyCode, false);
+                if (createTransactionModel != null)
                 {
-                    log.docCode = request.DocCode;
-                    log.docType = request.DocType.ToString();
-                    log.customerCode = request.CustomerCode;
+                    log.docCode = createTransactionModel.code;
+                    log.docType = createTransactionModel.type.ToString();
+                    log.customerCode = createTransactionModel.customerCode;
 
-                    var taxSvc = new JsonTaxSvc(AccountNumber, LicenseKey, ServiceUrl);
-                    var getTaxResult = taxSvc.GetTax(request);
+                    var avaTaxClient = _avaTaxClientFactory();
+                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
+                    // TODO: error handling?
 
-                    if (!getTaxResult.ResultCode.Equals(SeverityLevel.Success))
+                    if (!transaction.lines.IsNullOrEmpty())
                     {
-                        //if tax calculation failed create exception with provided error info
-                        var error = string.Join(Environment.NewLine, getTaxResult.Messages.Select(m => m.Summary));
-                        throw new Exception(error);
-                    }
-
-                    foreach (var taxLine in getTaxResult.TaxLines ?? Enumerable.Empty<AvaTaxCalcREST.TaxLine>())
-                    {
-                        var rate = new TaxRate
+                        foreach (var taxLine in transaction.lines)
                         {
-                            Rate = taxLine.Tax,
-                            Currency = evalContext.Currency,
-                            TaxProvider = this,
-                            Line = evalContext.Lines.First(l => l.Id == taxLine.LineNo)
-                        };
-                        retVal.Add(rate);
+                            var rate = new TaxRate
+                            {
+                                Rate = taxLine.tax ?? 0.0m,
+                                Currency = evalContext.Currency,
+                                TaxProvider = this,
+                                Line = evalContext.Lines.First(line => line.Id == taxLine.lineNumber)
+                            };
+                            retVal.Add(rate);
+                        }
                     }
                 }
             })
@@ -252,9 +228,9 @@ namespace AvaTax.TaxModule.Web
             return retVal;
         }
 
-        private void Validate()
+        protected virtual void Validate()
         {
-            if (!IsEnabled || string.IsNullOrEmpty(AccountNumber)
+            if (!IsEnabled || AccountNumber == 0
                     || string.IsNullOrEmpty(LicenseKey)
                     || string.IsNullOrEmpty(ServiceUrl)
                     || string.IsNullOrEmpty(CompanyCode))

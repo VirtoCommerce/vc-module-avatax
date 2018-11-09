@@ -1,121 +1,152 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using AvaTaxCalcREST;
-using Microsoft.Practices.ObjectBuilder2;
+using Avalara.AvaTax.RestClient;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Order.Model;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
-using Address = AvaTaxCalcREST.Address;
 using AddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
 
 namespace AvaTax.TaxModule.Web.Converters
 {
     public static class CustomerOrderConverter
     {
-        public static GetTaxRequest ToAvaTaxRequest(this VirtoCommerce.Domain.Order.Model.CustomerOrder order, string companyCode, Member member, bool commit = false)
+        [CLSCompliant(false)]
+        public static CreateTransactionModel ToAvaTaxCreateTransactionModel(this CustomerOrder order,
+            string companyCode, Member member, DocumentType documentType, bool commit = false)
         {
-            if (order.Addresses != null && order.Addresses.Any() && order.Items != null && order.Items.Any())
+            if (!order.Addresses.IsNullOrEmpty() && !order.Items.IsNullOrEmpty())
             {
-                // Document Level Elements
-                // Required Request Parameters
-                var getTaxRequest = new GetTaxRequest
+                Address shippingAddress = null;
+                foreach (var address in order.Addresses)
                 {
-                    CustomerCode = order.CustomerId,
-                    DocDate =
-                        order.CreatedDate == DateTime.MinValue
-                            ? DateTime.UtcNow.ToString("yyyy-MM-dd")
-                            : order.CreatedDate.ToString("yyyy-MM-dd"),
-                    CompanyCode = companyCode,
-                    Client = "VirtoCommerce,2.x,VirtoCommerce",
-                    DetailLevel = DetailLevel.Tax,
-                    Commit = commit,
-                    DocType = DocType.SalesInvoice,
-                    DocCode = order.Number,
-                    CurrencyCode = order.Currency.ToString()
+                    if (address.AddressType == AddressType.Shipping)
+                    {
+                        shippingAddress = address;
+                        break;
+                    }
+                }
+
+                var result = new CreateTransactionModel
+                {
+                    customerCode = order.CustomerId,
+                    date = order.CreatedDate != DateTime.MinValue ? order.CreatedDate : DateTime.UtcNow,
+                    companyCode = companyCode,
+                    commit = commit,
+                    type = documentType,
+                    code = order.Number,
+                    currencyCode = order.Currency,
+                    addresses = new AddressesModel()
+                    {
+                        shipTo = shippingAddress?.ToAvaTaxAddressLocationInfo()
+                    }
                 };
 
-                // Best Practice Request Parameters
-
-                // Situational Request Parameters
-                // getTaxRequest.CustomerUsageType = "G";
-                // getTaxRequest.ExemptionNo = "12345";
-                // getTaxRequest.BusinessIdentificationNo = "234243";
-                // getTaxRequest.Discount = 50;
-                // getTaxRequest.TaxOverride = new TaxOverrideDef();
-                // getTaxRequest.TaxOverride.TaxOverrideType = "TaxDate";
-                // getTaxRequest.TaxOverride.Reason = "Adjustment for return";
-                // getTaxRequest.TaxOverride.TaxDate = "2013-07-01";
-                // getTaxRequest.TaxOverride.TaxAmount = "0";
-
-                // Optional Request Parameters
-                //getTaxRequest.PurchaseOrderNo = order.Number;
-                //getTaxRequest.ReferenceCode = "ref123456";
-                //getTaxRequest.PosLaneCode = "09";
-
-                //add customer tax exemption code to cart if exists
-                getTaxRequest.ExemptionNo = member.GetDynamicPropertyValue("Tax exempt", string.Empty);
-
-                string destinationAddressIndex = "0";
-
-                // Address Data
-                var addresses = new List<Address>();
-
-                foreach (var address in order.Addresses.Select((x, i) => new { Value = x, Index = i }))
+                result.lines = order.Items.Select(item => item.ToAvaTaxLineItemModel(shippingAddress)).ToList();
+                if (!order.Shipments.IsNullOrEmpty())
                 {
-                    addresses.Add(new Address
-                    {
-                        AddressCode = address.Index.ToString(CultureInfo.InvariantCulture),
-                        Line1 = address.Value.Line1,
-                        City = address.Value.City,
-                        Region = address.Value.RegionName ?? address.Value.RegionId,
-                        PostalCode = address.Value.PostalCode,
-                        Country = address.Value.CountryName
-                    });
-
-                    if (address.Value.AddressType == AddressType.Shipping
-                        || address.Value.AddressType == AddressType.Shipping)
-                        destinationAddressIndex = address.Index.ToString(CultureInfo.InvariantCulture);
+                    result.lines.AddRange(order.Shipments.Select(shipment => shipment.ToAvaTaxLineItemModel()));
                 }
 
-                getTaxRequest.Addresses = addresses.ToArray();
+                return result;
+            }
 
-                // Line Data
-                // Required Parameters
+            return null;
+        }
 
-                getTaxRequest.Lines = order.Items.Select(li =>
-                    new Line
+        [CLSCompliant(false)]
+        public static CreateOrAdjustTransactionModel ToAvaTaxCreateOrAdjustTransactionModel(this CustomerOrder modifiedOrder,
+            CustomerOrder originalOrder, string companyCode, Member member, DocumentType documentType, bool commit = false)
+        {
+            if (!modifiedOrder.Addresses.IsNullOrEmpty() && !originalOrder.Items.IsNullOrEmpty())
+            {
+                Address shippingAddress = null;
+                foreach (var address in modifiedOrder.Addresses)
+                {
+                    if (address.AddressType == AddressType.Shipping)
                     {
-                        LineNo = li.ProductId,
-                        ItemCode = li.Sku,
-                        Qty = li.Quantity,                         
-                        Amount = li.Price * li.Quantity,
-                        OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
-                        DestinationCode = destinationAddressIndex,
-                        Description = li.Name,
-                        TaxCode = li.TaxType
+                        shippingAddress = address;
+                        break;
                     }
-                    ).ToList();
-
-                //Add shipments as lines
-                if (order.Shipments != null && order.Shipments.Any())
-                {
-                    order.Shipments.ForEach(sh =>
-                    getTaxRequest.Lines.Add(new Line
-                    {
-                        LineNo = sh.Id ?? sh.ShipmentMethodCode,
-                        ItemCode = sh.ShipmentMethodCode,
-                        Qty = 1,
-                        Amount = sh.Sum,
-                        OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
-                        DestinationCode = destinationAddressIndex,
-                        Description = sh.ShipmentMethodCode,
-                        TaxCode = sh.TaxType ?? "FR"
-                    })
-                    );
                 }
 
-                return getTaxRequest;
+                var adjustedTransactionModel = new CreateTransactionModel
+                {
+                    customerCode = modifiedOrder.CustomerId,
+                    date = DateTime.UtcNow,
+                    companyCode = companyCode,
+                    code = $"{originalOrder.Number}.{DateTime.UtcNow:yy-MM-dd-hh-mm}",
+                    commit = commit,
+                    type = documentType,
+                    taxOverride = new TaxOverrideModel
+                    {
+                        type = TaxOverrideType.TaxDate,
+                        reason = "Adjustment for return",
+                        taxDate = originalOrder.CreatedDate != DateTime.MinValue ? originalOrder.CreatedDate : DateTime.UtcNow,
+                        taxAmount = 0.0m
+                    },
+                    referenceCode = originalOrder.Number,
+                    currencyCode = modifiedOrder.Currency,
+                    exemptionNo = member.GetDynamicPropertyValue("Tax exempt", string.Empty),
+                    addresses = new AddressesModel
+                    {
+                        shipTo = shippingAddress?.ToAvaTaxAddressLocationInfo()
+                    }
+                };
+
+                var linesToCancel = originalOrder.Items.Where(originalItem =>
+                    modifiedOrder.Items.All(x => x.Id != originalItem.Id)
+                    || originalItem.Quantity > modifiedOrder.Items.Single(x => x.Id == originalItem.Id).Quantity
+                );
+
+                var lineItemModels = new List<LineItemModel>();
+                foreach (var originalItem in linesToCancel)
+                {
+                    var quantityToCancel = originalItem.Quantity;
+                    var amountToCancel = originalItem.Price * originalItem.Quantity;
+
+                    var modifiedItem = modifiedOrder.Items.FirstOrDefault(item => item.Id == originalItem.Id);
+                    if (modifiedItem != null)
+                    {
+                        quantityToCancel -= modifiedItem.Quantity;
+                        amountToCancel -= modifiedItem.Price * modifiedItem.Quantity;
+                    }
+
+                    lineItemModels.Add(new LineItemModel
+                    {
+                        number = originalItem.Id,
+                        itemCode = originalItem.ProductId,
+                        description = originalItem.Name,
+                        taxCode = originalItem.TaxType,
+                        quantity = quantityToCancel,
+                        amount = amountToCancel,
+                        addresses = new AddressesModel
+                        {
+                            shipTo = shippingAddress?.ToAvaTaxAddressLocationInfo()
+                        }
+                    });
+                }
+                adjustedTransactionModel.lines = lineItemModels;
+
+                return new CreateOrAdjustTransactionModel
+                {
+                    createTransactionModel = adjustedTransactionModel
+                };
+            }
+            return null;
+        }
+
+        [CLSCompliant(false)]
+        public static VoidTransactionModel ToAvaTaxVoidTransactionModel(this CustomerOrder order, VoidReasonCode voidReasonCode)
+        {
+            if (!order.Addresses.IsNullOrEmpty() && !order.Items.IsNullOrEmpty())
+            {
+                return new VoidTransactionModel
+                {
+                    code = voidReasonCode
+                };
             }
             return null;
         }

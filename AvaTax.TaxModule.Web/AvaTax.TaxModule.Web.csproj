@@ -43,6 +43,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Avalara.AvaTax.RestClient.net45, Version=18.9.0.234, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Avalara.AvaTax.18.9.0.234\lib\net45\Avalara.AvaTax.RestClient.net45.dll</HintPath>
+    </Reference>
     <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
       <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
       <Private>True</Private>
@@ -132,33 +135,17 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AvaTaxClasses\Address.cs" />
-    <Compile Include="AvaTaxClasses\JsonAddressSvc.cs" />
-    <Compile Include="AvaTaxClasses\AddressSvc.cs" />
-    <Compile Include="AvaTaxClasses\CancelTaxRequest.cs" />
-    <Compile Include="AvaTaxClasses\CancelTaxResponse.cs" />
-    <Compile Include="AvaTaxClasses\CancelTaxResult.cs" />
-    <Compile Include="AvaTaxClasses\CommonResponse.cs" />
-    <Compile Include="AvaTaxClasses\GeoTaxResult.cs" />
-    <Compile Include="AvaTaxClasses\GetTaxRequest.cs" />
-    <Compile Include="AvaTaxClasses\GetTaxResult.cs" />
-    <Compile Include="AvaTaxClasses\Line.cs" />
-    <Compile Include="AvaTaxClasses\TaxAddress.cs" />
-    <Compile Include="AvaTaxClasses\TaxDetail.cs" />
-    <Compile Include="AvaTaxClasses\TaxLine.cs" />
-    <Compile Include="AvaTaxClasses\TaxOverrideDef.cs" />
-    <Compile Include="AvaTaxClasses\JsonTaxSvc.cs" />
-    <Compile Include="AvaTaxClasses\TaxSvc.cs" />
-    <Compile Include="AvaTaxClasses\ValidateResult.cs" />
+    <Compile Include="Converters\CartLineItemConverter.cs" />
+    <Compile Include="Converters\CartShipmentConverter.cs" />
+    <Compile Include="Converters\OrderLineItemConverter.cs" />
+    <Compile Include="Converters\OrderShipmentConverter.cs" />
     <Compile Include="Converters\TaxDetailConverter.cs" />
+    <Compile Include="ModuleConstants.cs" />
     <Compile Include="Observers\CartTaxAdjustmentObserver.cs" />
     <Compile Include="Observers\OrderTaxAdjustmentObserver.cs" />
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
     <Compile Include="Converters\CustomerAddressConverter.cs" />
-    <Compile Include="Converters\CustomerOrderCancelConverter.cs" />
-    <Compile Include="Converters\CustomerOrderAdjustementConverter.cs" />
-    <Compile Include="Converters\TaxRequestConverter.cs" />
     <Compile Include="Converters\ShoppingCartConverter.cs" />
     <Compile Include="Converters\CustomerOrderConverter.cs" />
     <Compile Include="Logging\BaseLogContext.cs" />

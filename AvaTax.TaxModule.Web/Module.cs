@@ -1,4 +1,5 @@
 ﻿using System;
+using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Controller;
 using AvaTax.TaxModule.Web.Observers;
 using AvaTax.TaxModule.Web.Services;
@@ -51,6 +52,17 @@ namespace AvaTax.TaxModule.Web
 
             //Subscribe to order changes. Cancel SalesInvoice transaction
             _container.RegisterType<IObserver<OrderChangeEvent>, CancelOrderTaxesObserver>("CancelOrderTaxesObserver");
+
+            object ClientFactory(IUnityContainer container)
+            {
+                var machineName = Environment.MachineName;
+                var avaTaxUri = new Uri(avalaraTax.ServiceUrl);
+                var result = new AvaTaxClient(ModuleConstants.Avalara.ApplicationName, ModuleConstants.Avalara.ApplicationVersion, machineName, avaTaxUri).WithSecurity(avalaraTax.Username, avalaraTax.Password);
+
+                return result;
+            }
+
+            _container.RegisterType<AvaTaxClient>(new InjectionFactory(ClientFactory));
         }
 
         public override void PostInitialize()
@@ -58,14 +70,13 @@ namespace AvaTax.TaxModule.Web
             var settingManager = _container.Resolve<ISettingsManager>();
             var taxService = _container.Resolve<ITaxService>();
             var moduleSettings = settingManager.GetModuleSettings("Avalara.Tax");
-            taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<IMemberService>(), _container.Resolve<ILog>(), moduleSettings)
+            taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<IMemberService>(), _container.Resolve<ILog>(), 
+                _container.Resolve<Func<AvaTaxClient>>(), moduleSettings)
             {
                 Name = "Avalara taxes",
                 Description = "Avalara service integration",
                 LogoUrl = "Modules/$(Avalara.Tax)/Content/400.png"
             });
-
-
         }
         #endregion
     }

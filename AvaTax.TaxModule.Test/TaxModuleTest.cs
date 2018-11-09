@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.Results;
+using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web;
 using AvaTax.TaxModule.Web.Controller;
 using AvaTax.TaxModule.Web.Services;
-using AvaTaxCalcREST;
 using Common.Logging;
 using Moq;
 using VirtoCommerce.Domain.Cart.Model;
@@ -36,7 +36,7 @@ namespace AvaTax.TaxModule.Test
 
         string avalaraUsername = "1100165101";
         string avalaraPassword = "AE5F97FA88A8D87D";
-        string avalaraServiceUrl = "https://development.avalara.net";
+        string avalaraServiceUrl = "https://sandbox-rest.avatax.com";
         string avalaraCompanyCode = "APITrialCompany";
 
         const string _usernamePropertyName = "Avalara.Tax.Credentials.AccountNumber";
@@ -88,7 +88,7 @@ namespace AvaTax.TaxModule.Test
             var response = _controller.ValidateAddress(validTestAddress);
 
             //assert
-            Assert.IsType<OkNegotiatedContentResult<ValidateResult>>(response);
+            Assert.IsType<OkNegotiatedContentResult<AddressResolutionModel>>(response);
         }
 
         [Fact]
@@ -104,7 +104,7 @@ namespace AvaTax.TaxModule.Test
             Assert.IsType<BadRequestErrorMessageResult>(response);
         }
 
-        [Fact]
+        [Fact(Skip = "AvaTaxRateProvider does not update carts anymore, so this test does not work.")]
         public void Valid_cart_successfull_tax_calculation()
         {
             //arrange
@@ -114,7 +114,7 @@ namespace AvaTax.TaxModule.Test
 
             var logService = new Mock<ILog>();
 
-            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, _settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, CreateAvaTaxClient, _settings.ToArray());
             var validCart = GetTestCart(Guid.NewGuid().ToString());
 
             //act
@@ -124,7 +124,7 @@ namespace AvaTax.TaxModule.Test
             Assert.All(validCart.Items, item => Assert.True(item.TaxTotal > 0));
         }
 
-        [Fact]
+        [Fact(Skip = "AvaTaxRateProvider does not update orders anymore, so this test does not work.")]
         public void Valid_order_successfull_tax_calculation()
         {
             //arrange
@@ -134,7 +134,7 @@ namespace AvaTax.TaxModule.Test
 
             var logService = new Mock<ILog>();
 
-            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, _settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, CreateAvaTaxClient, _settings.ToArray());
             var validOrder = GetTestOrder(Guid.NewGuid().ToString());
 
             //act
@@ -154,7 +154,7 @@ namespace AvaTax.TaxModule.Test
 
             var logService = new Mock<ILog>();
 
-            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, _settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, CreateAvaTaxClient, _settings.ToArray());
 
             var context = new TaxEvaluationContext
             {
@@ -163,8 +163,8 @@ namespace AvaTax.TaxModule.Test
                 Lines = GetContextTaxLines(),
                 Currency = "USD",
                 Id = Guid.NewGuid().ToString(),
+                Type = "cart"
             };
-
 
             //act
             var rates = avaTaxRateProvider.CalculateRates(context);
@@ -193,6 +193,16 @@ namespace AvaTax.TaxModule.Test
         //    //assert
         //    Assert.All(validCart.Items, item => Assert.True(item.TaxTotal > 0));
         //}
+
+        private AvaTaxClient CreateAvaTaxClient()
+        {
+            var machineName = Environment.MachineName;
+            var avaTaxUri = new Uri(avalaraServiceUrl);
+            var result = new AvaTaxClient(ModuleConstants.Avalara.ApplicationName, ModuleConstants.Avalara.ApplicationVersion, machineName, avaTaxUri)
+                .WithSecurity(avalaraUsername, avalaraPassword);
+
+            return result;
+        }
 
         private static Address GetValidAddress()
         {
@@ -601,7 +611,6 @@ namespace AvaTax.TaxModule.Test
 
         private AvaTaxController GetTaxController()
         {
-
             const string _isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
 
             var settingsManager = new Mock<ISettingsManager>();
@@ -616,7 +625,7 @@ namespace AvaTax.TaxModule.Test
             var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager.Object);
             var logger = new Mock<ILog>();
 
-            var controller = new AvaTaxController(avalaraTax, logger.Object);
+            var controller = new AvaTaxController(avalaraTax, logger.Object, CreateAvaTaxClient);
             return controller;
         }
     }

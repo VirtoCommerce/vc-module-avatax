@@ -1,125 +1,56 @@
-﻿
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System;
 using System.Linq;
-using AvaTaxCalcREST;
-using Microsoft.Practices.ObjectBuilder2;
+using Avalara.AvaTax.RestClient;
+using VirtoCommerce.Domain.Cart.Model;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.DynamicProperties;
-using Address = AvaTaxCalcREST.Address;
 using AddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
 
 namespace AvaTax.TaxModule.Web.Converters
 {
     public static class ShoppingCartConverter
     {
-        public static GetTaxRequest ToAvaTaxRequest(
-            this VirtoCommerce.Domain.Cart.Model.ShoppingCart cart,
-            string companyCode, Member member,
-            bool commit = false)
+        [CLSCompliant(false)]
+        public static CreateTransactionModel ToAvaTaxCreateTransactionModel(this ShoppingCart cart,
+            string companyCode, Member member, bool commit = false)
         {
-            if (cart.Addresses != null && cart.Addresses.Any() && cart.Items != null && cart.Items.Any())
+            if (!cart.Addresses.IsNullOrEmpty() && !cart.Items.IsNullOrEmpty())
             {
-                var getTaxRequest = new GetTaxRequest
+                Address shippingAddress = null;
+                foreach (var address in cart.Addresses)
                 {
-                    CustomerCode = cart.CustomerId,
-                    DocDate = cart.CreatedDate.ToString("yyyy-MM-dd"),
-                    CompanyCode = companyCode,
-                    Client = "VirtoCommerce,2.x,VirtoCommerce",
-                    DocCode = cart.Id,
-                    DetailLevel = DetailLevel.Tax,
-                    Commit = false,
-                    DocType = DocType.SalesInvoice,
-                    CurrencyCode = cart.Currency.ToString()
+                    if (address.AddressType == AddressType.Shipping)
+                    {
+                        shippingAddress = address;
+                        break;
+                    }
+                }
+
+                var result = new CreateTransactionModel
+                {
+                    customerCode = cart.CustomerId,
+                    date = cart.CreatedDate,
+                    companyCode = companyCode,
+                    code = cart.Id,
+                    commit = commit,
+                    type = DocumentType.SalesInvoice,
+                    currencyCode = cart.Currency,
+                    exemptionNo = member.GetDynamicPropertyValue("Tax exempt", string.Empty),
+                    addresses = new AddressesModel()
+                    {
+                        shipTo = shippingAddress?.ToAvaTaxAddressLocationInfo()
+                    }
                 };
 
-                // Document Level Elements
-                // Required Request Parameters
-
-                // Best Practice Request Parameters
-
-                // Situational Request Parameters
-                // getTaxRequest.CustomerUsageType = "G";
-
-                // getTaxRequest.ExemptionNo = "12345";
-                // getTaxRequest.BusinessIdentificationNo = "234243";
-                // getTaxRequest.Discount = 50;
-                // getTaxRequest.TaxOverride = new TaxOverrideDef();
-                // getTaxRequest.TaxOverride.TaxOverrideType = "TaxDate";
-                // getTaxRequest.TaxOverride.Reason = "Adjustment for return";
-                // getTaxRequest.TaxOverride.TaxDate = "2013-07-01";
-                // getTaxRequest.TaxOverride.TaxAmount = "0";
-
-                // Optional Request Parameters
-                //getTaxRequest.PurchaseOrderNo = order.Id;
-                //getTaxRequest.ReferenceCode = "ref123456";
-                //getTaxRequest.PosLaneCode = "09";
-
-                //add customer tax exemption code to cart if exists
-                getTaxRequest.ExemptionNo = member.GetDynamicPropertyValue("Tax exempt", string.Empty);
-
-                // Address Data
-                string destinationAddressIndex = "0";
-
-                // Address Data
-                var addresses = new List<Address>();
-
-                foreach (var address in cart.Addresses.Select((x, i) => new { Value = x, Index = i }))
+                result.lines = cart.Items.Select(item => item.ToAvaTaxLineItemModel(shippingAddress)).ToList();
+                if (!cart.Shipments.IsNullOrEmpty())
                 {
-
-                    addresses.Add(
-                        new Address
-                        {
-                            AddressCode = address.Index.ToString(CultureInfo.InvariantCulture),
-                            Line1 = address.Value.Line1,
-                            City = address.Value.City,
-                            Region = address.Value.RegionName ?? address.Value.RegionId,
-                            PostalCode = address.Value.PostalCode,
-                            Country = address.Value.CountryName
-                        });
-
-                    if (address.Value.AddressType == AddressType.Shipping
-                        || address.Value.AddressType == AddressType.Shipping)
-                        destinationAddressIndex = address.Index.ToString(CultureInfo.InvariantCulture);
+                    result.lines.AddRange(cart.Shipments.Select(shipment => shipment.ToAvaTaxLineItemModel()));
                 }
 
-                getTaxRequest.Addresses = addresses;
-
-                // Line Data
-                // Required Parameters
-
-                getTaxRequest.Lines = cart.Items.Select(li =>
-                    new Line
-                    {
-                        LineNo = li.ProductId,
-                        ItemCode = li.Sku,
-                        Qty = li.Quantity,
-                        Amount = li.ExtendedPrice,
-                        OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
-                        DestinationCode = destinationAddressIndex,
-                        Description = li.Name,
-                        TaxCode = li.TaxType
-                    }
-                    ).ToList();
-
-                //Add shipments as lines
-                if (cart.Shipments != null && cart.Shipments.Any())
-                {
-                    cart.Shipments.ForEach(sh =>
-                    getTaxRequest.Lines.Add(new Line
-                    {
-                        LineNo = sh.Id ?? sh.ShipmentMethodCode,
-                        ItemCode = sh.ShipmentMethodCode,
-                        Qty = 1,
-                        Amount = sh.Price,
-                        OriginCode = destinationAddressIndex, //TODO set origin address (fulfillment?)
-                        DestinationCode = destinationAddressIndex,
-                        Description = sh.ShipmentMethodCode,
-                        TaxCode = sh.TaxType ?? "FR"
-                    })
-                    );
-                }
-                return getTaxRequest;
+                return result;
             }
 
             return null;
