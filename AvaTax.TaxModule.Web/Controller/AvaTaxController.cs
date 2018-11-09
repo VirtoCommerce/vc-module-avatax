@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Avalara.AvaTax.RestClient;
@@ -8,6 +9,7 @@ using AvaTax.TaxModule.Web.Converters;
 using AvaTax.TaxModule.Web.Logging;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
+using Newtonsoft.Json;
 using domainModel = VirtoCommerce.Domain.Commerce.Model;
 
 namespace AvaTax.TaxModule.Web.Controller
@@ -55,19 +57,30 @@ namespace AvaTax.TaxModule.Web.Controller
 
                 var avaTaxClient = _avaTaxClientFactory();
 
-                var result = avaTaxClient.Ping();
-                // TODO: error handling?
+                PingResultModel result;
+                try
+                {
+                    result = avaTaxClient.Ping();
+                }
+                catch (JsonException e)
+                {
+                    var errorMessage = $"Avalara API service responded with some unexpected data. Please verify the link to Avalara API service.\nInner error: {e.Message}";
+                    retVal = BadRequest(errorMessage);
+                    throw new Exception(errorMessage, e);
+                }
+                catch (Exception e)
+                {
+                    var errorMessage = $"Failed to connect to the Avalara API due to error: {e.Message}";
+                    retVal = BadRequest(errorMessage);
+                    throw new Exception(errorMessage, e);
+                }
 
-                //var taxSvc = new JsonTaxSvc(_taxSettings.Username, _taxSettings.Password, _taxSettings.ServiceUrl);
-                //var result = taxSvc.Ping();
-                //if (!result.ResultCode.Equals(SeverityLevel.Success))
-                //{
-                //    retVal =
-                //        BadRequest(string.Join(Environment.NewLine,
-                //            result.Messages.Where(ms => ms.Severity == SeverityLevel.Error).Select(
-                //        m => m.Summary + string.Format(" [{0} - {1}] ", m.RefersTo, m.Details == null ? string.Empty : string.Join(", ", m.Details)))));
-                //    throw new Exception((retVal as BadRequestErrorMessageResult).Message);
-                //}
+                if (result.authenticated != true)
+                {
+                    var errorMessage = "Provided Avalara credentials are invalid. Please verify the account number and the license key.";
+                    retVal = BadRequest(errorMessage);
+                    throw new Exception(errorMessage);
+                }
 
                 retVal = Ok(result);
             })
