@@ -38,10 +38,6 @@ namespace AvaTax.TaxModule.Web
 
             var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
 
-            var logManager = _container.Resolve<ILog>();
-
-            _container.RegisterType<AvaTaxController>(new InjectionConstructor(avalaraTax, logManager));
-
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
             //Subscribe to cart changes. Register in avalara  SalesOrder transaction 
