@@ -15,7 +15,9 @@ Installing the module:
 * **Avalara.Tax.Credentials.AccountNumber** - Account number provided by Avalara during registration process
 * **Avalara.Tax.Credentials.LicenseKey** - Account License Key provided by Avalara during registration process
 * **Avalara.Tax.Credentials.CompanyCode** - Company code that should match with the code provided to the company registered in Avalara admin manager
-* **Avalara.Tax.Credentials.ServiceUrl** - Link to Avalara API service
+* **Avalara.Tax.Credentials.ServiceUrl** - Link to Avalara API service:
+    * `https://sandbox-rest.avatax.com` for the development environment;
+    * `https://rest.avatax.com` for the production environment.
 * **Avalara.Tax.IsEnabled** - Enable or disable tax calculation
 * **Avalara.Tax.IsValidateAddress** - Enable or disable address validation
 

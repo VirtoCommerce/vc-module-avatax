@@ -1,12 +1,9 @@
-﻿using System;
-using AvaTax.TaxModule.Web.Controller;
-using AvaTax.TaxModule.Web.Observers;
+﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
-using VirtoCommerce.Domain.Cart.Events;
-using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Domain.Order.Events;
+using System;
+using AvaTax.TaxModule.Web.Converters;
 using VirtoCommerce.Domain.Tax.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
@@ -22,6 +19,9 @@ namespace AvaTax.TaxModule.Web
         private const string _isEnabledPropertyName = "Avalara.Tax.IsEnabled";
         private const string _isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
 
+        private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
+        private const string ApplicationVersion = "2.x";
+
         private readonly IUnityContainer _container;
 
         public Module(IUnityContainer container)
@@ -35,22 +35,23 @@ namespace AvaTax.TaxModule.Web
         {
             var settingsManager = _container.Resolve<ISettingsManager>();
 
-            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
-
-            var logManager = _container.Resolve<ILog>();
-
-            _container.RegisterType<AvaTaxController>(new InjectionConstructor(avalaraTax, logManager));
-
+            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, 
+                _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
-            //Subscribe to cart changes. Register in avalara  SalesOrder transaction 
-            _container.RegisterType<IObserver<CartChangeEvent>, CartTaxAdjustmentObserver>("CartTaxAdjustmentObserver");
+            _container.RegisterInstance<ITaxEvaluationContextConverter>(new TaxEvaluationContextConverterImpl());
 
-            //Subscribe to cart changes. Register in avalara  SalesInvoice transaction 
-            _container.RegisterType<IObserver<OrderChangeEvent>, OrderTaxAdjustmentObserver>("PlacedOrderObserver");
+            object ClientFactory(IUnityContainer container)
+            {
+                var machineName = Environment.MachineName;
+                var avaTaxUri = new Uri(avalaraTax.ServiceUrl);
+                var result = new AvaTaxClient(ApplicationName, ApplicationVersion, machineName, avaTaxUri)
+                    .WithSecurity(avalaraTax.Username, avalaraTax.Password);
 
-            //Subscribe to order changes. Cancel SalesInvoice transaction
-            _container.RegisterType<IObserver<OrderChangeEvent>, CancelOrderTaxesObserver>("CancelOrderTaxesObserver");
+                return result;
+            }
+
+            _container.RegisterType<AvaTaxClient>(new InjectionFactory(ClientFactory));
         }
 
         public override void PostInitialize()
@@ -58,14 +59,15 @@ namespace AvaTax.TaxModule.Web
             var settingManager = _container.Resolve<ISettingsManager>();
             var taxService = _container.Resolve<ITaxService>();
             var moduleSettings = settingManager.GetModuleSettings("Avalara.Tax");
-            taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<IMemberService>(), _container.Resolve<ILog>(), moduleSettings)
+            var taxEvaluationContextConverter = _container.Resolve<ITaxEvaluationContextConverter>();
+
+            taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<ILog>(), 
+                _container.Resolve<Func<AvaTaxClient>>(), taxEvaluationContextConverter, moduleSettings)
             {
                 Name = "Avalara taxes",
                 Description = "Avalara service integration",
                 LogoUrl = "Modules/$(Avalara.Tax)/Content/400.png"
             });
-
-
         }
         #endregion
     }
