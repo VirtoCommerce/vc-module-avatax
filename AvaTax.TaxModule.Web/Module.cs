@@ -1,13 +1,10 @@
 ﻿using System;
 using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web.Handlers;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
 using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Domain.Order.Events;
 using VirtoCommerce.Domain.Tax.Services;
-using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -21,6 +18,9 @@ namespace AvaTax.TaxModule.Web
         private const string _companyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
         private const string _isEnabledPropertyName = "Avalara.Tax.IsEnabled";
         private const string _isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
+
+        private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
+        private const string ApplicationVersion = "2.x";
 
         private readonly IUnityContainer _container;
 
@@ -40,15 +40,11 @@ namespace AvaTax.TaxModule.Web
 
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
-            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
-            eventHandlerRegistrar.RegisterHandler<OrderChangeEvent>(async (message, token) => await _container.Resolve<OrderTaxAdjustmentHandler>().Handle(message));
-            eventHandlerRegistrar.RegisterHandler<OrderChangeEvent>(async (message, token) => await _container.Resolve<CancelOrderTaxesHandler>().Handle(message));
-
             object ClientFactory(IUnityContainer container)
             {
                 var machineName = Environment.MachineName;
                 var avaTaxUri = new Uri(avalaraTax.ServiceUrl);
-                var result = new AvaTaxClient(ModuleConstants.Avalara.ApplicationName, ModuleConstants.Avalara.ApplicationVersion, machineName, avaTaxUri)
+                var result = new AvaTaxClient(ApplicationName, ApplicationVersion, machineName, avaTaxUri)
                     .WithSecurity(avalaraTax.Username, avalaraTax.Password);
 
                 return result;
