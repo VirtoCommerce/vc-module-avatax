@@ -4,6 +4,7 @@ using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Common;
@@ -71,34 +72,7 @@ namespace AvaTax.TaxModule.Web
             return retVal;
         }
 
-        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
-        public virtual void CalculateCartTax(ShoppingCart cart)
-        {
-            LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
-            {
-                Validate();
-                Member member = null;
-                if (cart.CustomerId != null)
-                    member = _memberService.GetByIds(new[] { cart.CustomerId }).FirstOrDefault();
 
-                var createTransactionModel = cart.ToAvaTaxCreateTransactionModel(CompanyCode, member);
-                if (createTransactionModel != null)
-                {
-                    log.docCode = createTransactionModel.code;
-                    log.customerCode = createTransactionModel.customerCode;
-                    log.docType = createTransactionModel.type.ToString();
-                    log.amount = (double)cart.Total;
-
-                    var avaTaxClient = _avaTaxClientFactory();
-                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
-                    // TODO: error handling?
-                }
-            })
-            .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
-            .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
-        }
-
-        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void CalculateOrderTax(CustomerOrder order)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
@@ -131,7 +105,6 @@ namespace AvaTax.TaxModule.Web
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
         }
 
-        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void AdjustOrderTax(CustomerOrder originalOrder, CustomerOrder modifiedOrder)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
@@ -164,7 +137,6 @@ namespace AvaTax.TaxModule.Web
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
         }
 
-        [Obsolete("Methods to calculate tax for carts and orders are considered obsolete. Please use the CalculateRates() method instead.")]
         public virtual void CancelTaxDocument(CustomerOrder order)
         {
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>

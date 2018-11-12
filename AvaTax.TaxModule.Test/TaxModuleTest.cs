@@ -104,26 +104,6 @@ namespace AvaTax.TaxModule.Test
             Assert.IsType<BadRequestErrorMessageResult>(response);
         }
 
-        [Fact(Skip = "AvaTaxRateProvider does not update carts anymore, so this test does not work.")]
-        public void Valid_cart_successfull_tax_calculation()
-        {
-            //arrange
-            var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null))
-                .Returns<string[], string, string[]>((ids, responseGroup, memberTypes) => new Member[] { new Contact() });
-
-            var logService = new Mock<ILog>();
-
-            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, CreateAvaTaxClient, _settings.ToArray());
-            var validCart = GetTestCart(Guid.NewGuid().ToString());
-
-            //act
-            avaTaxRateProvider.CalculateCartTax(validCart);
-
-            //assert
-            Assert.All(validCart.Items, item => Assert.True(item.TaxTotal > 0));
-        }
-
         [Fact(Skip = "AvaTaxRateProvider does not update orders anymore, so this test does not work.")]
         public void Valid_order_successfull_tax_calculation()
         {
