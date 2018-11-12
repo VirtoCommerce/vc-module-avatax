@@ -116,8 +116,7 @@ namespace AvaTax.TaxModule.Test
                 Customer = new Contact { Id = Guid.NewGuid().ToString() },
                 Lines = GetContextTaxLines(),
                 Currency = "USD",
-                Id = Guid.NewGuid().ToString(),
-                Type = "cart"
+                Id = Guid.NewGuid().ToString()
             };
 
             //act
