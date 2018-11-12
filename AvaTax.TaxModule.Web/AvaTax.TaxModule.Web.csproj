@@ -135,7 +135,8 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Converters\TaxDetailConverter.cs" />
+    <Compile Include="Converters\ITaxEvaluationContextConverter.cs" />
+    <Compile Include="Converters\TaxEvaluationContextConverterImpl.cs" />
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
     <Compile Include="Converters\CustomerAddressConverter.cs" />

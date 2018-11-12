@@ -26,6 +26,7 @@ namespace AvaTax.TaxModule.Web
 
         private readonly AvalaraLogger _logger;
         private readonly Func<AvaTaxClient> _avaTaxClientFactory;
+        private readonly ITaxEvaluationContextConverter _taxEvaluationContextConverter;
 
         public AvaTaxRateProvider()
             : base("AvaTaxRateProvider")
@@ -33,12 +34,14 @@ namespace AvaTax.TaxModule.Web
         }
 
         [CLSCompliant(false)]
-        public AvaTaxRateProvider(ILog log, Func<AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
+        public AvaTaxRateProvider(ILog log, Func<AvaTaxClient> avaTaxClientFactory, ITaxEvaluationContextConverter taxEvaluationContextConverter, 
+            params SettingEntry[] settings)
             : this()
         {
             Settings = settings;
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
+            _taxEvaluationContextConverter = taxEvaluationContextConverter;
         }
 
         private int AccountNumber => int.Parse(GetSetting(AccountNumberPropertyName));
@@ -71,7 +74,7 @@ namespace AvaTax.TaxModule.Web
                 Validate();
 
                 //Evaluate taxes only for cart to preventing registration redundant transactions in avalara
-                var createTransactionModel = evalContext.ToAvaTaxCreateTransactionModel(CompanyCode, false);
+                var createTransactionModel = _taxEvaluationContextConverter.ConvertToCreateTransactionModel(evalContext, CompanyCode, false);
                 if (createTransactionModel != null)
                 {
                     log.docCode = createTransactionModel.code;

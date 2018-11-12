@@ -5,18 +5,16 @@ using System.Web.Http.Results;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web;
 using AvaTax.TaxModule.Web.Controller;
+using AvaTax.TaxModule.Web.Converters;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Moq;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
 using Xunit;
 using Address = VirtoCommerce.Domain.Commerce.Model.Address;
 using AddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
-using LineItem = VirtoCommerce.Domain.Order.Model.LineItem;
-using Shipment = VirtoCommerce.Domain.Order.Model.Shipment;
 
 namespace AvaTax.TaxModule.Test
 {
@@ -108,7 +106,8 @@ namespace AvaTax.TaxModule.Test
             //arrange
             var logService = new Mock<ILog>();
 
-            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, _settings.ToArray());
+            var taxEvaluationContextConverter = new TaxEvaluationContextConverterImpl();
+            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, taxEvaluationContextConverter, _settings.ToArray());
 
             var context = new TaxEvaluationContext
             {
