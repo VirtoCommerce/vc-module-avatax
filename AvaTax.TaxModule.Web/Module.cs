@@ -1,12 +1,9 @@
 ﻿using System;
 using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web.Controller;
 using AvaTax.TaxModule.Web.Handlers;
-using AvaTax.TaxModule.Web.Observers;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
-using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Order.Events;
 using VirtoCommerce.Domain.Tax.Services;
