@@ -16,7 +16,11 @@
             $scope.message = "Connected successfully!";
             bladeNavigationService.setError('', $scope.blade);
         }, function (error) {
-            bladeNavigationService.setError('Error: ' + error.data.message.substring(0, 40) + '...', $scope.blade);
+            bladeNavigationService.setError({
+                status: 'Error',
+                statusText: error.data.message,
+                data: error.data
+            }, $scope.blade);
             $scope.background = "LightCoral";
             $scope.message = error.data.message;
         });
