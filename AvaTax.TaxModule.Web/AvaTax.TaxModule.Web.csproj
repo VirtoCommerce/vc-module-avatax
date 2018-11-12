@@ -140,9 +140,9 @@
     <Compile Include="Converters\OrderLineItemConverter.cs" />
     <Compile Include="Converters\OrderShipmentConverter.cs" />
     <Compile Include="Converters\TaxDetailConverter.cs" />
+    <Compile Include="Handlers\CancelOrderTaxesHandler.cs" />
+    <Compile Include="Handlers\OrderTaxAdjustmentHandler.cs" />
     <Compile Include="ModuleConstants.cs" />
-    <Compile Include="Observers\CartTaxAdjustmentObserver.cs" />
-    <Compile Include="Observers\OrderTaxAdjustmentObserver.cs" />
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
     <Compile Include="Converters\CustomerAddressConverter.cs" />
@@ -154,7 +154,6 @@
     <Compile Include="Logging\LogExtendedException.cs" />
     <Compile Include="Logging\LogInvoker.cs" />
     <Compile Include="Logging\AvalaraLogger.cs" />
-    <Compile Include="Observers\CancelOrderTaxesObserver.cs" />
     <Compile Include="Services\AvaTaxSettings.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

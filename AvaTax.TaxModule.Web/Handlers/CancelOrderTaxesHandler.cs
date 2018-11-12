@@ -1,50 +1,44 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using VirtoCommerce.Domain.Order.Events;
 using VirtoCommerce.Domain.Order.Model;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Domain.Store.Services;
+using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Events;
 
-namespace AvaTax.TaxModule.Web.Observers
+namespace AvaTax.TaxModule.Web.Handlers
 {
-    public class CancelOrderTaxesObserver : IObserver<OrderChangeEvent>
+    public class CancelOrderTaxesHandler : IEventHandler<OrderChangeEvent>
     {
         private readonly IStoreService _storeService;
 
-        public CancelOrderTaxesObserver(IStoreService storeService)
+        public CancelOrderTaxesHandler(IStoreService storeService)
         {
             _storeService = storeService;
         }
 
-        #region IObserver<CustomerOrder> Members
-
-        public void OnCompleted()
+        public Task Handle(OrderChangeEvent message)
         {
-        }
-
-        public void OnError(Exception error)
-        {
-        }
-
-        public void OnNext(OrderChangeEvent value)
-        {
-            foreach (var entry in value.ChangedEntries)
+            foreach (var entry in message.ChangedEntries)
             {
                 if (entry.EntryState == EntryState.Modified)
+                {
                     CancelCustomerOrderTaxes(entry.NewEntry);
+                }
             }
+
+            return Task.CompletedTask;
         }
 
-        #endregion
         private void CancelCustomerOrderTaxes(CustomerOrder order)
         {
             if (order.IsCancelled)
             {
                 var store = _storeService.GetById(order.StoreId);
                 var taxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == typeof(AvaTaxRateProvider).Name);
-                if (taxProvider != null && taxProvider is AvaTaxRateProvider && taxProvider.IsActive)
+                if (taxProvider != null && taxProvider.IsActive && taxProvider is AvaTaxRateProvider avaTaxRateProvider)
                 {
-                    (taxProvider as AvaTaxRateProvider).CancelTaxDocument(order);
+                    avaTaxRateProvider.CancelTaxDocument(order);
                 }
             }
         }

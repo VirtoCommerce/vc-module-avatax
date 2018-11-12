@@ -1,6 +1,7 @@
 ﻿using System;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Controller;
+using AvaTax.TaxModule.Web.Handlers;
 using AvaTax.TaxModule.Web.Observers;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
@@ -9,6 +10,7 @@ using VirtoCommerce.Domain.Cart.Events;
 using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Order.Events;
 using VirtoCommerce.Domain.Tax.Services;
+using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -36,24 +38,21 @@ namespace AvaTax.TaxModule.Web
         {
             var settingsManager = _container.Resolve<ISettingsManager>();
 
-            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
+            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, 
+                _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
 
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
-            //Subscribe to cart changes. Register in avalara  SalesOrder transaction 
-            _container.RegisterType<IObserver<CartChangeEvent>, CartTaxAdjustmentObserver>("CartTaxAdjustmentObserver");
-
-            //Subscribe to cart changes. Register in avalara  SalesInvoice transaction 
-            _container.RegisterType<IObserver<OrderChangeEvent>, OrderTaxAdjustmentObserver>("PlacedOrderObserver");
-
-            //Subscribe to order changes. Cancel SalesInvoice transaction
-            _container.RegisterType<IObserver<OrderChangeEvent>, CancelOrderTaxesObserver>("CancelOrderTaxesObserver");
+            var eventHandlerRegistrar = _container.Resolve<IHandlerRegistrar>();
+            eventHandlerRegistrar.RegisterHandler<OrderChangeEvent>(async (message, token) => await _container.Resolve<OrderTaxAdjustmentHandler>().Handle(message));
+            eventHandlerRegistrar.RegisterHandler<OrderChangeEvent>(async (message, token) => await _container.Resolve<CancelOrderTaxesHandler>().Handle(message));
 
             object ClientFactory(IUnityContainer container)
             {
                 var machineName = Environment.MachineName;
                 var avaTaxUri = new Uri(avalaraTax.ServiceUrl);
-                var result = new AvaTaxClient(ModuleConstants.Avalara.ApplicationName, ModuleConstants.Avalara.ApplicationVersion, machineName, avaTaxUri).WithSecurity(avalaraTax.Username, avalaraTax.Password);
+                var result = new AvaTaxClient(ModuleConstants.Avalara.ApplicationName, ModuleConstants.Avalara.ApplicationVersion, machineName, avaTaxUri)
+                    .WithSecurity(avalaraTax.Username, avalaraTax.Password);
 
                 return result;
             }
