@@ -22,6 +22,20 @@ namespace AvaTax.TaxModule.Test
 {
     public class TaxModuleTest
     {
+        private const string AvalaraUsername = "1100165101";
+        private const string AvalaraPassword = "AE5F97FA88A8D87D";
+        private const string AvalaraServiceUrl = "https://sandbox-rest.avatax.com";
+        private const string AvalaraCompanyCode = "APITrialCompany";
+
+        private const string UsernamePropertyName = "Avalara.Tax.Credentials.AccountNumber";
+        private const string PasswordPropertyName = "Avalara.Tax.Credentials.LicenseKey";
+        private const string ServiceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
+        private const string CompanyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
+        private const string IsEnabledPropertyName = "Avalara.Tax.IsEnabled";
+
+        private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
+        private const string ApplicationVersion = "2.x";
+
         private static readonly List<SettingEntry> _settings = new List<SettingEntry>
         {
             new SettingEntry
@@ -57,20 +71,6 @@ namespace AvaTax.TaxModule.Test
         };
 
         private readonly AvaTaxController _controller;
-
-        private const string AvalaraUsername = "1100165101";
-        private const string AvalaraPassword = "AE5F97FA88A8D87D";
-        private const string AvalaraServiceUrl = "https://sandbox-rest.avatax.com";
-        private const string AvalaraCompanyCode = "APITrialCompany";
-
-        const string UsernamePropertyName = "Avalara.Tax.Credentials.AccountNumber";
-        const string PasswordPropertyName = "Avalara.Tax.Credentials.LicenseKey";
-        const string ServiceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
-        const string CompanyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
-        const string IsEnabledPropertyName = "Avalara.Tax.IsEnabled";
-
-        private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
-        private const string ApplicationVersion = "2.x";
 
         public TaxModuleTest()
         {
@@ -127,7 +127,7 @@ namespace AvaTax.TaxModule.Test
             Assert.NotEmpty(rates);
         }
 
-        private AvaTaxClient CreateAvaTaxClient()
+        private static AvaTaxClient CreateAvaTaxClient()
         {
             var machineName = Environment.MachineName;
             var avaTaxUri = new Uri(AvalaraServiceUrl);
@@ -199,100 +199,6 @@ namespace AvaTax.TaxModule.Test
                     Amount = 1
                 }
             };
-        }
-
-        private static CustomerOrder GetTestOrder(string id)
-        {
-            var order = new CustomerOrder
-            {
-                Id = id,
-                Currency = "USD",
-                CustomerId = "Test Customer",
-                EmployeeId = "employee",
-                StoreId = "test store",
-                CreatedDate = DateTime.Now,
-                Addresses = new[]
-                {
-                    new Address
-                    {
-                        AddressType = AddressType.Shipping,
-                        Phone = "+68787687",
-                        PostalCode = "19142",
-                        CountryCode = "US",
-                        CountryName = "United states",
-                        Email = "user@mail.com",
-                        FirstName = "first name",
-                        LastName = "last name",
-                        Line1 = "6025 Greenway Ave",
-                        City = "Philadelphia",
-                        RegionId = "PA",
-                        RegionName = "Pennsylvania",
-                        Organization = "org1"
-                    }
-                }.ToList(),
-                Items = new List<LineItem>
-                {
-                    new LineItem
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Price = 20,
-                        ProductId = "shoes",
-                        CatalogId = "catalog",
-                        Currency = "USD",
-                        CategoryId = "category",
-                        Name = "shoes",
-                        Quantity = 2,
-                        ShippingMethodCode = "EMS",
-                    },
-                    new LineItem
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Price = 100,
-                        ProductId = "t-shirt",
-                        CatalogId = "catalog",
-                        CategoryId = "category",
-                        Currency = "USD",
-                        Name = "t-shirt",
-                        Quantity = 2,
-                        ShippingMethodCode = "EMS",
-                    }
-                },
-                Shipments = new List<Shipment>
-                {
-                    new Shipment
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        Currency = "USD",
-                        DeliveryAddress = new Address
-                        {
-                            City = "london",
-                            CountryName = "England",
-                            Phone = "+68787687",
-                            PostalCode = "2222",
-                            CountryCode = "ENG",
-                            Email = "user@mail.com",
-                            FirstName = "first name",
-                            LastName = "last name",
-                            Line1 = "line 1",
-                            Organization = "org1"
-                        },
-                    }
-                },
-                InPayments = new List<PaymentIn>
-                {
-                    new PaymentIn
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        GatewayCode = "PayPal",
-                        Currency = "USD",
-                        Sum = 10,
-                        CustomerId = "et",
-                        IsApproved = false
-                    }
-                },
-            };
-
-            return order;
         }
 
         private AvaTaxController GetTaxController()
