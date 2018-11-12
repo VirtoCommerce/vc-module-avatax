@@ -1,6 +1,7 @@
 ﻿using Avalara.AvaTax.RestClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -21,7 +22,7 @@ namespace AvaTax.TaxModule.Web.Model
             if (context.Lines != null)
             {
                 lines = new List<LineItemModel>();
-                foreach (var taxLine in context.Lines)
+                foreach (var taxLine in context.Lines.Where(x => !x.IsTransient()))
                 {
                     var avaLine = AbstractTypeFactory<AvaLineItem>.TryCreateInstance();
                     avaLine.FromTaxLine(taxLine);
