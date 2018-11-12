@@ -11,6 +11,13 @@ namespace AvaTax.TaxModule.Web.Model
     [CLSCompliant(false)]
     public class AvaCreateTransactionModel : CreateTransactionModel
     {
+        public virtual bool IsValid
+        {
+            get
+            {
+                return addresses != null && !lines.IsNullOrEmpty();
+            }
+        }
         public virtual AvaCreateTransactionModel FromContext(TaxEvaluationContext context)
         {
             code = context.Id;

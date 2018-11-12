@@ -79,25 +79,27 @@ namespace AvaTax.TaxModule.Web
                 log.docCode = createTransactionModel.code;
                 log.docType = createTransactionModel.type.ToString();
                 log.customerCode = createTransactionModel.customerCode;
-
-                var avaTaxClient = _avaTaxClientFactory();
-                var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
-                // TODO: error handling?
-
-                if (!transaction.lines.IsNullOrEmpty())
+                if (createTransactionModel.IsValid)
                 {
-                    foreach (var taxLine in transaction.lines)
+                    var avaTaxClient = _avaTaxClientFactory();
+                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
+                    // TODO: error handling?
+
+                    if (!transaction.lines.IsNullOrEmpty())
                     {
-                        var rate = new TaxRate
+                        foreach (var taxLine in transaction.lines)
                         {
-                            Rate = taxLine.tax ?? 0.0m,
-                            Currency = evalContext.Currency,
-                            TaxProvider = this,
-                            Line = evalContext.Lines.FirstOrDefault(x => x.Id == taxLine.lineNumber)
-                        };
-                        if (rate.Line != null)
-                        {
-                            retVal.Add(rate);
+                            var rate = new TaxRate
+                            {
+                                Rate = taxLine.tax ?? 0.0m,
+                                Currency = evalContext.Currency,
+                                TaxProvider = this,
+                                Line = evalContext.Lines.FirstOrDefault(x => x.Id == taxLine.lineNumber)
+                            };
+                            if (rate.Line != null)
+                            {
+                                retVal.Add(rate);
+                            }
                         }
                     }
                 }
