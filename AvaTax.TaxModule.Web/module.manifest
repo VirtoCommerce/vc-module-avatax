@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <module>
     <id>Avalara.Tax</id>
-    <version>2.12.1</version>
+    <version>2.13.0</version>
     <platformVersion>2.12.2</platformVersion>
     <dependencies>
         <dependency id="VirtoCommerce.Core" version="2.19.2" />
@@ -18,7 +18,7 @@
     <projectUrl>https://virtocommerce.com/apps/extensions/integration-with-avalara-tax-service</projectUrl>
     <iconUrl>Modules/$(Avalara.Tax)/Content/400.png</iconUrl>
     <releaseNotes>First version.</releaseNotes>
-    <copyright>Copyright © 2011-2016 Virto Commerce. All rights reserved</copyright>
+    <copyright>Copyright © 2011-2018 Virto Commerce. All rights reserved</copyright>
     <tags>avalara tax</tags>
 
     <assemblyFile>AvaTax.TaxModule.Web.dll</assemblyFile>

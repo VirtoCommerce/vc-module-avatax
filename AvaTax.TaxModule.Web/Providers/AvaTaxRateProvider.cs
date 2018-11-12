@@ -74,6 +74,7 @@ namespace AvaTax.TaxModule.Web
                 var createTransactionModel = AbstractTypeFactory<AvaCreateTransactionModel>.TryCreateInstance();
                 createTransactionModel.FromContext(evalContext);
                 createTransactionModel.companyCode = CompanyCode;
+                createTransactionModel.commit = false;
 
                 log.docCode = createTransactionModel.code;
                 log.docType = createTransactionModel.type.ToString();

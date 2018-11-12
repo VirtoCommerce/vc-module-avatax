@@ -16,9 +16,7 @@ namespace AvaTax.TaxModule.Web.Model
             // TODO: customerCode is required by AvaTax API, but using stub values when the customer is not specified doesn't seem right...
             customerCode = context.Customer?.Id ?? Thread.CurrentPrincipal?.Identity?.Name ?? "undef";
             date = DateTime.UtcNow;
-            companyCode = companyCode;
             type = DocumentType.SalesOrder;
-            commit = commit;
             currencyCode = context.Currency;
             if (context.Lines != null)
             {
