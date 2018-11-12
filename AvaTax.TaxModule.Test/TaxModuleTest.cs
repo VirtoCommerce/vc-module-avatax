@@ -9,7 +9,6 @@ using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Moq;
 using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Services;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
@@ -107,13 +106,9 @@ namespace AvaTax.TaxModule.Test
         public void Valid_evaluation_context_successfull_tax_calculation()
         {
             //arrange
-            var memberService = new Mock<IMemberService>();
-            memberService.Setup(s => s.GetByIds(It.IsAny<string[]>(), null, null))
-                .Returns<string[], string, string[]>((ids, responseGroup, memberTypes) => new Member[] { new Contact() });
-
             var logService = new Mock<ILog>();
 
-            var avaTaxRateProvider = new AvaTaxRateProvider(memberService.Object, logService.Object, CreateAvaTaxClient, _settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, _settings.ToArray());
 
             var context = new TaxEvaluationContext
             {
