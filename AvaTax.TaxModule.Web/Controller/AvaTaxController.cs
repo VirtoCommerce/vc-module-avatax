@@ -10,6 +10,7 @@ using AvaTax.TaxModule.Web.Logging;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;
+using VirtoCommerce.Platform.Core.Common;
 using domainModel = VirtoCommerce.Domain.Commerce.Model;
 
 namespace AvaTax.TaxModule.Web.Controller
@@ -118,7 +119,26 @@ namespace AvaTax.TaxModule.Web.Controller
                 var avaTaxClient = _avaTaxClientFactory();
                 var addressValidationInfo = address.ToAddressValidationInfo();
 
-                var addressResolutionModel = avaTaxClient.ResolveAddressPost(addressValidationInfo);
+                AddressResolutionModel addressResolutionModel;
+                try
+                {
+                    addressResolutionModel = avaTaxClient.ResolveAddressPost(addressValidationInfo);
+                }
+                catch (AvaTaxError e)
+                {
+                    var errorResult = e.error.error;
+
+                    var errorMessage = errorResult.message;
+                    if (!errorResult.details.IsNullOrEmpty())
+                    {
+                        var joinedErrorDetails = string.Join(Environment.NewLine,
+                            errorResult.details.Select(errorDetail => $"- {errorDetail.severity}: {errorDetail.description}"));
+                        errorMessage += Environment.NewLine + joinedErrorDetails;
+                    }
+
+                    retVal = BadRequest(errorMessage);
+                    throw;
+                }
                 
                 // If the address cannot be resolved, it's location will be null.
                 // This might mean that the address is invalid.

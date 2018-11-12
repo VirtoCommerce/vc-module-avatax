@@ -44,14 +44,14 @@ angular.module(moduleName, [
                   };
                   dialogService.showNotificationDialog(dialog);
               },
-                  function (error) {
-                      var dialog = {
-                          id: "avaTaxNotification",
-                          title: "Validation error",
-                          message: error.data.message
-                      };
-                      dialogService.showNotificationDialog(dialog);
-                  });
+              function (error) {
+                  var dialog = {
+                      id: "avaTaxNotification",
+                      title: "Validation error",
+                      message: error.data.message
+                  };
+                  dialogService.showNotificationDialog(dialog);
+              });
           },
           canExecuteMethod: function () { return true; },
           permission: 'tax:manage'
