@@ -3,7 +3,6 @@ using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
 using System;
-using AvaTax.TaxModule.Web.Converters;
 using VirtoCommerce.Domain.Tax.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
@@ -35,11 +34,10 @@ namespace AvaTax.TaxModule.Web
         {
             var settingsManager = _container.Resolve<ISettingsManager>();
 
-            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName, 
+            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName,
                 _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
-            _container.RegisterInstance<ITaxEvaluationContextConverter>(new TaxEvaluationContextConverterImpl());
 
             object ClientFactory(IUnityContainer container)
             {
@@ -59,10 +57,9 @@ namespace AvaTax.TaxModule.Web
             var settingManager = _container.Resolve<ISettingsManager>();
             var taxService = _container.Resolve<ITaxService>();
             var moduleSettings = settingManager.GetModuleSettings("Avalara.Tax");
-            var taxEvaluationContextConverter = _container.Resolve<ITaxEvaluationContextConverter>();
 
-            taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<ILog>(), 
-                _container.Resolve<Func<AvaTaxClient>>(), taxEvaluationContextConverter, moduleSettings)
+            taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<ILog>(),
+                _container.Resolve<Func<AvaTaxClient>>(), moduleSettings)
             {
                 Name = "Avalara taxes",
                 Description = "Avalara service integration",

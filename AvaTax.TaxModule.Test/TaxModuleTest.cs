@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web.Http.Results;
-using Avalara.AvaTax.RestClient;
+﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web;
 using AvaTax.TaxModule.Web.Controller;
-using AvaTax.TaxModule.Web.Converters;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http.Results;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
@@ -18,6 +17,7 @@ using AddressType = VirtoCommerce.Domain.Commerce.Model.AddressType;
 
 namespace AvaTax.TaxModule.Test
 {
+    [Trait("Category", "CI")]
     public class TaxModuleTest
     {
         private const string AvalaraUsername = "1100165101";
@@ -105,9 +105,7 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var logService = new Mock<ILog>();
-
-            var taxEvaluationContextConverter = new TaxEvaluationContextConverterImpl();
-            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, taxEvaluationContextConverter, _settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, _settings.ToArray());
 
             var context = new TaxEvaluationContext
             {
@@ -178,7 +176,7 @@ namespace AvaTax.TaxModule.Test
         private static ICollection<TaxLine> GetContextTaxLines()
         {
 
-            return new[] 
+            return new[]
             {
                 new TaxLine
                 {

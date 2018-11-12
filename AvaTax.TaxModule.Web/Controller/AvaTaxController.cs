@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Web.Http;
-using System.Web.Http.Description;
-using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web.Converters;
+﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Logging;
+using AvaTax.TaxModule.Web.Model;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web.Http;
+using System.Web.Http.Description;
 using VirtoCommerce.Platform.Core.Common;
 using domainModel = VirtoCommerce.Domain.Commerce.Model;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
-	[ApiExplorerSettings(IgnoreApi = true)]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [RoutePrefix("api/tax/avatax")]
     public class AvaTaxController : ApiController
-	{
-	    private readonly Func<AvaTaxClient> _avaTaxClientFactory;
+    {
+        private readonly Func<AvaTaxClient> _avaTaxClientFactory;
         private readonly ITaxSettings _taxSettings;
         private readonly AvalaraLogger _logger;
 
@@ -117,7 +116,7 @@ namespace AvaTax.TaxModule.Web.Controller
                 }
 
                 var avaTaxClient = _avaTaxClientFactory();
-                var addressValidationInfo = address.ToAddressValidationInfo();
+                var addressValidationInfo = AbstractTypeFactory<AvaAddressValidationInfo>.TryCreateInstance().FromAddress(address);
 
                 AddressResolutionModel addressResolutionModel;
                 try
@@ -139,7 +138,7 @@ namespace AvaTax.TaxModule.Web.Controller
                     retVal = BadRequest(errorMessage);
                     throw;
                 }
-                
+
                 // If the address cannot be resolved, it's location will be null.
                 // This might mean that the address is invalid.
                 if (addressResolutionModel.coordinates == null)

@@ -1,10 +1,10 @@
-﻿using AvaTax.TaxModule.Web.Converters;
+﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Logging;
+using AvaTax.TaxModule.Web.Model;
 using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -26,7 +26,6 @@ namespace AvaTax.TaxModule.Web
 
         private readonly AvalaraLogger _logger;
         private readonly Func<AvaTaxClient> _avaTaxClientFactory;
-        private readonly ITaxEvaluationContextConverter _taxEvaluationContextConverter;
 
         public AvaTaxRateProvider()
             : base("AvaTaxRateProvider")
@@ -34,14 +33,12 @@ namespace AvaTax.TaxModule.Web
         }
 
         [CLSCompliant(false)]
-        public AvaTaxRateProvider(ILog log, Func<AvaTaxClient> avaTaxClientFactory, ITaxEvaluationContextConverter taxEvaluationContextConverter, 
-            params SettingEntry[] settings)
+        public AvaTaxRateProvider(ILog log, Func<AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
             : this()
         {
             Settings = settings;
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
-            _taxEvaluationContextConverter = taxEvaluationContextConverter;
         }
 
         private int AccountNumber => int.Parse(GetSetting(AccountNumberPropertyName));
@@ -74,32 +71,33 @@ namespace AvaTax.TaxModule.Web
                 Validate();
 
                 //Evaluate taxes only for cart to preventing registration redundant transactions in avalara
-                var createTransactionModel = _taxEvaluationContextConverter.ConvertToCreateTransactionModel(evalContext, CompanyCode, false);
-                if (createTransactionModel != null)
+                var createTransactionModel = AbstractTypeFactory<AvaCreateTransactionModel>.TryCreateInstance();
+                createTransactionModel.FromContext(evalContext);
+                createTransactionModel.companyCode = CompanyCode;
+
+                log.docCode = createTransactionModel.code;
+                log.docType = createTransactionModel.type.ToString();
+                log.customerCode = createTransactionModel.customerCode;
+
+                var avaTaxClient = _avaTaxClientFactory();
+                var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
+                // TODO: error handling?
+
+                if (!transaction.lines.IsNullOrEmpty())
                 {
-                    log.docCode = createTransactionModel.code;
-                    log.docType = createTransactionModel.type.ToString();
-                    log.customerCode = createTransactionModel.customerCode;
-
-                    var avaTaxClient = _avaTaxClientFactory();
-                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
-                    // TODO: error handling?
-
-                    if (!transaction.lines.IsNullOrEmpty())
+                    foreach (var taxLine in transaction.lines)
                     {
-                        foreach (var taxLine in transaction.lines)
+                        var rate = new TaxRate
                         {
-                            var rate = new TaxRate
-                            {
-                                Rate = taxLine.tax ?? 0.0m,
-                                Currency = evalContext.Currency,
-                                TaxProvider = this,
-                                Line = evalContext.Lines.First(line => line.Id == taxLine.lineNumber)
-                            };
-                            retVal.Add(rate);
-                        }
+                            Rate = taxLine.tax ?? 0.0m,
+                            Currency = evalContext.Currency,
+                            TaxProvider = this,
+                            Line = evalContext.Lines.First(line => line.Id == taxLine.lineNumber)
+                        };
+                        retVal.Add(rate);
                     }
                 }
+
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
