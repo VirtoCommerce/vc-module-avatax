@@ -135,16 +135,10 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Converters\CartLineItemConverter.cs" />
-    <Compile Include="Converters\CartShipmentConverter.cs" />
-    <Compile Include="Converters\OrderLineItemConverter.cs" />
-    <Compile Include="Converters\OrderShipmentConverter.cs" />
     <Compile Include="Converters\TaxDetailConverter.cs" />
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
     <Compile Include="Converters\CustomerAddressConverter.cs" />
-    <Compile Include="Converters\ShoppingCartConverter.cs" />
-    <Compile Include="Converters\CustomerOrderConverter.cs" />
     <Compile Include="Logging\BaseLogContext.cs" />
     <Compile Include="Logging\LoggerExtension.cs" />
     <Compile Include="Logging\IsFileLockedExtension.cs" />

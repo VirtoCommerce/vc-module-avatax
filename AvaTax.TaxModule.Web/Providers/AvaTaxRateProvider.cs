@@ -58,8 +58,6 @@ namespace AvaTax.TaxModule.Web
 
         private bool IsEnabled => bool.Parse(GetSetting(isEnabledPropertyName));
 
-        private bool IsValidateAddressEnabled => bool.Parse(GetSetting(isValidateAddressPropertyName));
-
         public override IEnumerable<TaxRate> CalculateRates(IEvaluationContext context)
         {
             var taxEvalContext = context as TaxEvaluationContext;
@@ -71,93 +69,6 @@ namespace AvaTax.TaxModule.Web
             var retVal = GetTaxRates(taxEvalContext);
             return retVal;
         }
-
-
-        public virtual void CalculateOrderTax(CustomerOrder order)
-        {
-            LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
-            {
-                Validate();
-
-                Member member = null;
-                if (order.CustomerId != null)
-                    member = _memberService.GetByIds(new[] { order.CustomerId }).FirstOrDefault();
-
-                //if all payments completed commit tax document in avalara
-                var isCommit = order.InPayments != null && order.InPayments.Any() && order.InPayments.All(pi => pi.IsApproved);
-
-                //update transaction in avalara
-                var createTransactionModel = order.ToAvaTaxCreateTransactionModel(CompanyCode, member, DocumentType.SalesInvoice, isCommit);
-                if (createTransactionModel != null)
-                {
-                    log.docCode = createTransactionModel.code;
-                    log.docType = createTransactionModel.type.ToString();
-                    log.customerCode = createTransactionModel.customerCode;
-                    log.amount = (double)order.Sum;
-                    log.isCommit = isCommit;
-
-                    var avaTaxClient = _avaTaxClientFactory();
-                    var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
-                    // TODO: error handling?
-                }
-            })
-            .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
-            .OnSuccess(_logger, AvalaraLogger.EventCodes.GetSalesInvoiceRequestTime);
-        }
-
-        public virtual void AdjustOrderTax(CustomerOrder originalOrder, CustomerOrder modifiedOrder)
-        {
-            LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
-            {
-                Validate();
-
-                //if all payments completed commit tax document in avalara
-                var isCommit = modifiedOrder.InPayments != null && modifiedOrder.InPayments.Any()
-                    && modifiedOrder.InPayments.All(pi => pi.IsApproved);
-
-                Member member = null;
-                if (modifiedOrder.CustomerId != null)
-                    member = _memberService.GetByIds(new[] { modifiedOrder.CustomerId }).FirstOrDefault();
-
-                var transactionModel = modifiedOrder.ToAvaTaxCreateOrAdjustTransactionModel(originalOrder, CompanyCode,
-                    member, DocumentType.ReturnInvoice, isCommit);
-                if (transactionModel != null)
-                {
-                    log.docCode = transactionModel.createTransactionModel.referenceCode;
-                    log.docType = transactionModel.createTransactionModel.type.ToString();
-                    log.customerCode = transactionModel.createTransactionModel.customerCode;
-                    log.amount = (double)originalOrder.Sum;
-
-                    var avaTaxClient = _avaTaxClientFactory();
-                    var transaction = avaTaxClient.CreateOrAdjustTransaction(string.Empty, transactionModel);
-                    // TODO: handle errors?
-                }
-            })
-            .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
-            .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
-        }
-
-        public virtual void CancelTaxDocument(CustomerOrder order)
-        {
-            LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
-            {
-                Validate();
-
-                var voidTransactionModel = order.ToAvaTaxVoidTransactionModel(VoidReasonCode.DocDeleted);
-                if (voidTransactionModel != null)
-                {
-                    log.docCode = order.Number;
-                    log.docType = DocumentType.Any.ToString();
-
-                    var avaTaxClient = _avaTaxClientFactory();
-                    var transaction = avaTaxClient.VoidTransaction(CompanyCode, order.Number, null, voidTransactionModel);
-                    // TODO: error handling?
-                }
-            })
-            .OnError(_logger, AvalaraLogger.EventCodes.TaxCalculationError)
-            .OnSuccess(_logger, AvalaraLogger.EventCodes.GetTaxRequestTime);
-        }
-
 
         protected virtual List<TaxRate> GetTaxRates(TaxEvaluationContext evalContext)
         {
