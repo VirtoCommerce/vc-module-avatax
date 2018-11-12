@@ -4,13 +4,8 @@ using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
-using VirtoCommerce.Domain.Cart.Model;
 using VirtoCommerce.Domain.Common;
-using VirtoCommerce.Domain.Customer.Model;
-using VirtoCommerce.Domain.Customer.Services;
-using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
@@ -21,17 +16,15 @@ namespace AvaTax.TaxModule.Web
     {
         #region const
 
-        private const string accountNumberPropertyName = "Avalara.Tax.Credentials.AccountNumber";
-        private const string licenseKeyPropertyName = "Avalara.Tax.Credentials.LicenseKey";
-        private const string serviceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
-        private const string companyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
-        private const string isEnabledPropertyName = "Avalara.Tax.IsEnabled";
-        private const string isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
+        private const string AccountNumberPropertyName = "Avalara.Tax.Credentials.AccountNumber";
+        private const string LicenseKeyPropertyName = "Avalara.Tax.Credentials.LicenseKey";
+        private const string ServiceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
+        private const string CompanyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
+        private const string IsEnabledPropertyName = "Avalara.Tax.IsEnabled";
 
         #endregion
 
         private readonly AvalaraLogger _logger;
-        private readonly IMemberService _memberService;
         private readonly Func<AvaTaxClient> _avaTaxClientFactory;
 
         public AvaTaxRateProvider()
@@ -39,24 +32,24 @@ namespace AvaTax.TaxModule.Web
         {
         }
 
-        public AvaTaxRateProvider(IMemberService memberService, ILog log, Func<AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
+        [CLSCompliant(false)]
+        public AvaTaxRateProvider(ILog log, Func<AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
             : this()
         {
             Settings = settings;
             _logger = new AvalaraLogger(log);
-            _memberService = memberService;
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
-        private int AccountNumber => int.Parse(GetSetting(accountNumberPropertyName));
+        private int AccountNumber => int.Parse(GetSetting(AccountNumberPropertyName));
 
-        private string LicenseKey => GetSetting(licenseKeyPropertyName);
+        private string LicenseKey => GetSetting(LicenseKeyPropertyName);
 
-        private string CompanyCode => GetSetting(companyCodePropertyName);
+        private string CompanyCode => GetSetting(CompanyCodePropertyName);
 
-        private string ServiceUrl => GetSetting(serviceUrlPropertyName);
+        private string ServiceUrl => GetSetting(ServiceUrlPropertyName);
 
-        private bool IsEnabled => bool.Parse(GetSetting(isEnabledPropertyName));
+        private bool IsEnabled => bool.Parse(GetSetting(IsEnabledPropertyName));
 
         public override IEnumerable<TaxRate> CalculateRates(IEvaluationContext context)
         {
