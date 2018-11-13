@@ -1,5 +1,4 @@
-﻿
-namespace AvaTax.TaxModule.Web.Services
+﻿namespace AvaTax.TaxModule.Web.Services
 {
     public interface ITaxSettings
     {

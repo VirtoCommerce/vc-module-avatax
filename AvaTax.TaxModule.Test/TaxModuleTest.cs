@@ -7,7 +7,6 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web.Http.Results;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
@@ -67,13 +66,6 @@ namespace AvaTax.TaxModule.Test
                 ValueType = SettingValueType.Boolean
             }
         };
-
-        private readonly AvaTaxController _controller;
-
-        public TaxModuleTest()
-        {
-            _controller = GetTaxController();
-        }
 
         [Fact]
         public void Valid_evaluation_context_successfull_tax_calculation()
@@ -150,23 +142,6 @@ namespace AvaTax.TaxModule.Test
                     Amount = 1
                 }
             };
-        }
-
-        private AvaTaxController GetTaxController()
-        {
-            var settingsManager = new Mock<ISettingsManager>();
-
-            settingsManager.Setup(manager => manager.GetValue(UsernamePropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == UsernamePropertyName).Value);
-            settingsManager.Setup(manager => manager.GetValue(PasswordPropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == PasswordPropertyName).Value);
-            settingsManager.Setup(manager => manager.GetValue(ServiceUrlPropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == ServiceUrlPropertyName).Value);
-            settingsManager.Setup(manager => manager.GetValue(CompanyCodePropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == CompanyCodePropertyName).Value);
-            settingsManager.Setup(manager => manager.GetValue(IsEnabledPropertyName, true)).Returns(() => true);
-
-            var avalaraTax = new AvaTaxSettings(settingsManager.Object);
-            var logger = new Mock<ILog>();
-
-            var controller = new AvaTaxController(avalaraTax, logger.Object, CreateAvaTaxClient);
-            return controller;
         }
     }
 }

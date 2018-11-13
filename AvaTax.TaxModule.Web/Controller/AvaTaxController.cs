@@ -1,16 +1,11 @@
 ﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Logging;
-using AvaTax.TaxModule.Web.Model;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using VirtoCommerce.Platform.Core.Common;
-using domainModel = VirtoCommerce.Domain.Commerce.Model;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
