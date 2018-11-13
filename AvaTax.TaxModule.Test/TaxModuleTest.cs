@@ -162,7 +162,7 @@ namespace AvaTax.TaxModule.Test
             settingsManager.Setup(manager => manager.GetValue(CompanyCodePropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == CompanyCodePropertyName).Value);
             settingsManager.Setup(manager => manager.GetValue(IsEnabledPropertyName, true)).Returns(() => true);
 
-            var avalaraTax = new AvaTaxSettings(UsernamePropertyName, PasswordPropertyName, ServiceUrlPropertyName, CompanyCodePropertyName, IsEnabledPropertyName, settingsManager.Object);
+            var avalaraTax = new AvaTaxSettings(settingsManager.Object);
             var logger = new Mock<ILog>();
 
             var controller = new AvaTaxController(avalaraTax, logger.Object, CreateAvaTaxClient);

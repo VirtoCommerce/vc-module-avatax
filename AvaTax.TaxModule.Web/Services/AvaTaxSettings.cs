@@ -4,22 +4,16 @@ namespace AvaTax.TaxModule.Web.Services
 {
     public class AvaTaxSettings : ITaxSettings
     {
-        private readonly string _usernamePropertyName;
-        private readonly string _passwordPropertyName;
-        private readonly string _serviceUrlPropertyName;
-        private readonly string _companyCodePropertyName;
-        private readonly string _isEnabledPropertyName;
+        private const string UsernamePropertyName = "Avalara.Tax.Credentials.AccountNumber";
+        private const string PasswordPropertyName = "Avalara.Tax.Credentials.LicenseKey";
+        private const string ServiceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
+        private const string CompanyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
+        private const string IsEnabledPropertyName = "Avalara.Tax.IsEnabled";
 
         private readonly ISettingsManager _settingsManager;
 
-        public AvaTaxSettings(string usernamePropertyName, string passwordPropertyName, string serviceUrlPropertyName, string companyCodePropertyName,
-            string isEnabledPropertyName, ISettingsManager settingsManager)
+        public AvaTaxSettings(ISettingsManager settingsManager)
         {
-            _usernamePropertyName = usernamePropertyName;
-            _passwordPropertyName = passwordPropertyName;
-            _serviceUrlPropertyName = serviceUrlPropertyName;
-            _companyCodePropertyName = companyCodePropertyName;
-            _isEnabledPropertyName = isEnabledPropertyName;
             _settingsManager = settingsManager;
         }
 
@@ -28,7 +22,7 @@ namespace AvaTax.TaxModule.Web.Services
 
             get
             {
-                var retVal = _settingsManager.GetValue(_usernamePropertyName, string.Empty);
+                var retVal = _settingsManager.GetValue(UsernamePropertyName, string.Empty);
                 return retVal;
             }
         }
@@ -37,7 +31,7 @@ namespace AvaTax.TaxModule.Web.Services
         {
             get
             {
-                var retVal = _settingsManager.GetValue(_passwordPropertyName, string.Empty);
+                var retVal = _settingsManager.GetValue(PasswordPropertyName, string.Empty);
                 return retVal;
             }
         }
@@ -46,7 +40,7 @@ namespace AvaTax.TaxModule.Web.Services
         {
             get
             {
-                var retVal = _settingsManager.GetValue(_serviceUrlPropertyName, string.Empty);
+                var retVal = _settingsManager.GetValue(ServiceUrlPropertyName, string.Empty);
                 return retVal;
             }
         }
@@ -55,7 +49,7 @@ namespace AvaTax.TaxModule.Web.Services
         {
             get 
             {
-                var retVal = _settingsManager.GetValue(_companyCodePropertyName, string.Empty);
+                var retVal = _settingsManager.GetValue(CompanyCodePropertyName, string.Empty);
                 return retVal;
             }
         }
@@ -64,7 +58,7 @@ namespace AvaTax.TaxModule.Web.Services
         {
             get
             {
-                var retVal = _settingsManager.GetValue(_isEnabledPropertyName, true);
+                var retVal = _settingsManager.GetValue(IsEnabledPropertyName, true);
                 return retVal;
             }
         }
