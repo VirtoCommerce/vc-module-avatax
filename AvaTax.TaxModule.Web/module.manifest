@@ -64,15 +64,6 @@
                 <description>Enable or disable tax calculation</description>
             </setting>
         </group>
-        <group name="Taxes|Avalara|Address validation">
-            <setting>
-                <name>Avalara.Tax.IsValidateAddress</name>
-                <valueType>boolean</valueType>
-                <defaultValue>True</defaultValue>
-                <title>Validate address</title>
-                <description>Enable or disable address validation</description>
-            </setting>
-        </group>
     </settings>
 
     <permissions>

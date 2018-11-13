@@ -31,32 +31,6 @@ angular.module(moduleName, [
           },
           'taxProviderDetail');
 
-      var validateCommand = {
-          name: "Validate",
-          icon: 'fa fa-check-square-o',
-          index: 2,
-          executeMethod: function (blade) {
-              avataxModuleResources.validate(blade.currentEntity, function (result) {
-                  var dialog = {
-                      id: "avaTaxNotification",
-                      title: "Address valid",
-                      message: "Address validation passed."
-                  };
-                  dialogService.showNotificationDialog(dialog);
-              },
-              function (error) {
-                  var dialog = {
-                      id: "avaTaxNotification",
-                      title: "Validation error",
-                      message: error.data.message
-                  };
-                  dialogService.showNotificationDialog(dialog);
-              });
-          },
-          canExecuteMethod: function () { return true; },
-          permission: 'tax:manage'
-      };
-
       toolbarService.register(validateCommand, 'virtoCommerce.coreModule.common.coreAddressDetailController');
   }])
 ;

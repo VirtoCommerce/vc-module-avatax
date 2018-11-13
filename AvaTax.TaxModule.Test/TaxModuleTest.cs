@@ -76,31 +76,6 @@ namespace AvaTax.TaxModule.Test
         }
 
         [Fact]
-        public void Valid_address_successfull_validation()
-        {
-            //arrange
-            var validTestAddress = GetValidAddress();
-            //act
-            var response = _controller.ValidateAddress(validTestAddress);
-
-            //assert
-            Assert.IsType<OkNegotiatedContentResult<AddressResolutionModel>>(response);
-        }
-
-        [Fact]
-        public void Invalid_address_error_validation()
-        {
-            //arrange
-            var invalidTestAddress = GetInvalidAddress();
-
-            //act
-            var response = _controller.ValidateAddress(invalidTestAddress);
-
-            //assert
-            Assert.IsType<BadRequestErrorMessageResult>(response);
-        }
-
-        [Fact]
         public void Valid_evaluation_context_successfull_tax_calculation()
         {
             //arrange
@@ -153,26 +128,6 @@ namespace AvaTax.TaxModule.Test
             };
         }
 
-        private static Address GetInvalidAddress()
-        {
-            return new Address
-            {
-                AddressType = AddressType.Shipping,
-                Phone = "+0000000",
-                PostalCode = "10000",
-                CountryCode = "US",
-                CountryName = "United states",
-                Email = "user@mail.com",
-                FirstName = "first name",
-                LastName = "last name",
-                Line1 = "11111 Bad street address",
-                City = "New York",
-                RegionId = "CA",
-                RegionName = "California",
-                Organization = "org1"
-            };
-        }
-
         private static ICollection<TaxLine> GetContextTaxLines()
         {
 
@@ -199,8 +154,6 @@ namespace AvaTax.TaxModule.Test
 
         private AvaTaxController GetTaxController()
         {
-            const string _isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
-
             var settingsManager = new Mock<ISettingsManager>();
 
             settingsManager.Setup(manager => manager.GetValue(UsernamePropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == UsernamePropertyName).Value);
@@ -208,9 +161,8 @@ namespace AvaTax.TaxModule.Test
             settingsManager.Setup(manager => manager.GetValue(ServiceUrlPropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == ServiceUrlPropertyName).Value);
             settingsManager.Setup(manager => manager.GetValue(CompanyCodePropertyName, string.Empty)).Returns(() => _settings.First(x => x.Name == CompanyCodePropertyName).Value);
             settingsManager.Setup(manager => manager.GetValue(IsEnabledPropertyName, true)).Returns(() => true);
-            settingsManager.Setup(manager => manager.GetValue(_isValidateAddressPropertyName, true)).Returns(() => true);
 
-            var avalaraTax = new AvaTaxSettings(UsernamePropertyName, PasswordPropertyName, ServiceUrlPropertyName, CompanyCodePropertyName, IsEnabledPropertyName, _isValidateAddressPropertyName, settingsManager.Object);
+            var avalaraTax = new AvaTaxSettings(UsernamePropertyName, PasswordPropertyName, ServiceUrlPropertyName, CompanyCodePropertyName, IsEnabledPropertyName, settingsManager.Object);
             var logger = new Mock<ILog>();
 
             var controller = new AvaTaxController(avalaraTax, logger.Object, CreateAvaTaxClient);

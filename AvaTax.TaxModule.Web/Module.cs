@@ -16,7 +16,6 @@ namespace AvaTax.TaxModule.Web
         private const string _serviceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
         private const string _companyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
         private const string _isEnabledPropertyName = "Avalara.Tax.IsEnabled";
-        private const string _isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
 
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "2.x";
@@ -35,7 +34,7 @@ namespace AvaTax.TaxModule.Web
             var settingsManager = _container.Resolve<ISettingsManager>();
 
             var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName,
-                _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
+                _isEnabledPropertyName, settingsManager);
             _container.RegisterInstance<ITaxSettings>(avalaraTax);
 
 

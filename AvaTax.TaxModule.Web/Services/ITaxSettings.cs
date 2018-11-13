@@ -6,7 +6,6 @@ namespace AvaTax.TaxModule.Web.Services
         string Username { get; }
         string Password { get; }
         bool IsEnabled { get; }
-        bool IsValidateAddress { get; }
         string ServiceUrl { get; }
         string CompanyCode { get; }
     }
