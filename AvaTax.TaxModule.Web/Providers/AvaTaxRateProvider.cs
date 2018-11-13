@@ -1,10 +1,10 @@
-﻿using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web.Logging;
-using AvaTax.TaxModule.Web.Model;
-using Common.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Avalara.AvaTax.RestClient;
+using AvaTax.TaxModule.Data.Model;
+using AvaTax.TaxModule.Web.Logging;
+using Common.Logging;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;

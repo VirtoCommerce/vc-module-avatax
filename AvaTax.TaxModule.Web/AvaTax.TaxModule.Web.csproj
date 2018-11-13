@@ -135,10 +135,6 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Model\AvaAddressValidationInfo.cs" />
-    <Compile Include="Model\AvaAddressLocationInfo.cs" />
-    <Compile Include="Model\AvaCreateTransactionModel.cs" />
-    <Compile Include="Model\AvaLineItem.cs" />
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
     <Compile Include="Logging\BaseLogContext.cs" />
@@ -154,6 +150,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Scripts\blades\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AvaTax.TaxModule.Data\AvaTax.TaxModule.Data.csproj">
+      <Project>{141065B7-36A7-4D80-AF52-7F8EF24F9BDF}</Project>
+      <Name>AvaTax.TaxModule.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
