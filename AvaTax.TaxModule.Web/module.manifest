@@ -29,7 +29,14 @@
     </scripts>
 
     <settings>
-        <group name="Taxes|Avalara|Credentials">
+        <group name="Taxes|Avalara">
+            <setting>
+                <name>Avalara.Tax.IsEnabled</name>
+                <valueType>boolean</valueType>
+                <defaultValue>True</defaultValue>
+                <title>Calculate taxes</title>
+                <description>Enable or disable tax calculation</description>
+            </setting>
             <setting>
                 <name>Avalara.Tax.Credentials.AccountNumber</name>
                 <valueType>integer</valueType>
@@ -53,15 +60,6 @@
                 <valueType>string</valueType>
                 <title>Link to Avalara API service</title>
                 <description>Link to Avalara API service</description>
-            </setting>
-        </group>
-        <group name="Taxes|Avalara|General settings">
-            <setting>
-                <name>Avalara.Tax.IsEnabled</name>
-                <valueType>boolean</valueType>
-                <defaultValue>True</defaultValue>
-                <title>Calculate taxes</title>
-                <description>Enable or disable tax calculation</description>
             </setting>
         </group>
     </settings>
