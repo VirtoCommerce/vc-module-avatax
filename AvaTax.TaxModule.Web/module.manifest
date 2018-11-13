@@ -32,7 +32,7 @@
         <group name="Taxes|Avalara|Credentials">
             <setting>
                 <name>Avalara.Tax.Credentials.AccountNumber</name>
-                <valueType>string</valueType>
+                <valueType>integer</valueType>
                 <title>Avalara account number</title>
                 <description>Account number provided by Avalara during registration process</description>
             </setting>

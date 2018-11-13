@@ -35,7 +35,7 @@ namespace AvaTax.TaxModule.Web
                 var machineName = Environment.MachineName;
                 var avaTaxUri = new Uri(avalaraTax.ServiceUrl);
                 var result = new AvaTaxClient(ApplicationName, ApplicationVersion, machineName, avaTaxUri)
-                    .WithSecurity(avalaraTax.Username, avalaraTax.Password);
+                    .WithSecurity(avalaraTax.AccountNumber, avalaraTax.LicenseKey);
 
                 return result;
             }

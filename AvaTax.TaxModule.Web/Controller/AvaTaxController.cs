@@ -38,8 +38,8 @@ namespace AvaTax.TaxModule.Web.Controller
             IHttpActionResult retVal = BadRequest();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (string.IsNullOrEmpty(_taxSettings.Username)
-                    || string.IsNullOrEmpty(_taxSettings.Password)
+                if (_taxSettings.AccountNumber == 0
+                    || string.IsNullOrEmpty(_taxSettings.LicenseKey)
                     || string.IsNullOrEmpty(_taxSettings.ServiceUrl)
                     || string.IsNullOrEmpty(_taxSettings.CompanyCode))
                 {
