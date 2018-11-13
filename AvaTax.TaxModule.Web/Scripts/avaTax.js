@@ -30,7 +30,5 @@ angular.module(moduleName, [
               template: 'Modules/$(Avalara.Tax)/Scripts/widgets/avataxWidget.tpl.html'
           },
           'taxProviderDetail');
-
-      toolbarService.register(validateCommand, 'virtoCommerce.coreModule.common.coreAddressDetailController');
   }])
 ;
