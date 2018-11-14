@@ -49,7 +49,7 @@ The tax type can be selected in the following locations:
 
 > Note that the available tax types can be configured in VC Platform settings: Settings -> Commerce -> General -> Tax types.
 
-## Tax exemption
+## Tax exemptions
 This module can also provide the exemption number for selected customers to the Avalara Tax API. To configure it, follow these steps:
 1. Open the customer details for the customer you want to configure exemption for;
 2. Open dynamic properties for that customer;
