@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Avalara.AvaTax.RestClient;
+﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Data.Model;
-using AvaTax.TaxModule.Web.Extensions;
 using AvaTax.TaxModule.Web.Logging;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -17,7 +16,7 @@ namespace AvaTax.TaxModule.Web
     public class AvaTaxRateProvider : TaxProvider
     {
         private readonly AvalaraLogger _logger;
-        private readonly Func<ITaxSettings, AvaTaxClient> _avaTaxClientFactory;
+        private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
         public AvaTaxRateProvider()
             : base("AvaTaxRateProvider")
@@ -25,7 +24,7 @@ namespace AvaTax.TaxModule.Web
         }
 
         [CLSCompliant(false)]
-        public AvaTaxRateProvider(ILog log, Func<ITaxSettings, AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
+        public AvaTaxRateProvider(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, params SettingEntry[] settings)
             : this()
         {
             Settings = settings;
@@ -50,13 +49,13 @@ namespace AvaTax.TaxModule.Web
             List<TaxRate> retVal = new List<TaxRate>();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                var settings = new SettingsListTaxSettings(Settings);
-                Validate(settings);
+                var avaSettings = AvaTaxSettings.FromSettings(Settings);
+                Validate(avaSettings);
 
                 //Evaluate taxes only for cart to preventing registration redundant transactions in avalara
                 var createTransactionModel = AbstractTypeFactory<AvaCreateTransactionModel>.TryCreateInstance();
                 createTransactionModel.FromContext(evalContext);
-                createTransactionModel.companyCode = settings.CompanyCode;
+                createTransactionModel.companyCode = avaSettings.CompanyCode;
                 createTransactionModel.commit = false;
 
                 log.docCode = createTransactionModel.code;
@@ -64,7 +63,7 @@ namespace AvaTax.TaxModule.Web
                 log.customerCode = createTransactionModel.customerCode;
                 if (createTransactionModel.IsValid)
                 {
-                    var avaTaxClient = _avaTaxClientFactory(settings);
+                    var avaTaxClient = _avaTaxClientFactory(avaSettings);
                     var transaction = avaTaxClient.CreateTransaction(string.Empty, createTransactionModel);
 
                     if (!transaction.lines.IsNullOrEmpty())
@@ -93,9 +92,9 @@ namespace AvaTax.TaxModule.Web
             return retVal;
         }
 
-        protected virtual void Validate(ITaxSettings settings)
+        protected virtual void Validate(IAvaTaxSettings settings)
         {
-            if (!settings.IsEnabled || !settings.CredentialsAreFilled())
+            if (!settings.IsEnabled || !settings.IsValid)
             {
                 throw new Exception("Tax calculation disabled or credentials not provided");
             }

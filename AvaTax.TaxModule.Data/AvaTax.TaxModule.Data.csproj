@@ -59,6 +59,8 @@
     <Compile Include="Model\AvaAddressLocationInfo.cs" />
     <Compile Include="Model\AvaCreateTransactionModel.cs" />
     <Compile Include="Model\AvaLineItem.cs" />
+    <Compile Include="Model\AvaTaxSettings.cs" />
+    <Compile Include="Model\IAvaTaxSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

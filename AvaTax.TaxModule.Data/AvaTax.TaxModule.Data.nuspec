@@ -4,14 +4,13 @@
     <id>$id$</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
+    <authors>VirtoCommerce</authors>
+    <owners>VirtoCommerce</owners>
     <licenseUrl>http://virtocommerce.com/opensourcelicense</licenseUrl>
     <projectUrl>https://github.com/VirtoCommerce/vc-module-avatax</projectUrl>
     <iconUrl>https://raw.githubusercontent.com/VirtoCommerce/vc-module-avatax/master/NuGet/icon.png</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>Avalara tax integration with VirtoCommerce</description>
     <copyright>Copyright © VirtoCommerce 2015-2018</copyright>
-    <tags>virtocommerce avalara avatax tax</tags>
   </metadata>
 </package>

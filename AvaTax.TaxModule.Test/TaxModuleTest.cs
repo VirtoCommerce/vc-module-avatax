@@ -88,7 +88,7 @@ namespace AvaTax.TaxModule.Test
             Assert.NotEmpty(rates);
         }
 
-        private static AvaTaxClient CreateAvaTaxClient(ITaxSettings settings)
+        private static AvaTaxClient CreateAvaTaxClient(IAvaTaxSettings settings)
         {
             var machineName = Environment.MachineName;
             var avaTaxUri = new Uri(settings.ServiceUrl);

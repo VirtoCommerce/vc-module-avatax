@@ -25,7 +25,7 @@ namespace AvaTax.TaxModule.Web
 
         public override void Initialize()
         {
-            AvaTaxClient ClientFactory(ITaxSettings taxSettings)
+            AvaTaxClient ClientFactory(IAvaTaxSettings taxSettings)
             {
                 var machineName = Environment.MachineName;
                 var avaTaxUri = new Uri(taxSettings.ServiceUrl);
@@ -35,7 +35,7 @@ namespace AvaTax.TaxModule.Web
                 return result;
             }
 
-            _container.RegisterInstance<Func<ITaxSettings, AvaTaxClient>>(ClientFactory);
+            _container.RegisterInstance<Func<IAvaTaxSettings, AvaTaxClient>>(ClientFactory);
         }
 
         public override void PostInitialize()
@@ -45,7 +45,7 @@ namespace AvaTax.TaxModule.Web
             var moduleSettings = settingManager.GetModuleSettings("Avalara.Tax");
 
             taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<ILog>(),
-                _container.Resolve<Func<ITaxSettings, AvaTaxClient>>(), moduleSettings)
+                _container.Resolve<Func<IAvaTaxSettings, AvaTaxClient>>(), moduleSettings)
             {
                 Name = "Avalara taxes",
                 Description = "Avalara service integration",
