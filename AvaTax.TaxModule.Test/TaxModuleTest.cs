@@ -1,12 +1,10 @@
 ﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web;
-using AvaTax.TaxModule.Web.Controller;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using VirtoCommerce.Domain.Customer.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
@@ -33,7 +31,7 @@ namespace AvaTax.TaxModule.Test
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "2.x";
 
-        private static readonly List<SettingEntry> _settings = new List<SettingEntry>
+        private static readonly List<SettingEntry> Settings = new List<SettingEntry>
         {
             new SettingEntry
             {
@@ -72,7 +70,7 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var logService = new Mock<ILog>();
-            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, _settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, Settings.ToArray());
 
             var context = new TaxEvaluationContext
             {
@@ -90,12 +88,12 @@ namespace AvaTax.TaxModule.Test
             Assert.NotEmpty(rates);
         }
 
-        private static AvaTaxClient CreateAvaTaxClient()
+        private static AvaTaxClient CreateAvaTaxClient(ITaxSettings settings)
         {
             var machineName = Environment.MachineName;
-            var avaTaxUri = new Uri(AvalaraServiceUrl);
+            var avaTaxUri = new Uri(settings.ServiceUrl);
             var result = new AvaTaxClient(ApplicationName, ApplicationVersion, machineName, avaTaxUri)
-                .WithSecurity(AvalaraUsername, AvalaraPassword);
+                .WithSecurity(settings.AccountNumber, settings.LicenseKey);
 
             return result;
         }

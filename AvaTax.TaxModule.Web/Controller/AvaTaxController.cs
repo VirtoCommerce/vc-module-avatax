@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using System;
 using System.Web.Http;
 using System.Web.Http.Description;
+using AvaTax.TaxModule.Web.Extensions;
+using AvaTax.TaxModule.Web.Model;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
@@ -13,44 +15,46 @@ namespace AvaTax.TaxModule.Web.Controller
     [RoutePrefix("api/tax/avatax")]
     public class AvaTaxController : ApiController
     {
-        private readonly Func<AvaTaxClient> _avaTaxClientFactory;
-        private readonly ITaxSettings _taxSettings;
+        private readonly Func<ITaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly AvalaraLogger _logger;
 
         [CLSCompliant(false)]
-        public AvaTaxController(ITaxSettings taxSettings, ILog log, Func<AvaTaxClient> avaTaxClientFactory)
+        public AvaTaxController(ILog log, Func<ITaxSettings, AvaTaxClient> avaTaxClientFactory)
         {
-            _taxSettings = taxSettings;
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
-        [HttpGet]
+        [HttpPost]
         [ResponseType(typeof(void))]
         [Route("ping")]
-        public IHttpActionResult TestConnection()
+        public IHttpActionResult TestConnection([FromBody]AvaTaxConnectionInfo connectionInfo)
         {
             IHttpActionResult retVal = BadRequest();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (_taxSettings.AccountNumber == 0
-                    || string.IsNullOrEmpty(_taxSettings.LicenseKey)
-                    || string.IsNullOrEmpty(_taxSettings.ServiceUrl)
-                    || string.IsNullOrEmpty(_taxSettings.CompanyCode))
+                if (connectionInfo == null)
                 {
-                    const string errorMessage = "AvaTax credentials not provided";
+                    const string errorMessage = "The connectionInfo parameter is required to test the connection.";
                     retVal = BadRequest(errorMessage);
                     throw new Exception(errorMessage);
                 }
 
-                if (!_taxSettings.IsEnabled)
+                if (!connectionInfo.IsEnabled)
                 {
-                    const string errorMessage = "Tax calculation disabled, enable before testing connection";
+                    const string errorMessage = "Tax calculation disabled, enable before testing connection.";
                     retVal = BadRequest(errorMessage);
                     throw new Exception(errorMessage);
                 }
 
-                var avaTaxClient = _avaTaxClientFactory();
+                if (!connectionInfo.CredentialsAreFilled())
+                {
+                    const string errorMessage = "AvaTax credentials are not provided.";
+                    retVal = BadRequest(errorMessage);
+                    throw new Exception(errorMessage);
+                }
+
+                var avaTaxClient = _avaTaxClientFactory(connectionInfo);
 
                 PingResultModel result;
                 try
