@@ -1,16 +1,11 @@
 ﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Web.Logging;
-using AvaTax.TaxModule.Web.Model;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Description;
-using VirtoCommerce.Platform.Core.Common;
-using domainModel = VirtoCommerce.Domain.Commerce.Model;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
@@ -18,44 +13,46 @@ namespace AvaTax.TaxModule.Web.Controller
     [RoutePrefix("api/tax/avatax")]
     public class AvaTaxController : ApiController
     {
-        private readonly Func<AvaTaxClient> _avaTaxClientFactory;
-        private readonly ITaxSettings _taxSettings;
+        private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly AvalaraLogger _logger;
 
         [CLSCompliant(false)]
-        public AvaTaxController(ITaxSettings taxSettings, ILog log, Func<AvaTaxClient> avaTaxClientFactory)
+        public AvaTaxController(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
         {
-            _taxSettings = taxSettings;
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
-        [HttpGet]
+        [HttpPost]
         [ResponseType(typeof(void))]
         [Route("ping")]
-        public IHttpActionResult TestConnection()
+        public IHttpActionResult TestConnection([FromBody]AvaTaxSettings taxSetting)
         {
             IHttpActionResult retVal = BadRequest();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                if (string.IsNullOrEmpty(_taxSettings.Username)
-                    || string.IsNullOrEmpty(_taxSettings.Password)
-                    || string.IsNullOrEmpty(_taxSettings.ServiceUrl)
-                    || string.IsNullOrEmpty(_taxSettings.CompanyCode))
+                if (taxSetting == null)
                 {
-                    const string errorMessage = "AvaTax credentials not provided";
+                    const string errorMessage = "The connectionInfo parameter is required to test the connection.";
                     retVal = BadRequest(errorMessage);
                     throw new Exception(errorMessage);
                 }
 
-                if (!_taxSettings.IsEnabled)
+                if (!taxSetting.IsEnabled)
                 {
-                    const string errorMessage = "Tax calculation disabled, enable before testing connection";
+                    const string errorMessage = "Tax calculation disabled, enable before testing connection.";
                     retVal = BadRequest(errorMessage);
                     throw new Exception(errorMessage);
                 }
 
-                var avaTaxClient = _avaTaxClientFactory();
+                if (!taxSetting.IsValid)
+                {
+                    const string errorMessage = "AvaTax credentials are not provided.";
+                    retVal = BadRequest(errorMessage);
+                    throw new Exception(errorMessage);
+                }
+
+                var avaTaxClient = _avaTaxClientFactory(taxSetting);
 
                 PingResultModel result;
                 try
@@ -86,75 +83,6 @@ namespace AvaTax.TaxModule.Web.Controller
             })
             .OnError(_logger, AvalaraLogger.EventCodes.TaxPingError)
             .OnSuccess(_logger, AvalaraLogger.EventCodes.Ping);
-
-            return retVal;
-        }
-
-        [HttpPost]
-        [ResponseType(typeof(bool))]
-        [Route("address")]
-        public IHttpActionResult ValidateAddress(domainModel.Address address)
-        {
-            IHttpActionResult retVal = BadRequest();
-            LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
-            {
-                if (!_taxSettings.IsValidateAddress)
-                {
-                    const string errorMessage = "AvaTax address validation is disabled.";
-                    retVal = BadRequest(errorMessage);
-                    throw new Exception(errorMessage);
-                }
-
-                if (string.IsNullOrEmpty(_taxSettings.Username)
-                    || string.IsNullOrEmpty(_taxSettings.Password)
-                    || string.IsNullOrEmpty(_taxSettings.ServiceUrl)
-                    || string.IsNullOrEmpty(_taxSettings.CompanyCode))
-                {
-                    const string errorMessage = "AvaTax credentials are not provided.";
-                    retVal = BadRequest(errorMessage);
-                    throw new Exception(errorMessage);
-                }
-
-                var avaTaxClient = _avaTaxClientFactory();
-                var addressValidationInfo = AbstractTypeFactory<AvaAddressValidationInfo>.TryCreateInstance().FromAddress(address);
-
-                AddressResolutionModel addressResolutionModel;
-                try
-                {
-                    addressResolutionModel = avaTaxClient.ResolveAddressPost(addressValidationInfo);
-                }
-                catch (AvaTaxError e)
-                {
-                    var errorResult = e.error.error;
-
-                    var errorMessage = errorResult.message;
-                    if (!errorResult.details.IsNullOrEmpty())
-                    {
-                        var joinedErrorDetails = string.Join(Environment.NewLine,
-                            errorResult.details.Select(errorDetail => $"- {errorDetail.severity}: {errorDetail.description}"));
-                        errorMessage += Environment.NewLine + joinedErrorDetails;
-                    }
-
-                    retVal = BadRequest(errorMessage);
-                    throw;
-                }
-
-                // If the address cannot be resolved, it's location will be null.
-                // This might mean that the address is invalid.
-                if (addressResolutionModel.coordinates == null)
-                {
-                    var resolutionMessages = addressResolutionModel.messages ?? new List<AvaTaxMessage>();
-                    var messageStrings = resolutionMessages.Select(x => $"{x.severity}: {x.summary} [{x.refersTo} - {x.details}]");
-                    var errorMessage = string.Join(Environment.NewLine, messageStrings);
-
-                    retVal = BadRequest(errorMessage);
-                    throw new Exception(errorMessage);
-                }
-
-                retVal = Ok(addressResolutionModel);
-            })
-            .OnError(_logger, AvalaraLogger.EventCodes.AddressValidationError)
-            .OnSuccess(_logger, AvalaraLogger.EventCodes.ValidateAddress);
 
             return retVal;
         }

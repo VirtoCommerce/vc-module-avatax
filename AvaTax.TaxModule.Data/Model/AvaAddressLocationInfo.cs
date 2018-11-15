@@ -1,8 +1,8 @@
-﻿using Avalara.AvaTax.RestClient;
-using System;
+﻿using System;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Commerce.Model;
 
-namespace AvaTax.TaxModule.Web.Model
+namespace AvaTax.TaxModule.Data.Model
 {
     [CLSCompliant(false)]
     public class AvaAddressLocationInfo : AddressLocationInfo

@@ -109,6 +109,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvaTax.TaxModule.Data\AvaTax.TaxModule.Data.csproj">
+      <Project>{141065B7-36A7-4D80-AF52-7F8EF24F9BDF}</Project>
+      <Name>AvaTax.TaxModule.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AvaTax.TaxModule.Web\AvaTax.TaxModule.Web.csproj">
       <Project>{f7ec3e39-b6db-4912-be00-b5a7db25d3b4}</Project>
       <Name>AvaTax.TaxModule.Web</Name>

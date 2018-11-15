@@ -29,10 +29,17 @@
     </scripts>
 
     <settings>
-        <group name="Taxes|Avalara|Credentials">
+        <group name="Taxes|Avalara">
+            <setting>
+                <name>Avalara.Tax.IsEnabled</name>
+                <valueType>boolean</valueType>
+                <defaultValue>True</defaultValue>
+                <title>Calculate taxes</title>
+                <description>Enable or disable tax calculation</description>
+            </setting>
             <setting>
                 <name>Avalara.Tax.Credentials.AccountNumber</name>
-                <valueType>string</valueType>
+                <valueType>integer</valueType>
                 <title>Avalara account number</title>
                 <description>Account number provided by Avalara during registration process</description>
             </setting>
@@ -53,24 +60,6 @@
                 <valueType>string</valueType>
                 <title>Link to Avalara API service</title>
                 <description>Link to Avalara API service</description>
-            </setting>
-        </group>
-        <group name="Taxes|Avalara|General settings">
-            <setting>
-                <name>Avalara.Tax.IsEnabled</name>
-                <valueType>boolean</valueType>
-                <defaultValue>True</defaultValue>
-                <title>Calculate taxes</title>
-                <description>Enable or disable tax calculation</description>
-            </setting>
-        </group>
-        <group name="Taxes|Avalara|Address validation">
-            <setting>
-                <name>Avalara.Tax.IsValidateAddress</name>
-                <valueType>boolean</valueType>
-                <defaultValue>True</defaultValue>
-                <title>Validate address</title>
-                <description>Enable or disable address validation</description>
             </setting>
         </group>
     </settings>
