@@ -1,8 +1,8 @@
-﻿using Avalara.AvaTax.RestClient;
-using System;
+﻿using System;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Tax.Model;
 
-namespace AvaTax.TaxModule.Web.Model
+namespace AvaTax.TaxModule.Data.Model
 {
     [CLSCompliant(false)]
     public class AvaLineItem : LineItemModel
@@ -16,7 +16,6 @@ namespace AvaTax.TaxModule.Web.Model
             amount = taxLine.Amount;
             quantity = taxLine.Quantity;
             return this;
-
         }
     }
 }

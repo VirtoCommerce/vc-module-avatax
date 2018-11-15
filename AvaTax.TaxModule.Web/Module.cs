@@ -11,13 +11,6 @@ namespace AvaTax.TaxModule.Web
 {
     public class Module : ModuleBase
     {
-        private const string _usernamePropertyName = "Avalara.Tax.Credentials.AccountNumber";
-        private const string _passwordPropertyName = "Avalara.Tax.Credentials.LicenseKey";
-        private const string _serviceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
-        private const string _companyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
-        private const string _isEnabledPropertyName = "Avalara.Tax.IsEnabled";
-        private const string _isValidateAddressPropertyName = "Avalara.Tax.IsValidateAddress";
-
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "2.x";
 
@@ -32,24 +25,17 @@ namespace AvaTax.TaxModule.Web
 
         public override void Initialize()
         {
-            var settingsManager = _container.Resolve<ISettingsManager>();
-
-            var avalaraTax = new AvaTaxSettings(_usernamePropertyName, _passwordPropertyName, _serviceUrlPropertyName, _companyCodePropertyName,
-                _isEnabledPropertyName, _isValidateAddressPropertyName, settingsManager);
-            _container.RegisterInstance<ITaxSettings>(avalaraTax);
-
-
-            object ClientFactory(IUnityContainer container)
+            AvaTaxClient ClientFactory(IAvaTaxSettings taxSettings)
             {
                 var machineName = Environment.MachineName;
-                var avaTaxUri = new Uri(avalaraTax.ServiceUrl);
+                var avaTaxUri = new Uri(taxSettings.ServiceUrl);
                 var result = new AvaTaxClient(ApplicationName, ApplicationVersion, machineName, avaTaxUri)
-                    .WithSecurity(avalaraTax.Username, avalaraTax.Password);
+                    .WithSecurity(taxSettings.AccountNumber, taxSettings.LicenseKey);
 
                 return result;
             }
 
-            _container.RegisterType<AvaTaxClient>(new InjectionFactory(ClientFactory));
+            _container.RegisterInstance<Func<IAvaTaxSettings, AvaTaxClient>>(ClientFactory);
         }
 
         public override void PostInitialize()
@@ -59,7 +45,7 @@ namespace AvaTax.TaxModule.Web
             var moduleSettings = settingManager.GetModuleSettings("Avalara.Tax");
 
             taxService.RegisterTaxProvider(() => new AvaTaxRateProvider(_container.Resolve<ILog>(),
-                _container.Resolve<Func<AvaTaxClient>>(), moduleSettings)
+                _container.Resolve<Func<IAvaTaxSettings, AvaTaxClient>>(), moduleSettings)
             {
                 Name = "Avalara taxes",
                 Description = "Avalara service integration",
