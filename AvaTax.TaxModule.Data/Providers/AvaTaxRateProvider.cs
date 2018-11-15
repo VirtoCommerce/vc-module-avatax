@@ -1,6 +1,6 @@
 ﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Data.Model;
-using AvaTax.TaxModule.Web.Logging;
+using AvaTax.TaxModule.Data.Logging;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using System;
@@ -11,7 +11,7 @@ using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 
-namespace AvaTax.TaxModule.Web
+namespace AvaTax.TaxModule.Data
 {
     public class AvaTaxRateProvider : TaxProvider
     {

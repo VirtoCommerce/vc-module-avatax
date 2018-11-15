@@ -1,5 +1,5 @@
 ﻿using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web;
+using AvaTax.TaxModule.Data;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Moq;

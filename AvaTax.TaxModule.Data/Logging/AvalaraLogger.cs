@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.Tracing;
 using Common.Logging;
 
-namespace AvaTax.TaxModule.Web.Logging
+namespace AvaTax.TaxModule.Data.Logging
 {
     public class AvalaraLogger
     {
@@ -11,7 +11,7 @@ namespace AvaTax.TaxModule.Web.Logging
         {
             _logger = logger;
         }
-        
+
         #region Context
 
         public class TaxRequestContext : BaseLogContext

@@ -1,5 +1,5 @@
 ﻿using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web.Logging;
+using AvaTax.TaxModule.Data.Logging;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;

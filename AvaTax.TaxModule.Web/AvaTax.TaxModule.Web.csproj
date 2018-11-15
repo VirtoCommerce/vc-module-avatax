@@ -135,14 +135,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Controller\AvaTaxController.cs" />
-    <Compile Include="Logging\BaseLogContext.cs" />
-    <Compile Include="Logging\LoggerExtension.cs" />
-    <Compile Include="Logging\IsFileLockedExtension.cs" />
-    <Compile Include="Logging\LogExtendedException.cs" />
-    <Compile Include="Logging\LogInvoker.cs" />
-    <Compile Include="Logging\AvalaraLogger.cs" />
     <Compile Include="Module.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

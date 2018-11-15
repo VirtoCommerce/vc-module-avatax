@@ -34,6 +34,12 @@
     <Reference Include="Avalara.AvaTax.RestClient.net45, Version=18.9.0.234, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Avalara.AvaTax.18.9.0.234\lib\net45\Avalara.AvaTax.RestClient.net45.dll</HintPath>
     </Reference>
+    <Reference Include="Common.Logging, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.3.3.1\lib\net40\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core, Version=3.3.1.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Common.Logging.Core.3.3.1\lib\net40\Common.Logging.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -56,12 +62,19 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Logging\AvalaraLogger.cs" />
+    <Compile Include="Logging\BaseLogContext.cs" />
+    <Compile Include="Logging\IsFileLockedExtension.cs" />
+    <Compile Include="Logging\LogExtendedException.cs" />
+    <Compile Include="Logging\LoggerExtension.cs" />
+    <Compile Include="Logging\LogInvoker.cs" />
     <Compile Include="Model\AvaAddressLocationInfo.cs" />
     <Compile Include="Model\AvaCreateTransactionModel.cs" />
     <Compile Include="Model\AvaLineItem.cs" />
     <Compile Include="Model\AvaTaxSettings.cs" />
     <Compile Include="Model\IAvaTaxSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\AvaTaxRateProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
