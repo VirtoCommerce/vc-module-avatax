@@ -3,8 +3,11 @@ using AvaTax.TaxModule.Data;
 using Common.Logging;
 using Microsoft.Practices.Unity;
 using System;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Services;
+using AvaTax.TaxModule.Web.BackgroundJobs;
+using Hangfire;
 using VirtoCommerce.Domain.Tax.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
@@ -55,6 +58,17 @@ namespace AvaTax.TaxModule.Web
                 Description = "Avalara service integration",
                 LogoUrl = "Modules/$(Avalara.Tax)/Content/400.png"
             });
+
+            var processJobEnabled = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrderSynchronization.IsEnabled, false);
+            if (processJobEnabled)
+            {
+                var cronExpression = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrderSynchronization.CronExpression, "0 0 * * *");
+                RecurringJob.AddOrUpdate<OrdersSynchronizationJob>("SendOrdersToAvaTaxJob", x => x.RunScheduled(JobCancellationToken.Null, null), cronExpression);
+            }
+            else
+            {
+                RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
+            }
         }
         #endregion
     }

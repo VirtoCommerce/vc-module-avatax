@@ -3,10 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.Models;
 using AvaTax.TaxModule.Web.Models.PushNotifications;
 using Hangfire;
 using Hangfire.Server;
+using VirtoCommerce.Domain.Order.Services;
+using VirtoCommerce.Domain.Store.Services;
+using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.PushNotifications;
 
 namespace AvaTax.TaxModule.Web.BackgroundJobs
@@ -16,15 +20,41 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
     {
         private readonly IOrdersSynchronizationService _ordersSynchronizationService;
         private readonly IPushNotificationManager _pushNotificationManager;
+        private readonly IChangeLogService _changeLogService;
+        private readonly ICustomerOrderService _orderService;
+        private readonly ICustomerOrderSearchService _orderSearchService;
+        private readonly IStoreService _storeService;
 
-        public OrdersSynchronizationJob(IOrdersSynchronizationService ordersSynchronizationService, IPushNotificationManager pushNotificationManager)
+        public OrdersSynchronizationJob(IOrdersSynchronizationService ordersSynchronizationService, IPushNotificationManager pushNotificationManager, 
+            IChangeLogService changeLogService, ICustomerOrderService orderService, ICustomerOrderSearchService orderSearchService, IStoreService storeService)
         {
             _ordersSynchronizationService = ordersSynchronizationService;
             _pushNotificationManager = pushNotificationManager;
+            _changeLogService = changeLogService;
+            _orderService = orderService;
+            _orderSearchService = orderSearchService;
+            _storeService = storeService;
         }
 
         [DisableConcurrentExecution(60 * 60 * 24)]
-        public async Task Run(IOrdersFeed ordersFeed, OrdersSynchronizationPushNotification notification, 
+        public async Task RunScheduled(IJobCancellationToken cancellationToken, PerformContext context)
+        {
+            var currentTime = DateTime.UtcNow;
+            var lastRunTime = GetLastRunTime();
+
+            var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderService, _orderSearchService, _storeService, lastRunTime, currentTime);
+
+            void ProgressCallback(AvaTaxOrdersSynchronizationProgress progress)
+            {
+            }
+
+            await PerformOrderSynchronization(ordersFeed, ProgressCallback, cancellationToken);
+
+            StoreLastRunTime(currentTime);
+        }
+
+        [DisableConcurrentExecution(60 * 60 * 24)]
+        public async Task RunManually(IOrdersFeed ordersFeed, OrdersSynchronizationPushNotification notification, 
             IJobCancellationToken cancellationToken, PerformContext context)
         {
             void ProgressCallback(AvaTaxOrdersSynchronizationProgress x)
@@ -41,8 +71,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
 
             try
             {
-                var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
-                await _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, ProgressCallback, cancellationTokenWrapper);
+                await PerformOrderSynchronization(ordersFeed, ProgressCallback, cancellationToken);
             }
             catch (JobAbortedException)
             {
@@ -59,6 +88,23 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
                 notification.Description = "Process finished " + (notification.Errors.Any() ? "with errors" : "successfully");
                 _pushNotificationManager.Upsert(notification);
             }
+        }
+
+        private async Task PerformOrderSynchronization(IOrdersFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback,
+            IJobCancellationToken cancellationToken)
+        {
+            var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
+            await _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationTokenWrapper);
+        }
+
+        private DateTime GetLastRunTime()
+        {
+            throw new NotImplementedException();
+        }
+
+        private void StoreLastRunTime(DateTime lastRunTime)
+        {
+            throw new NotImplementedException();
         }
     }
 }
