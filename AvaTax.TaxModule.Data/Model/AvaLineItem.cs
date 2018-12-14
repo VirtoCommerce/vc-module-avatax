@@ -33,7 +33,7 @@ namespace AvaTax.TaxModule.Data.Model
         public virtual LineItemModel FromOrderShipment(Shipment shipment)
         {
             number = shipment.Id;
-            itemCode = shipment.ShipmentMethodCode;
+            itemCode = shipment.Number;
             description = shipment.ShipmentMethodCode;
             taxCode = shipment.TaxType;
             quantity = 1;
