@@ -51,7 +51,7 @@ namespace AvaTax.TaxModule.Data.Model
 
         public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order)
         {
-            code = order.Id;
+            code = order.Number;
             customerCode = order.CustomerId;
             date = order.CreatedDate;
             type = DocumentType.SalesInvoice;
