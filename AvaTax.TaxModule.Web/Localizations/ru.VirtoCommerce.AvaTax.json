@@ -12,7 +12,15 @@
     },
     "commands": {
       "test-connection": "Проверить соединение с AvaTax",
-      "run-order-synchronization": "Отправить заказ в AvaTax"
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "Ожидание состояния заказа в AvaTax...",
+          "store-does-not-use-avatax": "Служба AvaTax не активирована для магазина этого заказа.",
+          "sent-to-avatax": "Заказ отправлен в AvaTax:",
+          "error": "Получение отправки заказа в AvaTax завершилось неудачей.",
+          "send-to-avatax": "Нажмите для отправки заказа в AvaTax"
+        }
+      } 
     }
   }
 }
