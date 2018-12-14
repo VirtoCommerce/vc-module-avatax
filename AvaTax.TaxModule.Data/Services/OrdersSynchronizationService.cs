@@ -73,7 +73,7 @@ namespace AvaTax.TaxModule.Data.Services
                             var joinedMessages = string.Join(Environment.NewLine,
                                 errorDetails.details.Select(x => $"{x.severity}: {x.message} {x.description}"));
 
-                            var errorMessage = $"Order #{order.Id}: {errorDetails.message}{Environment.NewLine}{joinedMessages}";
+                            var errorMessage = $"Order #{order.Number}: {errorDetails.message}{Environment.NewLine}{joinedMessages}";
                             progressInfo.Errors.Add(errorMessage);
                         }
                         finally
