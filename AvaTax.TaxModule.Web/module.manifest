@@ -61,6 +61,26 @@
                 <title>Link to Avalara API service</title>
                 <description>Link to Avalara API service</description>
             </setting>
+            <setting>
+                <name>Avalara.Tax.ScheduledOrderSynchronization.IsEnabled</name>
+                <valueType>boolean</valueType>
+                <defaultValue>True</defaultValue>
+                <title>Send orders to AvaTax automatically</title>
+                <description>Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)</description>
+            </setting>
+            <setting>
+                <name>Avalara.Tax.ScheduledOrderSynchronization.TaskSynchronizationSchedule</name>
+                <valueType>string</valueType>
+                <defaultValue>0 0 * * *</defaultValue>
+                <title>Schedule of automatic order synchronization (requires restart)</title>
+                <description>
+                    <![CDATA[ 
+                        x minutes use "0/x * * * *"
+                        x hours use "0 */x * * *" you can set minutes also "15 */x * * *"
+                        x days "0 0 */x * *"   
+                    ]]>
+                </description>
+            </setting>
         </group>
     </settings>
 
