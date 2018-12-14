@@ -24,7 +24,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         }
 
         [DisableConcurrentExecution(60 * 60 * 24)]
-        public async Task Run(OrdersSynchronizationRequest request, OrdersSynchronizationPushNotification notification, 
+        public async Task Run(IOrdersFeed ordersFeed, OrdersSynchronizationPushNotification notification, 
             IJobCancellationToken cancellationToken, PerformContext context)
         {
             void ProgressCallback(AvaTaxOrdersSynchronizationProgress x)
@@ -42,7 +42,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             try
             {
                 var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
-                await _ordersSynchronizationService.SynchronizeOrdersAsync(request.OrderIds, ProgressCallback, cancellationTokenWrapper);
+                await _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, ProgressCallback, cancellationTokenWrapper);
             }
             catch (JobAbortedException)
             {

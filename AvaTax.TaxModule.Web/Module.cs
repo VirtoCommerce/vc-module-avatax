@@ -1,6 +1,5 @@
 ﻿using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Data;
-using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
 using System;

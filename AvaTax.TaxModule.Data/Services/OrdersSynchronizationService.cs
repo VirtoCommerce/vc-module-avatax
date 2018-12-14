@@ -15,6 +15,8 @@ namespace AvaTax.TaxModule.Data.Services
 {
     public class OrdersSynchronizationService : IOrdersSynchronizationService
     {
+        private const int BatchSize = 50;
+
         private readonly ICustomerOrderService _orderService;
         private readonly IStoreService _storeService;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
@@ -76,43 +78,37 @@ namespace AvaTax.TaxModule.Data.Services
             return result;
         }
 
-        public async Task SynchronizeOrdersAsync(string[] orderIds, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
+        public async Task SynchronizeOrdersAsync(IOrdersFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
         {
+            var emptyResult = ordersFeed.GetOrders(0, 0);
+            var totalCount = emptyResult.TotalCount;
+
             var progressInfo = new AvaTaxOrdersSynchronizationProgress
             {
                 Message = "Reading orders...",
-                TotalCount = orderIds.Length,
+                TotalCount = totalCount,
                 ProcessedCount = 0
             };
             progressCallback(progressInfo);
 
-            var orders = _orderService.GetByIds(orderIds).GroupBy(order => order.StoreId);
-
-            var storeIds = orders.Select(orderGroup => orderGroup.Key).ToArray();
-            var stores = _storeService.GetByIds(storeIds).ToDictionary(store => store.Id, store => store);
-
             cancellationToken?.ThrowIfCancellationRequested();
 
-            foreach (var orderGroup in orders)
+            for (int i = 0; i < totalCount; i += BatchSize)
             {
-                var store = stores[orderGroup.Key];
-
-                progressInfo.Message = $"Processing orders from store '{store.Name}'...";
-                progressCallback(progressInfo);
-
-                var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == "AvaTaxRateProvider");
-                if (avaTaxProvider != null && avaTaxProvider.IsActive)
+                var searchResult = ordersFeed.GetOrders(i, BatchSize);
+                foreach (var entry in searchResult.Results)
                 {
-                    var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
-                    var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
+                    var order = entry.CustomerOrder;
+                    var store = entry.Store;
 
-                    foreach (var order in orderGroup)
+                    var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == "AvaTaxRateProvider");
+                    if (avaTaxProvider != null && avaTaxProvider.IsActive)
                     {
+                        var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
+                        var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
+
                         var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
                         createOrAdjustTransactionModel.FromOrder(order);
-
-                        progressInfo.ProcessedCount++;
-                        progressInfo.Message = $"Processed {progressInfo.ProcessedCount} of {progressInfo.TotalCount} orders";
 
                         try
                         {
@@ -127,22 +123,20 @@ namespace AvaTax.TaxModule.Data.Services
                             var errorMessage = $"Order #{order.Number}: {errorDetails.message}{Environment.NewLine}{joinedMessages}";
                             progressInfo.Errors.Add(errorMessage);
                         }
-                        finally
-                        {
-                            progressCallback(progressInfo);
-                        }
                     }
-                }
-                else
-                {
-                    var errorMessage = $"Orders from store '{store.Name}' were not sent to Avalara, because this store does not use AvaTax as tax provider.";
-                    progressInfo.Errors.Add(errorMessage);
+                    else
+                    {
+                        var errorMessage = $"Order #{order.Number} was not sent to Avalara, because the store '{store.Name}' does not use AvaTax as tax provider.";
+                        progressInfo.Errors.Add(errorMessage);
+                    }
 
-                    progressInfo.ProcessedCount += orderGroup.Count();
-                    progressCallback(progressInfo);
+                    cancellationToken?.ThrowIfCancellationRequested();
                 }
 
-                cancellationToken?.ThrowIfCancellationRequested();
+                var processedCount = Math.Min(i, totalCount);
+                progressInfo.ProcessedCount = processedCount;
+                progressInfo.Message = $"Processed {processedCount} of {totalCount} orders";
+                progressCallback(progressInfo);
             }
 
             progressInfo.Message = "Orders synchronization completed.";

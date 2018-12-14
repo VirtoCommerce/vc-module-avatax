@@ -55,10 +55,12 @@
     </Compile>
     <Compile Include="Models\AddressValidationResult.cs" />
     <Compile Include="Models\AvaTaxOrderSynchronizationStatus.cs" />
+    <Compile Include="Models\OrderFeedEntry.cs" />
     <Compile Include="Services\IAvaTaxSettings.cs" />
     <Compile Include="Models\AvaTaxOrdersSynchronizationProgress.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\IAddressValidationService.cs" />
+    <Compile Include="Services\IOrdersFeed.cs" />
     <Compile Include="Services\IOrdersSynchronizationService.cs" />
   </ItemGroup>
   <ItemGroup />
