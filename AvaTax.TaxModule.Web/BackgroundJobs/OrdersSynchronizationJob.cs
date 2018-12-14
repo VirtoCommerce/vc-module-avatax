@@ -54,9 +54,11 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         }
 
         [DisableConcurrentExecution(60 * 60 * 24)]
-        public async Task RunManually(IOrdersFeed ordersFeed, OrdersSynchronizationPushNotification notification, 
+        public async Task RunManually(string[] orderIds, OrdersSynchronizationPushNotification notification, 
             IJobCancellationToken cancellationToken, PerformContext context)
         {
+            var ordersFeed = new FixedOrdersFeed(orderIds, _orderService, _storeService);
+
             void ProgressCallback(AvaTaxOrdersSynchronizationProgress x)
             {
                 notification.Description = x.Message;

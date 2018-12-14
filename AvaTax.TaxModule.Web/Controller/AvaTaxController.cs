@@ -164,8 +164,7 @@ namespace AvaTax.TaxModule.Web.Controller
             };
             _pushNotificationManager.Upsert(notification);
 
-            var ordersFeed = new FixedOrdersFeed(request.OrderIds, _orderService, _storeService);
-            var jobId = BackgroundJob.Enqueue<OrdersSynchronizationJob>(x => x.RunManually(ordersFeed, notification, JobCancellationToken.Null, null));
+            var jobId = BackgroundJob.Enqueue<OrdersSynchronizationJob>(x => x.RunManually(request.OrderIds, notification, JobCancellationToken.Null, null));
             notification.JobId = jobId;
 
             return notification;
