@@ -64,7 +64,7 @@
             <setting>
                 <name>Avalara.Tax.ScheduledOrdersSynchronization.IsEnabled</name>
                 <valueType>boolean</valueType>
-                <defaultValue>True</defaultValue>
+                <defaultValue>false</defaultValue>
                 <title>Send orders to AvaTax automatically</title>
                 <description>Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)</description>
             </setting>
