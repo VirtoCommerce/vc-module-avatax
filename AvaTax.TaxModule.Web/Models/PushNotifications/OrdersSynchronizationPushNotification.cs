@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.PushNotifications;
 
 namespace AvaTax.TaxModule.Web.Models.PushNotifications
@@ -13,14 +14,20 @@ namespace AvaTax.TaxModule.Web.Models.PushNotifications
             Errors = new List<string>();
         }
 
+        [JsonProperty("jobId")]
         public string JobId { get; set; }
 
+        [JsonProperty("finished")]
         public DateTime? Finished { get; set; }
 
+        [JsonProperty("totalCount")]
         public long TotalCount { get; set; }
+        [JsonProperty("processedCount")]
         public long ProcessedCount { get; set; }
+        [JsonProperty("errorCount")]
         public long ErrorCount { get; set; }
 
+        [JsonProperty("errors")]
         public ICollection<string> Errors { get; set; }
     }
 }
