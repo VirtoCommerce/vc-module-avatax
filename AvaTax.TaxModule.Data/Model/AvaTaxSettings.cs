@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.Platform.Core.Settings;
 
 namespace AvaTax.TaxModule.Web.Services

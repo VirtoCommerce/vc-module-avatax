@@ -1,0 +1,18 @@
+{
+  "avaTax": {
+    "blades": {
+      "orders-synchronization-progress": {
+        "labels": {
+          "start": "Start",
+          "end": "End",
+          "stats": "Processed — {{ processedCount }} of {{ totalCount }} orders",
+          "errors": "Errors"
+        }
+      }
+    },
+    "commands": {
+      "test-connection": "Test connection with AvaTax",
+      "run-order-synchronization": "Send order to AvaTax" 
+    } 
+  } 
+}

@@ -6,6 +6,7 @@ using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;

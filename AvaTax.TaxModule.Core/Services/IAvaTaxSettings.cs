@@ -1,4 +1,4 @@
-﻿namespace AvaTax.TaxModule.Web.Services
+﻿namespace AvaTax.TaxModule.Core.Services
 {
     /// <summary>
     /// Represents the settings for Avalara API connection endpoint

@@ -5,7 +5,11 @@ using Common.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Data.Services;
 using VirtoCommerce.Domain.Customer.Model;
+using VirtoCommerce.Domain.Store.Model;
+using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Settings;
 using Xunit;
@@ -65,6 +69,43 @@ namespace AvaTax.TaxModule.Test
             }
         };
 
+        public static readonly IEnumerable<object[]> TestData = new List<object[]>
+        {
+            new object[] {GetValidAddress(), true},
+            new object[] {GetInvalidAddress(), false},
+            new object[] {GetEmptyAddress(), false}
+        };
+
+        [Theory]
+        [MemberData(nameof(TestData))]
+        [CLSCompliant(false)]
+        public void TestAddressValidation(Address address, bool expectedIsValid)
+        {
+            const string storeId = "some-test-store";
+
+            // Arrange
+            var storeService = new Mock<IStoreService>();
+            storeService.Setup(x => x.GetById(storeId)).Returns(new Store
+            {
+                TaxProviders = new List<TaxProvider>
+                {
+                    new AvaTaxRateProvider
+                    {
+                        IsActive = true,
+                        Settings = Settings
+                    }
+                }
+            });
+
+            var target = new AddressValidationService(storeService.Object, CreateAvaTaxClient);
+
+            // Act
+            var result = target.ValidateAddress(address, storeId);
+
+            // Assert
+            Assert.Equal(expectedIsValid, result.AddressIsValid);
+        }
+
         [Fact]
         public void Valid_evaluation_context_successfull_tax_calculation()
         {
@@ -116,6 +157,31 @@ namespace AvaTax.TaxModule.Test
                 RegionName = "Pennsylvania",
                 Organization = "org1"
             };
+        }
+
+        private static Address GetInvalidAddress()
+        {
+            return new Address
+            {
+                AddressType = AddressType.Shipping,
+                Phone = "+0000000",
+                PostalCode = "10000",
+                CountryCode = "US",
+                CountryName = "United states",
+                Email = "user@mail.com",
+                FirstName = "first name",
+                LastName = "last name",
+                Line1 = "11111 Bad street address",
+                City = "New York",
+                RegionId = "CA",
+                RegionName = "California",
+                Organization = "org1"
+            };
+        }
+
+        private static Address GetEmptyAddress()
+        {
+            return new Address();
         }
 
         private static ICollection<TaxLine> GetContextTaxLines()

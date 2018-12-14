@@ -4,6 +4,8 @@ using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Microsoft.Practices.Unity;
 using System;
+using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Data.Services;
 using VirtoCommerce.Domain.Tax.Services;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Settings;
@@ -37,6 +39,8 @@ namespace AvaTax.TaxModule.Web
             }
 
             _container.RegisterInstance<Func<IAvaTaxSettings, AvaTaxClient>>(ClientFactory);
+            _container.RegisterType<IAddressValidationService, AddressValidationService>();
+            _container.RegisterType<IOrdersSynchronizationService, OrdersSynchronizationService>();
         }
 
         public override void PostInitialize()
