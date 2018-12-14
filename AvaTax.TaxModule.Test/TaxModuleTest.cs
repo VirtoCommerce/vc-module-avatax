@@ -5,6 +5,7 @@ using Common.Logging;
 using Moq;
 using System;
 using System.Collections.Generic;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Services;
 using VirtoCommerce.Domain.Customer.Model;
@@ -26,12 +27,6 @@ namespace AvaTax.TaxModule.Test
         private const string AvalaraServiceUrl = "https://sandbox-rest.avatax.com";
         private const string AvalaraCompanyCode = "APITrialCompany";
 
-        private const string UsernamePropertyName = "Avalara.Tax.Credentials.AccountNumber";
-        private const string PasswordPropertyName = "Avalara.Tax.Credentials.LicenseKey";
-        private const string ServiceUrlPropertyName = "Avalara.Tax.Credentials.ServiceUrl";
-        private const string CompanyCodePropertyName = "Avalara.Tax.Credentials.CompanyCode";
-        private const string IsEnabledPropertyName = "Avalara.Tax.IsEnabled";
-
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "2.x";
 
@@ -40,31 +35,31 @@ namespace AvaTax.TaxModule.Test
             new SettingEntry
             {
                 Value = AvalaraUsername,
-                Name = UsernamePropertyName,
+                Name = ModuleConstants.Settings.Credentials.AccountNumber,
                 ValueType = SettingValueType.ShortText
             },
             new SettingEntry
             {
                 Value = AvalaraPassword,
-                Name = PasswordPropertyName,
+                Name = ModuleConstants.Settings.Credentials.LicenseKey,
                 ValueType = SettingValueType.SecureString
             },
             new SettingEntry
             {
                 Value = AvalaraServiceUrl,
-                Name = ServiceUrlPropertyName,
+                Name = ModuleConstants.Settings.Credentials.ServiceUrl,
                 ValueType = SettingValueType.ShortText
             },
             new SettingEntry
             {
                 Value = AvalaraCompanyCode,
-                Name = CompanyCodePropertyName,
+                Name = ModuleConstants.Settings.Credentials.CompanyCode,
                 ValueType = SettingValueType.ShortText
             },
             new SettingEntry
             {
                 Value = "True",
-                Name = IsEnabledPropertyName,
+                Name = ModuleConstants.Settings.IsEnabled,
                 ValueType = SettingValueType.Boolean
             }
         };

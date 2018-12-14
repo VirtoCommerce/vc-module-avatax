@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.Domain.Commerce.Model.Search;
@@ -61,7 +62,7 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 var store = stores[orderGroup.Key];
 
-                var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == "AvaTaxRateProvider");
+                var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
                 if (avaTaxProvider != null && avaTaxProvider.IsActive)
                 {
                     foreach (var order in orderGroup)

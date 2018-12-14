@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -10,11 +11,11 @@ namespace AvaTax.TaxModule.Web.Services
         {
             return new AvaTaxSettings
             {
-                AccountNumber = settings.GetSettingValue("Avalara.Tax.Credentials.AccountNumber", string.Empty),
-                LicenseKey = settings.GetSettingValue("Avalara.Tax.Credentials.LicenseKey", string.Empty),
-                CompanyCode = settings.GetSettingValue("Avalara.Tax.Credentials.CompanyCode", string.Empty),
-                ServiceUrl = settings.GetSettingValue("Avalara.Tax.Credentials.ServiceUrl", string.Empty),
-                IsEnabled = settings.GetSettingValue("Avalara.Tax.IsEnabled", false)
+                AccountNumber = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AccountNumber, string.Empty),
+                LicenseKey = settings.GetSettingValue(ModuleConstants.Settings.Credentials.LicenseKey, string.Empty),
+                CompanyCode = settings.GetSettingValue(ModuleConstants.Settings.Credentials.CompanyCode, string.Empty),
+                ServiceUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.ServiceUrl, string.Empty),
+                IsEnabled = settings.GetSettingValue(ModuleConstants.Settings.IsEnabled, false)
             };
         }
 

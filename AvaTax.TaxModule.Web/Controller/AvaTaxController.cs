@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Services;
@@ -117,7 +118,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [HttpPost]
         [ResponseType(typeof(OrdersSynchronizationPushNotification))]
         [Route("orders/synchronize")]
-        [CheckPermission(Permission = "tax:manage")]
+        [CheckPermission(Permission = ModuleConstants.Permissions.TaxManage)]
         public IHttpActionResult SynchronizeOrders(OrdersSynchronizationRequest request)
         {
             var notification = Enqueue(request);
@@ -128,7 +129,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [HttpPost]
         [ResponseType(typeof(void))]
         [Route("orders/{jobId}/cancel")]
-        [CheckPermission(Permission = "tax:manage")]
+        [CheckPermission(Permission = ModuleConstants.Permissions.TaxManage)]
         public IHttpActionResult CancelOrdersSynchronization(string jobId)
         {
             BackgroundJob.Delete(jobId);
@@ -147,7 +148,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [HttpGet]
         [ResponseType(typeof(AvaTaxOrderSynchronizationStatus))]
         [Route("orders/{orderId}/status")]
-        [CheckPermission(Permission = "tax:manage")]
+        [CheckPermission(Permission = ModuleConstants.Permissions.TaxManage)]
         public async Task<IHttpActionResult> GetOrderSynchronizationStatus(string orderId)
         {
             var result = await _ordersSynchronizationService.GetOrderSynchronizationStatusAsync(orderId);

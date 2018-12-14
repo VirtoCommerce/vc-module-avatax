@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Avalara.AvaTax.RestClient;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
@@ -31,7 +32,7 @@ namespace AvaTax.TaxModule.Data.Services
                 throw new ArgumentException("Store with specified storeId does not exist.", nameof(storeId));
             }
 
-            var avaTaxProvider = store.TaxProviders?.FirstOrDefault(x => x.Code == "AvaTaxRateProvider" && x.IsActive);
+            var avaTaxProvider = store.TaxProviders?.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode && x.IsActive);
             if (avaTaxProvider == null)
             {
                 throw new ArgumentException($"Store '{storeId}' does not use AvaTaxRateProvider, so it can't be used for address validation.");

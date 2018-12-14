@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
@@ -39,7 +40,7 @@ namespace AvaTax.TaxModule.Data.Services
             var result = AbstractTypeFactory<AvaTaxOrderSynchronizationStatus>.TryCreateInstance();
 
             var store = _storeService.GetById(order.StoreId);
-            var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == "AvaTaxRateProvider");
+            var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
             if (avaTaxProvider != null && avaTaxProvider.IsActive)
             {
                 result.StoreUsesAvaTax = true;
@@ -100,7 +101,7 @@ namespace AvaTax.TaxModule.Data.Services
                     var order = entry.CustomerOrder;
                     var store = entry.Store;
 
-                    var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == "AvaTaxRateProvider");
+                    var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
                     if (avaTaxProvider != null && avaTaxProvider.IsActive)
                     {
                         var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);

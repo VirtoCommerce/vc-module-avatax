@@ -6,6 +6,7 @@ using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Tax.Model;
@@ -20,7 +21,7 @@ namespace AvaTax.TaxModule.Data
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
         public AvaTaxRateProvider()
-            : base("AvaTaxRateProvider")
+            : base(ModuleConstants.AvaTaxRateProviderCode)
         {
         }
 
