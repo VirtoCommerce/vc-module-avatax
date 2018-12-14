@@ -1,10 +1,11 @@
-﻿using AvaTax.TaxModule.Core.Models;
-using VirtoCommerce.Domain.Commerce.Model.Search;
+﻿using System.Collections.Generic;
+using AvaTax.TaxModule.Core.Models;
 
 namespace AvaTax.TaxModule.Core.Services
 {
     public interface IOrdersFeed
     {
-        GenericSearchResult<OrderFeedEntry> GetOrders(int skip, int take);
+        int GetTotalOrdersCount();
+        IEnumerable<OrderFeedEntry> GetOrders(int skip, int take);
     }
 }

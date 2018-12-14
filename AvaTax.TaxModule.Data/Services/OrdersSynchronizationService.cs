@@ -80,8 +80,7 @@ namespace AvaTax.TaxModule.Data.Services
 
         public async Task SynchronizeOrdersAsync(IOrdersFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
         {
-            var emptyResult = ordersFeed.GetOrders(0, 0);
-            var totalCount = emptyResult.TotalCount;
+            var totalCount = ordersFeed.GetTotalOrdersCount();
 
             var progressInfo = new AvaTaxOrdersSynchronizationProgress
             {
@@ -96,7 +95,7 @@ namespace AvaTax.TaxModule.Data.Services
             for (int i = 0; i < totalCount; i += BatchSize)
             {
                 var searchResult = ordersFeed.GetOrders(i, BatchSize);
-                foreach (var entry in searchResult.Results)
+                foreach (var entry in searchResult)
                 {
                     var order = entry.CustomerOrder;
                     var store = entry.Store;

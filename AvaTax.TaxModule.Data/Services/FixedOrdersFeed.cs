@@ -2,7 +2,6 @@
 using System.Linq;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
-using VirtoCommerce.Domain.Commerce.Model.Search;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Store.Services;
 
@@ -21,13 +20,15 @@ namespace AvaTax.TaxModule.Data.Services
             _storeService = storeService;
         }
 
-        public GenericSearchResult<OrderFeedEntry> GetOrders(int skip, int take)
+        public int GetTotalOrdersCount()
         {
-            var totalCount = _orderIds.Length;
+            return _orderIds.Length;
+        }
 
-            var result = new GenericSearchResult<OrderFeedEntry>() { TotalCount = totalCount };
+        public IEnumerable<OrderFeedEntry> GetOrders(int skip, int take)
+        {
             var entries = new List<OrderFeedEntry>();
-            if (skip <= totalCount && take > 0)
+            if (skip < _orderIds.Length && take > 0)
             {
                 var selectedOrderIds = _orderIds.Skip(skip).Take(take).ToArray();
                 var orders = _orderService.GetByIds(selectedOrderIds, string.Empty);
@@ -46,8 +47,7 @@ namespace AvaTax.TaxModule.Data.Services
                 }
             }
 
-            result.Results = entries;
-            return result;
+            return entries;
         }
     }
 }
