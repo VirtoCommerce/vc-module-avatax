@@ -17,7 +17,8 @@
           "waiting-for-status": "Waiting for AvaTax status...",
           "store-does-not-use-avatax": "AvaTax is not enabled for this order's store.",
           "sent-to-avatax": "Sent to AvaTax:",
-          "error": "Could not get date of last synchronization with AvaTax." 
+          "error": "Could not get date of last synchronization with AvaTax.",
+          "send-to-avatax": "Click to send this order to AvaTax" 
         }
       } 
     } 

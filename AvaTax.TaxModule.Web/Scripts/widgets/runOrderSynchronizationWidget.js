@@ -10,7 +10,7 @@
     }
 
     function updateWidgetContents(orderId) {
-        $scope.avaTaxMessage = 'avatax.commands.run-order-synchronization.labels.waiting-for-status';
+        $scope.avaTaxMessage = 'avaTax.commands.run-order-synchronization.labels.waiting-for-status';
         $scope.avaTaxOrderStatus = null;
         $scope.avaTaxOrderStatusReceived = false;
 
@@ -19,12 +19,14 @@
                 $scope.avaTaxOrderStatus = orderStatus;
 
                 if (!orderStatus.storeUsesAvaTax) {
-                    $scope.avaTaxMessage = 'avatax.commands.run-order-synchronization.labels.store-does-not-use-avatax';
+                    $scope.avaTaxMessage = 'avaTax.commands.run-order-synchronization.labels.store-does-not-use-avatax';
                 } else if (orderStatus.hasErrors) {
-                    $scope.avaTaxMessage = 'avatax.commands.run-order-synchronization.labels.error';
+                    $scope.avaTaxMessage = 'avaTax.commands.run-order-synchronization.labels.error';
+                } else if (!orderStatus.lastSynchronizationDate) {
+                    $scope.avaTaxMessage = 'avaTax.commands.run-order-synchronization.labels.send-to-avatax';
                 } else {
                     $scope.avaTaxOrderStatusReceived = true;
-                    $scope.avaTaxMessage = 'avatax.commands.run-order-synchronization.labels.sent-to-avatax';
+                    $scope.avaTaxMessage = 'avaTax.commands.run-order-synchronization.labels.sent-to-avatax';
                 }
             });
     }

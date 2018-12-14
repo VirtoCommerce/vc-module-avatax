@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core.Models;
@@ -46,8 +47,15 @@ namespace AvaTax.TaxModule.Data.Services
 
                 try
                 {
-                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(store.Id, order.Number, DocumentType.SalesInvoice, string.Empty);
+                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(store.Id, order.Number, 
+                        DocumentType.SalesInvoice, string.Empty);
                     result.LastSynchronizationDate = transactionModel.modifiedDate;
+                }
+                catch (AvaTaxError e) when (e.statusCode == HttpStatusCode.NotFound)
+                {
+                    // The transaction does not exist in Avalara - the order had probably never been sent there.
+                    // This is normal, and we shouldn't treat it as error.
+                    result.LastSynchronizationDate = null;
                 }
                 catch (AvaTaxError e)
                 {
