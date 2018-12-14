@@ -7,6 +7,7 @@ namespace AvaTax.TaxModule.Core.Services
 {
     public interface IOrdersSynchronizationService
     {
-        Task SynchronizeOrders(string[] orderIds, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken);
+        Task<AvaTaxOrderSynchronizationStatus> GetOrderSynchronizationStatusAsync(string orderId);
+        Task SynchronizeOrdersAsync(string[] orderIds, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken);
     }
 }

@@ -25,7 +25,50 @@ namespace AvaTax.TaxModule.Data.Services
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
-        public async Task SynchronizeOrders(string[] orderIds, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
+        public async Task<AvaTaxOrderSynchronizationStatus> GetOrderSynchronizationStatusAsync(string orderId)
+        {
+            var order = _orderService.GetByIds(new[] {orderId}).FirstOrDefault();
+            if (order == null)
+            {
+                throw new ArgumentException("Order with given ID does not exist.", nameof(orderId));
+            }
+
+            var result = AbstractTypeFactory<AvaTaxOrderSynchronizationStatus>.TryCreateInstance();
+
+            var store = _storeService.GetById(order.StoreId);
+            var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == "AvaTaxRateProvider");
+            if (avaTaxProvider != null && avaTaxProvider.IsActive)
+            {
+                result.StoreUsesAvaTax = true;
+
+                var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
+                var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
+
+                try
+                {
+                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(store.Id, order.Number, DocumentType.SalesInvoice, string.Empty);
+                    result.LastSynchronizationDate = transactionModel.modifiedDate;
+                }
+                catch (AvaTaxError e)
+                {
+                    var errorDetails = e.error.error;
+                    var joinedMessages = string.Join(Environment.NewLine,
+                        errorDetails.details.Select(x => $"{x.severity}: {x.message} {x.description}"));
+
+                    var errorMessage = $"{errorDetails.message}{Environment.NewLine}{joinedMessages}";
+                    result.Errors = new[] { errorMessage };
+                    result.HasErrors = true;
+                }
+            }
+            else
+            {
+                result.StoreUsesAvaTax = false;
+            }
+
+            return result;
+        }
+
+        public async Task SynchronizeOrdersAsync(string[] orderIds, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
         {
             var progressInfo = new AvaTaxOrdersSynchronizationProgress
             {

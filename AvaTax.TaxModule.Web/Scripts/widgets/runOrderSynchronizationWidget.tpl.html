@@ -1,5 +1,6 @@
 ﻿<div class="gridster-cnt" ng-click="runOrderSynchronization()">
     <div class="cnt-inner">
-        <div class="list-t">{{ 'avaTax.commands.run-order-synchronization' | translate }}</div>
+        <div class="list-t">{{ avaTaxMessage | translate }}</div>
+        <div ng-if="avaTaxOrderStatusReceived" am-time-ago="avaTaxOrderStatus.lastSynchronizationDate"></div>
     </div>
 </div>

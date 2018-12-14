@@ -4,6 +4,7 @@ using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using AvaTax.TaxModule.Core.Models;
@@ -24,16 +25,18 @@ namespace AvaTax.TaxModule.Web.Controller
     {
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly AvalaraLogger _logger;
+        private readonly IOrdersSynchronizationService _ordersSynchronizationService;
         private readonly IAddressValidationService _addressValidationService;
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IUserNameResolver _userNameResolver;
         
         [CLSCompliant(false)]
-        public AvaTaxController(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IAddressValidationService addressValidationService, 
-            IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
+        public AvaTaxController(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOrdersSynchronizationService ordersSynchronizationService,
+            IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
         {
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
+            _ordersSynchronizationService = ordersSynchronizationService;
             _addressValidationService = addressValidationService;
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
@@ -130,6 +133,16 @@ namespace AvaTax.TaxModule.Web.Controller
         public IHttpActionResult ValidateAddress(AddressValidationRequest request)
         {
             var result = _addressValidationService.ValidateAddress(request.Address, request.StoreId);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(AvaTaxOrderSynchronizationStatus))]
+        [Route("orders/{orderId}/status")]
+        [CheckPermission(Permission = "tax:manage")]
+        public async Task<IHttpActionResult> GetOrderSynchronizationStatus(string orderId)
+        {
+            var result = await _ordersSynchronizationService.GetOrderSynchronizationStatusAsync(orderId);
             return Ok(result);
         }
 

@@ -42,7 +42,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             try
             {
                 var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
-                await _ordersSynchronizationService.SynchronizeOrders(request.OrderIds, ProgressCallback, cancellationTokenWrapper);
+                await _ordersSynchronizationService.SynchronizeOrdersAsync(request.OrderIds, ProgressCallback, cancellationTokenWrapper);
             }
             catch (JobAbortedException)
             {

@@ -12,7 +12,14 @@
     },
     "commands": {
       "test-connection": "Test connection with AvaTax",
-      "run-order-synchronization": "Send order to AvaTax" 
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "Waiting for AvaTax status...",
+          "store-does-not-use-avatax": "AvaTax is not enabled for this order's store.",
+          "sent-to-avatax": "Sent to AvaTax:",
+          "error": "Could not get date of last synchronization with AvaTax." 
+        }
+      } 
     } 
   } 
 }
