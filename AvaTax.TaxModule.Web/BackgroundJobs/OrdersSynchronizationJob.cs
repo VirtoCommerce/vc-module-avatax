@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Services;
-using AvaTax.TaxModule.Web.Models;
 using AvaTax.TaxModule.Web.Models.PushNotifications;
 using Hangfire;
 using Hangfire.Server;
@@ -12,6 +12,7 @@ using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.PushNotifications;
+using VirtoCommerce.Platform.Core.Settings;
 
 namespace AvaTax.TaxModule.Web.BackgroundJobs
 {
@@ -24,9 +25,11 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         private readonly ICustomerOrderService _orderService;
         private readonly ICustomerOrderSearchService _orderSearchService;
         private readonly IStoreService _storeService;
+        private readonly ISettingsManager _settingsManager;
 
         public OrdersSynchronizationJob(IOrdersSynchronizationService ordersSynchronizationService, IPushNotificationManager pushNotificationManager, 
-            IChangeLogService changeLogService, ICustomerOrderService orderService, ICustomerOrderSearchService orderSearchService, IStoreService storeService)
+            IChangeLogService changeLogService, ICustomerOrderService orderService, ICustomerOrderSearchService orderSearchService, IStoreService storeService,
+            ISettingsManager settingsManager)
         {
             _ordersSynchronizationService = ordersSynchronizationService;
             _pushNotificationManager = pushNotificationManager;
@@ -34,13 +37,14 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             _orderService = orderService;
             _orderSearchService = orderSearchService;
             _storeService = storeService;
+            _settingsManager = settingsManager;
         }
 
         [DisableConcurrentExecution(60 * 60 * 24)]
         public async Task RunScheduled(IJobCancellationToken cancellationToken, PerformContext context)
         {
             var currentTime = DateTime.UtcNow;
-            var lastRunTime = GetLastRunTime();
+            var lastRunTime = _settingsManager.GetValue(ModuleConstants.Settings.Synchronization.LastExecutionDate, (DateTime?)null);
 
             var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderService, _orderSearchService, _storeService, lastRunTime, currentTime);
 
@@ -50,7 +54,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
 
             await PerformOrderSynchronization(ordersFeed, ProgressCallback, cancellationToken);
 
-            StoreLastRunTime(currentTime);
+            _settingsManager.SetValue(ModuleConstants.Settings.Synchronization.LastExecutionDate, currentTime);
         }
 
         [DisableConcurrentExecution(60 * 60 * 24)]
@@ -97,16 +101,6 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         {
             var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
             await _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationTokenWrapper);
-        }
-
-        private DateTime GetLastRunTime()
-        {
-            throw new NotImplementedException();
-        }
-
-        private void StoreLastRunTime(DateTime lastRunTime)
-        {
-            throw new NotImplementedException();
         }
     }
 }

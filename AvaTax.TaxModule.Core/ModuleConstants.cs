@@ -6,6 +6,11 @@
         {
             public const string IsEnabled = "Avalara.Tax.IsEnabled";
 
+            public static class Synchronization
+            {
+                public const string LastExecutionDate = "Avalara.Tax.Synchronization.LastExecutionDate";
+            }
+
             public static class Credentials
             {
                 public const string AccountNumber = "Avalara.Tax.Credentials.AccountNumber";
