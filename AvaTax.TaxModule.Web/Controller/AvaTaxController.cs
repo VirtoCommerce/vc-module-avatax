@@ -10,13 +10,10 @@ using System.Web.Http.Description;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
-using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.BackgroundJobs;
 using AvaTax.TaxModule.Web.Models;
 using AvaTax.TaxModule.Web.Models.PushNotifications;
 using Hangfire;
-using VirtoCommerce.Domain.Order.Services;
-using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Web.Security;
@@ -33,13 +30,10 @@ namespace AvaTax.TaxModule.Web.Controller
         private readonly IAddressValidationService _addressValidationService;
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IUserNameResolver _userNameResolver;
-        private readonly ICustomerOrderService _orderService;
-        private readonly IStoreService _storeService;
         
         [CLSCompliant(false)]
         public AvaTaxController(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOrdersSynchronizationService ordersSynchronizationService,
-            IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, 
-            ICustomerOrderService orderService, IStoreService storeService)
+            IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
         {
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
@@ -47,8 +41,6 @@ namespace AvaTax.TaxModule.Web.Controller
             _addressValidationService = addressValidationService;
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
-            _orderService = orderService;
-            _storeService = storeService;
         }
 
         [HttpPost]
