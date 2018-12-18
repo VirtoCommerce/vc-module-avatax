@@ -96,10 +96,15 @@ namespace AvaTax.TaxModule.Data.Services
             for (int i = 0; i < totalCount; i += BatchSize)
             {
                 var searchResult = ordersFeed.GetOrders(i, BatchSize);
-                foreach (var entry in searchResult)
+                var orderIds = searchResult.Select(x => x.CustomerOrderId).ToArray();
+                var orders = _orderService.GetByIds(orderIds);
+
+                var storeIds = orders.Select(x => x.StoreId).Distinct().ToArray();
+                var stores = _storeService.GetByIds(storeIds).ToDictionary(x => x.Id, x => x);
+
+                foreach (var order in orders)
                 {
-                    var order = entry.CustomerOrder;
-                    var store = entry.Store;
+                    var store = stores[order.StoreId];
 
                     var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
                     if (avaTaxProvider != null && avaTaxProvider.IsActive)

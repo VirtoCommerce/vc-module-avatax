@@ -9,7 +9,6 @@ using AvaTax.TaxModule.Web.Models.PushNotifications;
 using Hangfire;
 using Hangfire.Server;
 using VirtoCommerce.Domain.Order.Services;
-using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.ChangeLog;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Settings;
@@ -22,21 +21,16 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         private readonly IOrdersSynchronizationService _ordersSynchronizationService;
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IChangeLogService _changeLogService;
-        private readonly ICustomerOrderService _orderService;
         private readonly ICustomerOrderSearchService _orderSearchService;
-        private readonly IStoreService _storeService;
         private readonly ISettingsManager _settingsManager;
 
         public OrdersSynchronizationJob(IOrdersSynchronizationService ordersSynchronizationService, IPushNotificationManager pushNotificationManager, 
-            IChangeLogService changeLogService, ICustomerOrderService orderService, ICustomerOrderSearchService orderSearchService, IStoreService storeService,
-            ISettingsManager settingsManager)
+            IChangeLogService changeLogService, ICustomerOrderSearchService orderSearchService, ISettingsManager settingsManager)
         {
             _ordersSynchronizationService = ordersSynchronizationService;
             _pushNotificationManager = pushNotificationManager;
             _changeLogService = changeLogService;
-            _orderService = orderService;
             _orderSearchService = orderSearchService;
-            _storeService = storeService;
             _settingsManager = settingsManager;
         }
 
@@ -46,7 +40,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             var currentTime = DateTime.UtcNow;
             var lastRunTime = _settingsManager.GetValue(ModuleConstants.Settings.Synchronization.LastExecutionDate, (DateTime?)null);
 
-            var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderService, _orderSearchService, _storeService, lastRunTime, currentTime);
+            var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderSearchService, lastRunTime, currentTime);
 
             void ProgressCallback(AvaTaxOrdersSynchronizationProgress progress)
             {
@@ -61,7 +55,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         public async Task RunManually(string[] orderIds, OrdersSynchronizationPushNotification notification, 
             IJobCancellationToken cancellationToken, PerformContext context)
         {
-            var ordersFeed = new FixedOrdersFeed(orderIds, _orderService, _storeService);
+            var ordersFeed = new FixedOrdersFeed(orderIds);
 
             void ProgressCallback(AvaTaxOrdersSynchronizationProgress x)
             {
