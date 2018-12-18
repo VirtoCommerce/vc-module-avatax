@@ -1,24 +1,24 @@
-{
+п»ї{
   "avaTax": {
     "blades": {
       "orders-synchronization-progress": {
         "labels": {
-          "start": "Начало",
-          "end": "Конец",
-          "stats": "Обработано — {{ processedCount }} из {{ totalCount }} заказов",
-          "errors": "Ошибки"
+          "start": "РќР°С‡Р°Р»Рѕ",
+          "end": "РљРѕРЅРµС†",
+          "stats": "РћР±СЂР°Р±РѕС‚Р°РЅРѕ вЂ” {{ processedCount }} РёР· {{ totalCount }} Р·Р°РєР°Р·РѕРІ",
+          "errors": "РћС€РёР±РєРё"
         }
       }
     },
     "commands": {
-      "test-connection": "Проверить соединение с AvaTax",
+      "test-connection": "РџСЂРѕРІРµСЂРёС‚СЊ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ AvaTax",
       "run-order-synchronization": {
         "labels": {
-          "waiting-for-status": "Ожидание состояния заказа в AvaTax...",
-          "store-does-not-use-avatax": "Служба AvaTax не активирована для магазина этого заказа.",
-          "sent-to-avatax": "Заказ отправлен в AvaTax:",
-          "error": "Получение отправки заказа в AvaTax завершилось неудачей.",
-          "send-to-avatax": "Нажмите для отправки заказа в AvaTax"
+          "waiting-for-status": "РћР¶РёРґР°РЅРёРµ СЃРѕСЃС‚РѕСЏРЅРёСЏ Р·Р°РєР°Р·Р° РІ AvaTax...",
+          "store-does-not-use-avatax": "РЎР»СѓР¶Р±Р° AvaTax РЅРµ Р°РєС‚РёРІРёСЂРѕРІР°РЅР° РґР»СЏ РјР°РіР°Р·РёРЅР° СЌС‚РѕРіРѕ Р·Р°РєР°Р·Р°.",
+          "sent-to-avatax": "Р—Р°РєР°Р· РѕС‚РїСЂР°РІР»РµРЅ РІ AvaTax:",
+          "error": "РџРѕР»СѓС‡РµРЅРёРµ РѕС‚РїСЂР°РІРєРё Р·Р°РєР°Р·Р° РІ AvaTax Р·Р°РІРµСЂС€РёР»РѕСЃСЊ РЅРµСѓРґР°С‡РµР№.",
+          "send-to-avatax": "РќР°Р¶РјРёС‚Рµ РґР»СЏ РѕС‚РїСЂР°РІРєРё Р·Р°РєР°Р·Р° РІ AvaTax"
         }
       } 
     }
