@@ -1,6 +1,7 @@
 ﻿angular.module('virtoCommerce.avataxModule')
 .controller('virtoCommerce.avataxModule.runOrderSynchronizationWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.avataxModule.resources', function ($scope, bladeNavigationService, avataxModuleResources) {
     $scope.widget.refresh = function () {
+        $scope.background = "transparent";
         $scope.$watch(function(scope) { return scope.blade.currentEntity; },
             function(currentEntity) {
                 if (currentEntity) {
@@ -28,7 +29,18 @@
                     $scope.avaTaxOrderStatusReceived = true;
                     $scope.avaTaxMessage = 'avaTax.commands.run-order-synchronization.labels.sent-to-avatax';
                 }
+
+                updateWidgetColor(orderStatus);
             });
+    }
+
+    function updateWidgetColor(orderStatus) {
+        var currentEntity = $scope.blade.currentEntity;
+        if (orderStatus.lastSynchronizationDate >= currentEntity.modifiedDate) {
+            $scope.background = "transparent";
+        } else {
+            $scope.background = "LightCoral";
+        }
     }
 
     $scope.runOrderSynchronization = function() {
