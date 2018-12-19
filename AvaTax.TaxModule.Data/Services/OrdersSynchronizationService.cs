@@ -11,6 +11,7 @@ using AvaTax.TaxModule.Web.Services;
 using Newtonsoft.Json;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
+using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -52,7 +53,9 @@ namespace AvaTax.TaxModule.Data.Services
 
                 try
                 {
-                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(store.Id, order.Number, 
+                    var companyCode = GetCompanyCode(avaTaxSettings, store);
+
+                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(companyCode, order.Number, 
                         DocumentType.SalesInvoice, string.Empty);
                     result.TransactionId = transactionModel.id;
                     result.LastSynchronizationDate = transactionModel.modifiedDate;
@@ -118,7 +121,8 @@ namespace AvaTax.TaxModule.Data.Services
 
                         try
                         {
-                            await SendOrderToAvaTax(order, order.StoreId, avaTaxClient);
+                            var companyCode = GetCompanyCode(avaTaxSettings, store);
+                            await SendOrderToAvaTax(order, companyCode, avaTaxClient);
                         }
                         catch (AvaTaxError e)
                         {
@@ -147,6 +151,17 @@ namespace AvaTax.TaxModule.Data.Services
 
             progressInfo.Message = "Orders synchronization completed.";
             progressCallback(progressInfo);
+        }
+
+        protected virtual string GetCompanyCode(IAvaTaxSettings avaTaxSettings, Store store)
+        {
+            var result = avaTaxSettings.CompanyCode;
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                result = store.Id;
+            }
+
+            return result;
         }
 
         protected virtual async Task SendOrderToAvaTax(CustomerOrder order, string companyCode, AvaTaxClient avaTaxClient)
