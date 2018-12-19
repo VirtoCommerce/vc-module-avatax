@@ -145,7 +145,7 @@ namespace AvaTax.TaxModule.Data.Services
                     cancellationToken?.ThrowIfCancellationRequested();
                 }
 
-                var processedCount = Math.Min(i, totalCount);
+                var processedCount = Math.Min(i + orderIds.Length, totalCount);
                 progressInfo.ProcessedCount = processedCount;
                 progressInfo.Message = $"Processed {processedCount} of {totalCount} orders";
                 progressCallback(progressInfo);
