@@ -7,14 +7,13 @@ using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Search;
 using VirtoCommerce.Domain.Search.ChangeFeed;
 using VirtoCommerce.Platform.Core.ChangeLog;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace AvaTax.TaxModule.Data.Services
 {
     public class ChangeLogBasedOrdersFeed : IIndexDocumentChangeFeed
     {
         // TECHDEBT: this feed should ideally be implemented in OrdersModule...
-
-        private const string CustomerOrderType = "CustomerOrderEntity";
 
         private readonly IChangeLogService _changeLogService;
         private readonly ICustomerOrderSearchService _orderSearchService;
@@ -46,7 +45,8 @@ namespace AvaTax.TaxModule.Data.Services
                 }
                 else
                 {
-                    return _changeLogService.FindChangeHistory(CustomerOrderType, _startDate, _endDate)
+                    var customerOrderType = GetCustomerOrderType();
+                    return _changeLogService.FindChangeHistory(customerOrderType, _startDate, _endDate)
                                             .Select(x => x.ObjectId)
                                             .Distinct()
                                             .Count();
@@ -79,7 +79,8 @@ namespace AvaTax.TaxModule.Data.Services
             }
             else
             {
-                return _changeLogService.FindChangeHistory(CustomerOrderType, _startDate, _endDate)
+                var customerOrderType = GetCustomerOrderType();
+                return _changeLogService.FindChangeHistory(customerOrderType, _startDate, _endDate)
                                         .Select(x => x.ObjectId)
                                         .Distinct()
                                         .Skip(skip)
@@ -92,6 +93,12 @@ namespace AvaTax.TaxModule.Data.Services
                                         })
                                         .ToArray();
             }
+        }
+
+        private string GetCustomerOrderType()
+        {
+            var concreteOrder = AbstractTypeFactory<CustomerOrder>.TryCreateInstance();
+            return concreteOrder.GetType().Name;
         }
     }
 }
