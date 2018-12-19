@@ -15,6 +15,7 @@ namespace AvaTax.TaxModule.Web.Services
                 LicenseKey = settings.GetSettingValue(ModuleConstants.Settings.Credentials.LicenseKey, string.Empty),
                 CompanyCode = settings.GetSettingValue(ModuleConstants.Settings.Credentials.CompanyCode, string.Empty),
                 ServiceUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.ServiceUrl, string.Empty),
+                AdminAreaUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AdminAreaUrl, string.Empty),
                 IsEnabled = settings.GetSettingValue(ModuleConstants.Settings.IsEnabled, false)
             };
         }
@@ -34,6 +35,7 @@ namespace AvaTax.TaxModule.Web.Services
         public string LicenseKey { get; set; }
         public string CompanyCode { get; set; }
         public string ServiceUrl { get; set; }
+        public string AdminAreaUrl { get; set; }
         public bool IsEnabled { get; set; } = false;
     }
 }

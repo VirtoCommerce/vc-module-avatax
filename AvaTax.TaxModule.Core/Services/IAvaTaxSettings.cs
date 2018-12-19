@@ -10,6 +10,7 @@
         string LicenseKey { get; }
         bool IsEnabled { get; }
         string ServiceUrl { get; }
+        string AdminAreaUrl { get; }
         string CompanyCode { get; }
     }
 }

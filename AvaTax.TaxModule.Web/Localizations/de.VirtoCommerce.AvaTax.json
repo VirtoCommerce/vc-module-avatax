@@ -8,6 +8,7 @@
         "labels": {
           "last-sync-date": "Letzte Sendung an AvaTax",
           "transaction-in-avatax": "Transaktion in AvaTax",
+          "link-to-transaction": "Link zur Transaktion",
           "raw-transaction-content": "Inhalt der Transaktion",
           "not-sent-to-avatax": "Die Bestellung wurde nicht an AvaTax gesendet."
         }

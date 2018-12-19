@@ -17,6 +17,7 @@
                 public const string LicenseKey = "Avalara.Tax.Credentials.LicenseKey";
                 public const string CompanyCode = "Avalara.Tax.Credentials.CompanyCode";
                 public const string ServiceUrl = "Avalara.Tax.Credentials.ServiceUrl";
+                public const string AdminAreaUrl = "Avalara.Tax.Credentials.AdminAreaUrl";
             }
 
             public static class ScheduledOrderSynchronization

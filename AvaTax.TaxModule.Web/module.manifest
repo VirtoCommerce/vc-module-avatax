@@ -62,6 +62,12 @@
                 <description>Link to Avalara API service</description>
             </setting>
             <setting>
+                <name>Avalara.Tax.Credentials.AdminAreaUrl</name>
+                <valueType>string</valueType>
+                <title>Link to Avalara admin page</title>
+                <description>Link to Avalara admin page. Used for building links to AvaTax transactions.</description>
+            </setting>
+            <setting>
                 <name>Avalara.Tax.ScheduledOrdersSynchronization.IsEnabled</name>
                 <valueType>boolean</valueType>
                 <defaultValue>false</defaultValue>

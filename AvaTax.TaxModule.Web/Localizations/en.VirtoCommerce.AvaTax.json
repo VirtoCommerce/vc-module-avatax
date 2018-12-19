@@ -8,6 +8,7 @@
         "labels": {
           "last-sync-date": "Last send to AvaTax",
           "transaction-in-avatax": "Transaction in AvaTax",
+          "link-to-transaction": "Link to transaction:",
           "raw-transaction-content": "Raw transaction",
           "not-sent-to-avatax": "The order was not sent to AvaTax."
         }

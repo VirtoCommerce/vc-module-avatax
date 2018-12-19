@@ -53,7 +53,9 @@ namespace AvaTax.TaxModule.Data.Services
                 {
                     var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(store.Id, order.Number, 
                         DocumentType.SalesInvoice, string.Empty);
+                    result.TransactionId = transactionModel.id;
                     result.LastSynchronizationDate = transactionModel.modifiedDate;
+                    result.LinkToAvaTax = BuildLinkToAvaTaxTransaction(transactionModel, avaTaxSettings);
                     result.RawContent = JsonConvert.SerializeObject(transactionModel, Formatting.Indented);
                 }
                 catch (AvaTaxError e) when (e.statusCode == HttpStatusCode.NotFound)
@@ -148,6 +150,19 @@ namespace AvaTax.TaxModule.Data.Services
 
             progressInfo.Message = "Orders synchronization completed.";
             progressCallback(progressInfo);
+        }
+
+        protected virtual string BuildLinkToAvaTaxTransaction(TransactionModel transactionModel, IAvaTaxSettings avaTaxSettings)
+        {
+            string result = null;
+            if (!string.IsNullOrEmpty(avaTaxSettings.AdminAreaUrl)
+                && transactionModel.id != null
+                && transactionModel.companyId != null)
+            {
+                result = $"{avaTaxSettings.AdminAreaUrl}/cup/a/{avaTaxSettings.AccountNumber}/c/{transactionModel.companyId}/transactions/{transactionModel.id}";
+            }
+
+            return result;
         }
     }
 }
