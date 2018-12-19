@@ -134,8 +134,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\avaTax.js" />
+    <Content Include="Scripts\blades\order-synchronization-status.js" />
     <Content Include="Scripts\blades\orders-synchronization-progress.js" />
     <Content Include="Scripts\blades\orders-synchronization-progress.tpl.html" />
+    <Content Include="Scripts\blades\order-synchronization-status.tpl.html" />
     <Content Include="Scripts\notifications\ordersSynchronization-menu.tpl.html" />
     <Content Include="Scripts\notifications\ordersSynchronization-history.tpl.html" />
     <Content Include="Scripts\resources\avaTaxApi.js" />

@@ -43,23 +43,19 @@
         }
     }
 
-    $scope.runOrderSynchronization = function() {
-        avataxModuleResources.synchronizeOrders({ orderIds: [$scope.blade.currentEntity.id] }, function(notification) {
-            var newBlade = {
-                id: 'avaTaxOrderSynchronizationProgress',
-                notification: notification,
-                controller: 'virtoCommerce.avataxModule.ordersSynchronizationProgressController',
-                template: 'Modules/$(Avalara.Tax)/Scripts/blades/orders-synchronization-progress.tpl.html'
-            };
-
-            $scope.$on("new-notification-event", function (event, notification) {
-                if (notification && notification.id == newBlade.notification.id && notification.finished != null) {
-                    updateWidgetContents($scope.blade.currentEntity.id);
-                }
-            });
-
-            bladeNavigationService.showBlade(newBlade, $scope.blade);
-        });
+    $scope.showDetails = function() {
+        var newBlade = {
+            id: 'detailChild',
+            currentEntityId: $scope.blade.currentEntityId,
+            currentEntity: $scope.blade.currentEntity,
+            data: $scope.avaTaxOrderStatus,
+            lastSynchronizationDate: $scope.avaTaxOrderStatus.lastSynchronizationDate,
+            orderId: $scope.blade.currentEntity.id,
+            parentRefresh: updateWidgetContents,
+            controller: 'virtoCommerce.avataxModule.orderSynchronizationStatusController',
+            template: 'Modules/$(Avalara.Tax)/Scripts/blades/order-synchronization-status.tpl.html'
+        };
+        bladeNavigationService.showBlade(newBlade, $scope.blade);
     }
 
     $scope.widget.refresh();

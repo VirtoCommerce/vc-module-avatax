@@ -75,7 +75,7 @@ angular.module(moduleName, [])
 
             // Register order synchronization command (on the toolbar of the 'Customer orders' blade)
             var synchronizeOrdersCommand = {
-                name: 'Send to AvaTax',
+                name: 'avaTax.commands.send-to-avatax',
                 icon: 'fa fa-upload',
                 index: 2,
                 executeMethod: function(blade) {

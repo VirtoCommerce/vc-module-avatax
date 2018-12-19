@@ -1,5 +1,5 @@
 ﻿angular.module('virtoCommerce.avataxModule')
-    .controller('virtoCommerce.avataxModule.ordersSynchronizationProgressController', ['$scope', 'virtoCommerce.avataxModule.resources', function ($scope, avaTaxApiApi) {
+    .controller('virtoCommerce.avataxModule.ordersSynchronizationProgressController', ['$scope', function ($scope) {
         var blade = $scope.blade;
 
         $scope.$on("new-notification-event", function (event, notification) {

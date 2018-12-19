@@ -8,6 +8,7 @@ using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
 using AvaTax.TaxModule.Web.Services;
+using Newtonsoft.Json;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -53,6 +54,7 @@ namespace AvaTax.TaxModule.Data.Services
                     var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(store.Id, order.Number, 
                         DocumentType.SalesInvoice, string.Empty);
                     result.LastSynchronizationDate = transactionModel.modifiedDate;
+                    result.RawContent = JsonConvert.SerializeObject(transactionModel, Formatting.Indented);
                 }
                 catch (AvaTaxError e) when (e.statusCode == HttpStatusCode.NotFound)
                 {

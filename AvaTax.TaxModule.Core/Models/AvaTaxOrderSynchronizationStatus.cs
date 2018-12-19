@@ -8,6 +8,9 @@ namespace AvaTax.TaxModule.Core.Models
 
         public DateTime? LastSynchronizationDate { get; set; }
 
+        public string LinkToAvaTax { get; set; }
+        public string RawContent { get; set; }
+
         public bool HasErrors { get; set; }
         public string[] Errors { get; set; }
     }

@@ -1,6 +1,17 @@
 ﻿{
   "avaTax": {
     "blades": {
+      "order-synchronization-status": {
+        "title": "Bestellung in AvaTax",
+        "title-new": "AvaTax-Transaktion fehlt",
+        "subtitle": "Details zur AvaTax-Transaktion",
+        "labels": {
+          "last-sync-date": "Letzte Sendung an AvaTax",
+          "transaction-in-avatax": "Transaktion in AvaTax",
+          "raw-transaction-content": "Inhalt der Transaktion",
+          "not-sent-to-avatax": "Die Bestellung wurde nicht an AvaTax gesendet."
+        }
+      },
       "orders-synchronization-progress": {
         "labels": {
           "start": "Start",
@@ -12,6 +23,7 @@
     },
     "commands": {
       "test-connection": "Verbindung mit AvaTax testen",
+      "send-to-avatax": "Senden Sie an AvaTax",
       "run-order-synchronization": {
         "labels": {
           "waiting-for-status": "Warten auf den Bestellstatus in AvaTax...",
