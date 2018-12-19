@@ -4,6 +4,7 @@
 
     blade.initialize = function (data) {
         blade.currentEntity = data;
+        blade.hasData = data && data.storeUsesAvaTax && data.lastSynchronizationDate;
         blade.isLoading = false;
     };
 

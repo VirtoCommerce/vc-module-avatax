@@ -1,7 +1,7 @@
 ﻿<div class="blade-content">
     <div class="blade-inner">
         <div class="inner-block">
-            <div ng-if="blade.currentEntity">
+            <div ng-if="blade.hasData">
                 <div class="sub-t">{{ 'avaTax.blades.order-synchronization-status.labels.last-sync-date' | translate }}</div>
                 <div class="form-input __calendar">
                     <input ng-value="blade.formatLastSynchronizationDate()" disabled="disabled">
@@ -17,7 +17,7 @@
                 <pre>{{blade.currentEntity.rawContent}}</pre>
             </div>
 
-            <div class="note" ng-if="!blade.currentEntity">{{ 'avaTax.blades.order-synchronization-status.labels.no-index' | translate }}</div>
+            <div class="note" ng-if="!blade.hasData">{{ 'avaTax.blades.order-synchronization-status.labels.not-sent-to-avatax' | translate }}</div>
         </div>
     </div>
 </div>
