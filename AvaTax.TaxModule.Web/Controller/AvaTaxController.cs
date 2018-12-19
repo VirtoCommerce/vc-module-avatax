@@ -1,11 +1,22 @@
 ﻿using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Web.Logging;
+using AvaTax.TaxModule.Data.Logging;
 using AvaTax.TaxModule.Web.Services;
 using Common.Logging;
 using Newtonsoft.Json;
 using System;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
+using AvaTax.TaxModule.Core;
+using AvaTax.TaxModule.Core.Models;
+using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Web.BackgroundJobs;
+using AvaTax.TaxModule.Web.Models;
+using AvaTax.TaxModule.Web.Models.PushNotifications;
+using Hangfire;
+using VirtoCommerce.Platform.Core.PushNotifications;
+using VirtoCommerce.Platform.Core.Security;
+using VirtoCommerce.Platform.Core.Web.Security;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
@@ -15,12 +26,21 @@ namespace AvaTax.TaxModule.Web.Controller
     {
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly AvalaraLogger _logger;
-
+        private readonly IOrdersSynchronizationService _ordersSynchronizationService;
+        private readonly IAddressValidationService _addressValidationService;
+        private readonly IPushNotificationManager _pushNotificationManager;
+        private readonly IUserNameResolver _userNameResolver;
+        
         [CLSCompliant(false)]
-        public AvaTaxController(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
+        public AvaTaxController(ILog log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOrdersSynchronizationService ordersSynchronizationService,
+            IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
         {
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
+            _ordersSynchronizationService = ordersSynchronizationService;
+            _addressValidationService = addressValidationService;
+            _pushNotificationManager = pushNotificationManager;
+            _userNameResolver = userNameResolver;
         }
 
         [HttpPost]
@@ -85,6 +105,61 @@ namespace AvaTax.TaxModule.Web.Controller
             .OnSuccess(_logger, AvalaraLogger.EventCodes.Ping);
 
             return retVal;
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(OrdersSynchronizationPushNotification))]
+        [Route("orders/synchronize")]
+        [CheckPermission(Permission = ModuleConstants.Permissions.TaxManage)]
+        public IHttpActionResult SynchronizeOrders(OrdersSynchronizationRequest request)
+        {
+            var notification = Enqueue(request);
+            _pushNotificationManager.Upsert(notification);
+            return Ok(notification);
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(void))]
+        [Route("orders/{jobId}/cancel")]
+        [CheckPermission(Permission = ModuleConstants.Permissions.TaxManage)]
+        public IHttpActionResult CancelOrdersSynchronization(string jobId)
+        {
+            BackgroundJob.Delete(jobId);
+            return Ok();
+        }
+
+        [HttpPost]
+        [ResponseType(typeof(AddressValidationResult))]
+        [Route("address/validate")]
+        public IHttpActionResult ValidateAddress(AddressValidationRequest request)
+        {
+            var result = _addressValidationService.ValidateAddress(request.Address, request.StoreId);
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [ResponseType(typeof(AvaTaxOrderSynchronizationStatus))]
+        [Route("orders/{orderId}/status")]
+        [CheckPermission(Permission = ModuleConstants.Permissions.TaxManage)]
+        public async Task<IHttpActionResult> GetOrderSynchronizationStatus(string orderId)
+        {
+            var result = await _ordersSynchronizationService.GetOrderSynchronizationStatusAsync(orderId);
+            return Ok(result);
+        }
+
+        private OrdersSynchronizationPushNotification Enqueue(OrdersSynchronizationRequest request)
+        {
+            var notification = new OrdersSynchronizationPushNotification(_userNameResolver.GetCurrentUserName())
+            {
+                Title = "Sending orders to AvaTax",
+                Description = "Starting process..."
+            };
+            _pushNotificationManager.Upsert(notification);
+
+            var jobId = BackgroundJob.Enqueue<OrdersSynchronizationJob>(x => x.RunManually(request.OrderIds, notification, JobCancellationToken.Null, null));
+            notification.JobId = jobId;
+
+            return notification;
         }
     }
 }

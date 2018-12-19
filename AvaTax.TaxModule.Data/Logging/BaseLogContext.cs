@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AvaTax.TaxModule.Web.Logging
+namespace AvaTax.TaxModule.Data.Logging
 {
     public class BaseLogContext
     {

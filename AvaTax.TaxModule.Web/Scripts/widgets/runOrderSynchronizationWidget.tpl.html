@@ -1,0 +1,6 @@
+﻿<div class="gridster-cnt" ng-click="showDetails()" style="background: {{background}}">
+    <div class="cnt-inner">
+        <div class="list-t">{{ avaTaxMessage | translate }}</div>
+        <div ng-if="avaTaxOrderStatusReceived" am-time-ago="avaTaxOrderStatus.lastSynchronizationDate"></div>
+    </div>
+</div>

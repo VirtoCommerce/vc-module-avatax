@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Linq;
 
-namespace AvaTax.TaxModule.Web.Logging
+namespace AvaTax.TaxModule.Data.Logging
 {
     public static class LoggerExtension
     {

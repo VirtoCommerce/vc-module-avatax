@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web;
 
-namespace AvaTax.TaxModule.Web.Logging
+namespace AvaTax.TaxModule.Data.Logging
 {
     public static class IsFileLockedExtension
     {

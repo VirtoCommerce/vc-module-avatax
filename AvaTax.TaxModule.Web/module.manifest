@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <module>
     <id>Avalara.Tax</id>
-    <version>2.13.2</version>
+    <version>2.14.0</version>
     <platformVersion>2.12.2</platformVersion>
     <dependencies>
-        <dependency id="VirtoCommerce.Core" version="2.19.2" />
+        <dependency id="VirtoCommerce.Core" version="2.25.16" />
     </dependencies>
 
     <title>Avalara tax</title>
@@ -60,6 +60,32 @@
                 <valueType>string</valueType>
                 <title>Link to Avalara API service</title>
                 <description>Link to Avalara API service</description>
+            </setting>
+            <setting>
+                <name>Avalara.Tax.Credentials.AdminAreaUrl</name>
+                <valueType>string</valueType>
+                <title>Link to Avalara admin page</title>
+                <description>Link to Avalara admin page. Used for building links to AvaTax transactions.</description>
+            </setting>
+            <setting>
+                <name>Avalara.Tax.ScheduledOrdersSynchronization.IsEnabled</name>
+                <valueType>boolean</valueType>
+                <defaultValue>false</defaultValue>
+                <title>Send orders to AvaTax automatically</title>
+                <description>Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)</description>
+            </setting>
+            <setting>
+                <name>Avalara.Tax.ScheduledOrdersSynchronization.CronExpression</name>
+                <valueType>string</valueType>
+                <defaultValue>0 0 * * *</defaultValue>
+                <title>Schedule of automatic order synchronization (requires restart)</title>
+                <description>
+                    <![CDATA[ 
+                        x minutes use "0/x * * * *"
+                        x hours use "0 */x * * *" you can set minutes also "15 */x * * *"
+                        x days "0 0 */x * *"   
+                    ]]>
+                </description>
             </setting>
         </group>
     </settings>
