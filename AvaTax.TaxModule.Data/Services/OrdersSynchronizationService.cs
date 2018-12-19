@@ -163,7 +163,7 @@ namespace AvaTax.TaxModule.Data.Services
             else
             {
                 var voidTransactionModel = new VoidTransactionModel { code = VoidReasonCode.DocVoided };
-                var transactionModel = await avaTaxClient.VoidTransactionAsync(companyCode, order.Id, DocumentType.Any, voidTransactionModel);
+                var transactionModel = await avaTaxClient.VoidTransactionAsync(companyCode, order.Number, DocumentType.Any, voidTransactionModel);
             }
         }
 
