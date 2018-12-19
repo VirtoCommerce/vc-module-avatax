@@ -1,0 +1,39 @@
+﻿{
+  "avaTax": {
+    "blades": {
+      "order-synchronization-status": {
+        "title": "Заказ в AvaTax",
+        "title-new": "Информация о заказе в AvaTax отсутствует",
+        "subtitle": "Подробности о транзакции в AvaTax",
+        "labels": {
+          "last-sync-date": "Дата отправки в AvaTax",
+          "transaction-in-avatax": "Транзакция в AvaTax",
+          "link-to-transaction": "Ссылка на транзакцию",
+          "raw-transaction-content": "Содержимое транзакции",
+          "not-sent-to-avatax": "Заказ не был отправлен в AvaTax."
+        }
+      },
+      "orders-synchronization-progress": {
+        "labels": {
+          "start": "Начало",
+          "end": "Конец",
+          "stats": "Обработано — {{ processedCount }} из {{ totalCount }} заказов",
+          "errors": "Ошибки"
+        }
+      }
+    },
+    "commands": {
+      "test-connection": "Проверить соединение с AvaTax",
+      "send-to-avatax": "Отправить в AvaTax",
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "Ожидание состояния заказа в AvaTax...",
+          "store-does-not-use-avatax": "Служба AvaTax не активирована для магазина этого заказа.",
+          "sent-to-avatax": "Заказ отправлен в AvaTax:",
+          "error": "Получение отправки заказа в AvaTax завершилось неудачей.",
+          "send-to-avatax": "Нажмите для отправки заказа в AvaTax"
+        }
+      }
+    }
+  }
+}

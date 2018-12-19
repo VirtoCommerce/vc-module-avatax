@@ -38,6 +38,8 @@ namespace AvaTax.TaxModule.Data.Logging
 
             public const int GetTaxRequestTime = 2000;
             public const int GetSalesInvoiceRequestTime = 2001;
+
+
         }
 
         [Event(EventCodes.Startup, Message = "Starting up.", Level = EventLevel.Informational)]

@@ -1,4 +1,4 @@
-﻿namespace AvaTax.TaxModule.Web.Services
+﻿namespace AvaTax.TaxModule.Core.Services
 {
     /// <summary>
     /// Represents the settings for Avalara API connection endpoint
@@ -10,6 +10,7 @@
         string LicenseKey { get; }
         bool IsEnabled { get; }
         string ServiceUrl { get; }
+        string AdminAreaUrl { get; }
         string CompanyCode { get; }
     }
 }

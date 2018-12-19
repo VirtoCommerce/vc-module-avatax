@@ -6,6 +6,8 @@ using Common.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using AvaTax.TaxModule.Core;
+using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.Domain.Common;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -19,7 +21,7 @@ namespace AvaTax.TaxModule.Data
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
         public AvaTaxRateProvider()
-            : base("AvaTaxRateProvider")
+            : base(ModuleConstants.AvaTaxRateProviderCode)
         {
         }
 
@@ -52,10 +54,9 @@ namespace AvaTax.TaxModule.Data
                 var avaSettings = AvaTaxSettings.FromSettings(Settings);
                 Validate(avaSettings);
 
-                //Evaluate taxes only for cart to preventing registration redundant transactions in avalara
+                var companyCode = avaSettings.CompanyCode;
                 var createTransactionModel = AbstractTypeFactory<AvaCreateTransactionModel>.TryCreateInstance();
-                createTransactionModel.FromContext(evalContext);
-                createTransactionModel.companyCode = avaSettings.CompanyCode;
+                createTransactionModel.FromContext(evalContext, companyCode);
                 createTransactionModel.commit = false;
 
                 log.docCode = createTransactionModel.code;
