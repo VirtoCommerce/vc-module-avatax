@@ -11,6 +11,7 @@ using AvaTax.TaxModule.Web.Services;
 using Newtonsoft.Json;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
+using VirtoCommerce.Domain.Search.ChangeFeed;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
@@ -86,9 +87,10 @@ namespace AvaTax.TaxModule.Data.Services
             return result;
         }
 
-        public async Task SynchronizeOrdersAsync(IOrdersFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
+        public async Task SynchronizeOrdersAsync(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
         {
-            var totalCount = ordersFeed.GetTotalOrdersCount();
+            // TODO: how to find order count when ordersFeed.TotalsCount is null?
+            var totalCount = (long)ordersFeed.TotalCount;
 
             var progressInfo = new AvaTaxOrdersSynchronizationProgress
             {
@@ -100,10 +102,10 @@ namespace AvaTax.TaxModule.Data.Services
 
             cancellationToken?.ThrowIfCancellationRequested();
 
-            for (int i = 0; i < totalCount; i += BatchSize)
+            for (long i = 0; i < totalCount; i += BatchSize)
             {
-                var searchResult = ordersFeed.GetOrders(i, BatchSize);
-                var orderIds = searchResult.Select(x => x.CustomerOrderId).ToArray();
+                var searchResult = await ordersFeed.GetNextBatch();
+                var orderIds = searchResult.Select(x => x.DocumentId).ToArray();
                 var orders = _orderService.GetByIds(orderIds);
 
                 var storeIds = orders.Select(x => x.StoreId).Distinct().ToArray();

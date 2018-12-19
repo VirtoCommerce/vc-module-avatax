@@ -86,7 +86,6 @@
     <Compile Include="Providers\AvaTaxRateProvider.cs" />
     <Compile Include="Services\AddressValidationService.cs" />
     <Compile Include="Services\ChangeLogBasedOrdersFeed.cs" />
-    <Compile Include="Services\FixedOrdersFeed.cs" />
     <Compile Include="Services\OrdersSynchronizationService.cs" />
   </ItemGroup>
   <ItemGroup>
