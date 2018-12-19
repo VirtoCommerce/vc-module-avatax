@@ -37,7 +37,7 @@ namespace AvaTax.TaxModule.Data.Services
         {
             get
             {
-                if (_startDate == null || _endDate == null)
+                if (_startDate == null && _endDate == null)
                 {
                     var criteria = new CustomerOrderSearchCriteria { Skip = 0, Take = 0 };
                     var searchResult = _orderSearchService.SearchCustomerOrders(criteria);

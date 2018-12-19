@@ -42,9 +42,13 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         public async Task RunScheduled(IJobCancellationToken cancellationToken, PerformContext context)
         {
             var currentTime = DateTime.UtcNow;
+
             var lastRunTime = _settingsManager.GetValue(ModuleConstants.Settings.Synchronization.LastExecutionDate, (DateTime?)null);
 
-            var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderSearchService, lastRunTime, currentTime, BatchSize);
+            // NOTE: if lastRunTime is null, the order syncronization job is running first time, and it should process all orders in the database.
+            //       To do so, we'll need to pass null for both startTime and endTime.
+            var intervalEndTime = lastRunTime == null ? null : (DateTime?)currentTime;
+            var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderSearchService, lastRunTime, intervalEndTime, BatchSize);
 
             void ProgressCallback(AvaTaxOrdersSynchronizationProgress progress)
             {
