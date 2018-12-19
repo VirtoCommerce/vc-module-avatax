@@ -15,12 +15,12 @@ namespace AvaTax.TaxModule.Data.Model
     {
         public virtual bool IsValid => addresses != null && !lines.IsNullOrEmpty();
 
-        public virtual AvaCreateTransactionModel FromContext(TaxEvaluationContext context)
+        public virtual AvaCreateTransactionModel FromContext(TaxEvaluationContext context, string requiredCompanyCode)
         {
             code = context.Id;
             // TODO: customerCode is required by AvaTax API, but using stub values when the customer is not specified doesn't seem right...
             customerCode = context.Customer?.Id ?? Thread.CurrentPrincipal?.Identity?.Name ?? "undef";
-            companyCode = context.Store?.Id ?? "undef";
+            companyCode = requiredCompanyCode;
             date = DateTime.UtcNow;
             type = DocumentType.SalesOrder;
             currencyCode = context.Currency;
@@ -49,14 +49,14 @@ namespace AvaTax.TaxModule.Data.Model
             return this;
         }
 
-        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order)
+        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, string requiredCompanyCode)
         {
             code = order.Number;
             customerCode = order.CustomerId;
             date = order.CreatedDate;
             type = DocumentType.SalesInvoice;
             currencyCode = order.Currency;
-            companyCode = order.StoreId;
+            companyCode = requiredCompanyCode;
 
             lines = new List<LineItemModel>();
             foreach (var orderLine in order.Items.Where(x => !x.IsTransient()))

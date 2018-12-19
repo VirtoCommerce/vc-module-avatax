@@ -12,7 +12,6 @@ using Newtonsoft.Json;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Search.ChangeFeed;
-using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -54,10 +53,8 @@ namespace AvaTax.TaxModule.Data.Services
 
                 try
                 {
-                    var companyCode = GetCompanyCode(avaTaxSettings, store);
-
-                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(companyCode, order.Number, 
-                        DocumentType.SalesInvoice, string.Empty);
+                    var companyCode = avaTaxSettings.CompanyCode;
+                    var transactionModel = await avaTaxClient.GetTransactionByCodeAsync(companyCode, order.Number, DocumentType.SalesInvoice, string.Empty);
                     result.TransactionId = transactionModel.id;
                     result.LastSynchronizationDate = transactionModel.modifiedDate;
                     result.LinkToAvaTax = BuildLinkToAvaTaxTransaction(transactionModel, avaTaxSettings);
@@ -123,7 +120,7 @@ namespace AvaTax.TaxModule.Data.Services
 
                         try
                         {
-                            var companyCode = GetCompanyCode(avaTaxSettings, store);
+                            var companyCode = avaTaxSettings.CompanyCode;
                             await SendOrderToAvaTax(order, companyCode, avaTaxClient);
                         }
                         catch (AvaTaxError e)
@@ -155,23 +152,12 @@ namespace AvaTax.TaxModule.Data.Services
             progressCallback(progressInfo);
         }
 
-        protected virtual string GetCompanyCode(IAvaTaxSettings avaTaxSettings, Store store)
-        {
-            var result = avaTaxSettings.CompanyCode;
-            if (string.IsNullOrWhiteSpace(result))
-            {
-                result = store.Id;
-            }
-
-            return result;
-        }
-
         protected virtual async Task SendOrderToAvaTax(CustomerOrder order, string companyCode, AvaTaxClient avaTaxClient)
         {
             if (!order.IsCancelled)
             {
                 var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
-                createOrAdjustTransactionModel.FromOrder(order);
+                createOrAdjustTransactionModel.FromOrder(order, companyCode);
                 var transactionModel = await avaTaxClient.CreateOrAdjustTransactionAsync(string.Empty, createOrAdjustTransactionModel);
             }
             else

@@ -6,10 +6,10 @@ namespace AvaTax.TaxModule.Data.Model
 {
     public class AvaCreateOrAdjustTransactionModel : CreateOrAdjustTransactionModel
     {
-        public virtual AvaCreateOrAdjustTransactionModel FromOrder(CustomerOrder order)
+        public virtual AvaCreateOrAdjustTransactionModel FromOrder(CustomerOrder order, string companyCode)
         {
             var transaction = AbstractTypeFactory<AvaCreateTransactionModel>.TryCreateInstance();
-            transaction.FromOrder(order);
+            transaction.FromOrder(order, companyCode);
             createTransactionModel = transaction;
 
             return this;
