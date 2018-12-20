@@ -76,20 +76,6 @@ namespace AvaTax.TaxModule.Data.Model
                 lines.Add(avaTaxLine);
             }
 
-            var shippingAddress = order.Addresses?.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
-            if (shippingAddress != null)
-            {
-                var avaAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
-                avaAddress.FromAddress(shippingAddress);
-
-                addresses = new AddressesModel
-                {
-                    // TODO: set actual origin address (fulfillment center/store owner)?
-                    shipFrom = avaAddress,
-                    shipTo = avaAddress
-                };
-            }
-
             return this;
         }
     }
