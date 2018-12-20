@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Order.Model;
+using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Tax.Model;
 
 namespace AvaTax.TaxModule.Data.Model
@@ -30,14 +32,27 @@ namespace AvaTax.TaxModule.Data.Model
             return this;
         }
 
-        public virtual LineItemModel FromOrderShipment(Shipment shipment)
+        public virtual LineItemModel FromOrderShipment(Shipment shipment, Store store)
         {
             number = shipment.Id;
             itemCode = shipment.Number;
             description = shipment.ShipmentMethodCode;
-            taxCode = shipment.TaxType;
             quantity = 1;
             amount = shipment.Sum;
+
+            // First, let's try to read the tax type from the shipment itself.
+            taxCode = shipment.TaxType;
+
+            // If it is not filled, let's find the shipping method for this shipment and take the tax type from there.
+            if (string.IsNullOrEmpty(taxCode))
+            {
+                var shippingMethod = store.ShippingMethods.FirstOrDefault(x => x.Code == shipment.ShipmentMethodCode);
+                if (shippingMethod != null)
+                {
+                    taxCode = shippingMethod.TaxType;
+                }
+            }
+
             return this;
         }
     }

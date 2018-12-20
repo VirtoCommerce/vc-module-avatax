@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Search.ChangeFeed;
+using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -121,7 +122,7 @@ namespace AvaTax.TaxModule.Data.Services
                         try
                         {
                             var companyCode = avaTaxSettings.CompanyCode;
-                            await SendOrderToAvaTax(order, companyCode, avaTaxClient);
+                            await SendOrderToAvaTax(order, store, companyCode, avaTaxClient);
                         }
                         catch (AvaTaxError e)
                         {
@@ -152,12 +153,12 @@ namespace AvaTax.TaxModule.Data.Services
             progressCallback(progressInfo);
         }
 
-        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, string companyCode, AvaTaxClient avaTaxClient)
+        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, Store store, string companyCode, AvaTaxClient avaTaxClient)
         {
             if (!order.IsCancelled)
             {
                 var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
-                createOrAdjustTransactionModel.FromOrder(order, companyCode);
+                createOrAdjustTransactionModel.FromOrder(order, store, companyCode);
                 var transactionModel = await avaTaxClient.CreateOrAdjustTransactionAsync(string.Empty, createOrAdjustTransactionModel);
             }
             else

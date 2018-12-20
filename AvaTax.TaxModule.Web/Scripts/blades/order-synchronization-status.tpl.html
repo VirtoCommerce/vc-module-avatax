@@ -11,7 +11,7 @@
                 </div>
                 <div ng-if="blade.currentEntity.linkToAvaTax">
                     <div class="sub-t">{{ 'avaTax.blades.order-synchronization-status.labels.transaction-in-avatax' | translate }}</div>
-                    <div>{{ 'avaTax.blades.order-synchronization-status.labels.link-to-transaction' | translate }} <a ng-href="{{blade.currentEntity.linkToAvaTax}}">#{{blade.currentEntity.transactionId}}</a></div>
+                    <div>{{ 'avaTax.blades.order-synchronization-status.labels.link-to-transaction' | translate }} <a ng-href="{{blade.currentEntity.linkToAvaTax}}" target="_blank">#{{blade.currentEntity.transactionId}}</a></div>
                 </div>
                 <div class="sub-t">{{ 'avaTax.blades.order-synchronization-status.labels.raw-transaction-content' | translate }}</div>
                 <pre>{{blade.currentEntity.rawContent}}</pre>
