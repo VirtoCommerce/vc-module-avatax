@@ -9,6 +9,7 @@ using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
 using AvaTax.TaxModule.Web.Services;
 using Newtonsoft.Json;
+using VirtoCommerce.Domain.Inventory.Services;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Search.ChangeFeed;
@@ -24,12 +25,15 @@ namespace AvaTax.TaxModule.Data.Services
 
         private readonly ICustomerOrderService _orderService;
         private readonly IStoreService _storeService;
+        private readonly IFulfillmentCenterService _fulfillmentCenterService;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
-        public OrdersSynchronizationService(ICustomerOrderService orderService, IStoreService storeService, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
+        public OrdersSynchronizationService(ICustomerOrderService orderService, IStoreService storeService, 
+            IFulfillmentCenterService fulfillmentCenterService, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
         {
             _orderService = orderService;
             _storeService = storeService;
+            _fulfillmentCenterService = fulfillmentCenterService;
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
@@ -158,7 +162,7 @@ namespace AvaTax.TaxModule.Data.Services
             if (!order.IsCancelled)
             {
                 var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
-                createOrAdjustTransactionModel.FromOrder(order, store, companyCode);
+                createOrAdjustTransactionModel.FromOrder(order, store, companyCode, _fulfillmentCenterService);
                 var transactionModel = await avaTaxClient.CreateOrAdjustTransactionAsync(string.Empty, createOrAdjustTransactionModel);
             }
             else
