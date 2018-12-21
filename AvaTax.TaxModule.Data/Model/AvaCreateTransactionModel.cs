@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Commerce.Model;
-using VirtoCommerce.Domain.Inventory.Services;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Tax.Model;
@@ -51,8 +50,7 @@ namespace AvaTax.TaxModule.Data.Model
             return this;
         }
 
-        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, Store store, string requiredCompanyCode, 
-            IFulfillmentCenterService fulfillmentCenterService)
+        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, Store store, string requiredCompanyCode, Address sourceAddress)
         {
             code = order.Number;
             customerCode = order.CustomerId;
@@ -61,18 +59,34 @@ namespace AvaTax.TaxModule.Data.Model
             currencyCode = order.Currency;
             companyCode = requiredCompanyCode;
 
+            var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
+            if (shippingAddress != null && sourceAddress != null)
+            {
+                var avaSourceAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
+                avaSourceAddress.FromAddress(sourceAddress);
+
+                var avaShippingAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
+                avaShippingAddress.FromAddress(shippingAddress);
+
+                addresses = new AddressesModel
+                {
+                    shipFrom = avaSourceAddress,
+                    shipTo = avaShippingAddress
+                };
+            }
+
             lines = new List<LineItemModel>();
             foreach (var orderLine in order.Items.Where(x => !x.IsTransient()))
             {
                 var avaTaxLine = AbstractTypeFactory<AvaLineItem>.TryCreateInstance();
-                avaTaxLine.FromOrderLine(orderLine, order, store, fulfillmentCenterService);
+                avaTaxLine.FromOrderLine(orderLine);
                 lines.Add(avaTaxLine);
             }
 
             foreach (var shipment in order.Shipments ?? Enumerable.Empty<Shipment>())
             {
                 var avaTaxLine = AbstractTypeFactory<AvaLineItem>.TryCreateInstance();
-                avaTaxLine.FromOrderShipment(shipment, order, store, fulfillmentCenterService);
+                avaTaxLine.FromOrderShipment(shipment, store);
                 lines.Add(avaTaxLine);
             }
 

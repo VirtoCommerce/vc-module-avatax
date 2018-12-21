@@ -9,6 +9,7 @@ using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
 using AvaTax.TaxModule.Web.Services;
 using Newtonsoft.Json;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Inventory.Services;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
@@ -16,6 +17,7 @@ using VirtoCommerce.Domain.Search.ChangeFeed;
 using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
+using FulfillmentCenter = VirtoCommerce.Domain.Inventory.Model.FulfillmentCenter;
 
 namespace AvaTax.TaxModule.Data.Services
 {
@@ -113,6 +115,12 @@ namespace AvaTax.TaxModule.Data.Services
                 var storeIds = orders.Select(x => x.StoreId).Distinct().ToArray();
                 var stores = _storeService.GetByIds(storeIds).ToDictionary(x => x.Id, x => x);
 
+                var fulfillmentCenterIds = stores.Values.Select(x => x.MainFulfillmentCenterId)
+                                                        .Where(x => !string.IsNullOrEmpty(x))
+                                                        .Distinct()
+                                                        .ToArray();
+                var fulfillmentCenters = _fulfillmentCenterService.GetByIds(fulfillmentCenterIds).ToDictionary(x => x.Id, x => x);
+
                 foreach (var order in orders)
                 {
                     var store = stores[order.StoreId];
@@ -120,13 +128,22 @@ namespace AvaTax.TaxModule.Data.Services
                     var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
                     if (avaTaxProvider != null && avaTaxProvider.IsActive)
                     {
+                        FulfillmentCenter fulfillmentCenter = null;
+
+                        var fulfillmentCenterId = store.MainFulfillmentCenterId;
+                        if (!string.IsNullOrEmpty(fulfillmentCenterId))
+                        {
+                            fulfillmentCenter = fulfillmentCenters[fulfillmentCenterId];
+                        }
+
                         var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
                         var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
 
                         try
                         {
                             var companyCode = avaTaxSettings.CompanyCode;
-                            await SendOrderToAvaTax(order, store, companyCode, avaTaxClient);
+                            var sourceAddress = fulfillmentCenter?.Address;
+                            await SendOrderToAvaTax(order, store, companyCode, sourceAddress, avaTaxClient);
                         }
                         catch (AvaTaxError e)
                         {
@@ -157,12 +174,12 @@ namespace AvaTax.TaxModule.Data.Services
             progressCallback(progressInfo);
         }
 
-        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, Store store, string companyCode, AvaTaxClient avaTaxClient)
+        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, Store store, string companyCode, Address sourceAddress, AvaTaxClient avaTaxClient)
         {
             if (!order.IsCancelled)
             {
                 var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
-                createOrAdjustTransactionModel.FromOrder(order, store, companyCode, _fulfillmentCenterService);
+                createOrAdjustTransactionModel.FromOrder(order, store, companyCode, sourceAddress);
                 var transactionModel = await avaTaxClient.CreateOrAdjustTransactionAsync(string.Empty, createOrAdjustTransactionModel);
             }
             else
