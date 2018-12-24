@@ -87,7 +87,7 @@
     <Compile Include="Services\AddressValidationService.cs" />
     <Compile Include="Services\ChangeLogBasedOrdersFeed.cs" />
     <Compile Include="Services\OrdersSynchronizationService.cs" />
-    <Compile Include="Services\TaxTypeAdjustmentService.cs" />
+    <Compile Include="Services\OrderTaxTypeResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

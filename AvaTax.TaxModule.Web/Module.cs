@@ -43,7 +43,7 @@ namespace AvaTax.TaxModule.Web
             _container.RegisterInstance<Func<IAvaTaxSettings, AvaTaxClient>>(ClientFactory);
             _container.RegisterType<IAddressValidationService, AddressValidationService>();
             _container.RegisterType<IOrdersSynchronizationService, OrdersSynchronizationService>();
-            _container.RegisterType<ITaxTypeAdjustmentService, TaxTypeAdjustmentService>();
+            _container.RegisterType<IOrderTaxTypeResolver, OrderTaxTypeResolver>();
         }
 
         public override void PostInitialize()

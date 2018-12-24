@@ -28,23 +28,23 @@ namespace AvaTax.TaxModule.Data.Services
         private readonly ICustomerOrderService _orderService;
         private readonly IStoreService _storeService;
         private readonly IFulfillmentCenterService _fulfillmentCenterService;
-        private readonly ITaxTypeAdjustmentService _taxTypeAdjustmentService;
+        private readonly IOrderTaxTypeResolver _orderTaxTypeResolver;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
-        public OrdersSynchronizationService(ICustomerOrderService orderService, IStoreService storeService, 
-            IFulfillmentCenterService fulfillmentCenterService, ITaxTypeAdjustmentService taxTypeAdjustmentService,
+        public OrdersSynchronizationService(ICustomerOrderService orderService, IStoreService storeService,
+            IFulfillmentCenterService fulfillmentCenterService, IOrderTaxTypeResolver orderTaxTypeResolver,
             Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
         {
             _orderService = orderService;
             _storeService = storeService;
             _fulfillmentCenterService = fulfillmentCenterService;
-            _taxTypeAdjustmentService = taxTypeAdjustmentService;
+            _orderTaxTypeResolver = orderTaxTypeResolver;
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
         public async Task<AvaTaxOrderSynchronizationStatus> GetOrderSynchronizationStatusAsync(string orderId)
         {
-            var order = _orderService.GetByIds(new[] {orderId}).FirstOrDefault();
+            var order = _orderService.GetByIds(new[] { orderId }).FirstOrDefault();
             if (order == null)
             {
                 throw new ArgumentException("Order with given ID does not exist.", nameof(orderId));
@@ -52,15 +52,10 @@ namespace AvaTax.TaxModule.Data.Services
 
             var result = AbstractTypeFactory<AvaTaxOrderSynchronizationStatus>.TryCreateInstance();
 
-            var store = _storeService.GetById(order.StoreId);
-            var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
-            if (avaTaxProvider != null && avaTaxProvider.IsActive)
+            var avaTaxSettings = GetAvataxSettingsForOrder(order);
+            if (avaTaxSettings != null)
             {
-                result.StoreUsesAvaTax = true;
-
-                var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
                 var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
-
                 try
                 {
                     var companyCode = avaTaxSettings.CompanyCode;
@@ -86,10 +81,7 @@ namespace AvaTax.TaxModule.Data.Services
                     result.HasErrors = true;
                 }
             }
-            else
-            {
-                result.StoreUsesAvaTax = false;
-            }
+            result.StoreUsesAvaTax = avaTaxSettings != null;
 
             return result;
         }
@@ -115,40 +107,17 @@ namespace AvaTax.TaxModule.Data.Services
                 var orderIds = searchResult.Select(x => x.DocumentId).ToArray();
                 var orders = _orderService.GetByIds(orderIds);
 
-                var storeIds = orders.Select(x => x.StoreId).Distinct().ToArray();
-                var stores = _storeService.GetByIds(storeIds).ToDictionary(x => x.Id, x => x);
-
-                var fulfillmentCenterIds = stores.Values.Select(x => x.MainFulfillmentCenterId)
-                                                        .Where(x => !string.IsNullOrEmpty(x))
-                                                        .Distinct()
-                                                        .ToArray();
-                var fulfillmentCenters = _fulfillmentCenterService.GetByIds(fulfillmentCenterIds).ToDictionary(x => x.Id, x => x);
-
                 foreach (var order in orders)
                 {
-                    var store = stores[order.StoreId];
-
-                    var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
-                    if (avaTaxProvider != null && avaTaxProvider.IsActive)
+                    var avaTaxSettings = GetAvataxSettingsForOrder(order);
+                    if (avaTaxSettings != null)
                     {
-                        _taxTypeAdjustmentService.AdjustTaxTypesFor(order);
+                        _orderTaxTypeResolver.ResolveTaxTypeForOrder(order);
 
-                        FulfillmentCenter fulfillmentCenter = null;
-
-                        var fulfillmentCenterId = store.MainFulfillmentCenterId;
-                        if (!string.IsNullOrEmpty(fulfillmentCenterId))
-                        {
-                            fulfillmentCenter = fulfillmentCenters[fulfillmentCenterId];
-                        }
-
-                        var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
                         var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
-
                         try
                         {
-                            var companyCode = avaTaxSettings.CompanyCode;
-                            var sourceAddress = fulfillmentCenter?.Address;
-                            await SendOrderToAvaTax(order, companyCode, sourceAddress, avaTaxClient);
+                            await SendOrderToAvaTax(order, avaTaxSettings.CompanyCode, avaTaxSettings.SourceAddress, avaTaxClient);
                         }
                         catch (AvaTaxError e)
                         {
@@ -162,7 +131,7 @@ namespace AvaTax.TaxModule.Data.Services
                     }
                     else
                     {
-                        var errorMessage = $"Order #{order.Number} was not sent to Avalara, because the store '{store.Name}' does not use AvaTax as tax provider.";
+                        var errorMessage = $"Order #{order.Number} was not sent to Avalara, because the order store does not use AvaTax as tax provider.";
                         progressInfo.Errors.Add(errorMessage);
                     }
 
@@ -177,6 +146,29 @@ namespace AvaTax.TaxModule.Data.Services
 
             progressInfo.Message = "Orders synchronization completed.";
             progressCallback(progressInfo);
+        }
+
+        protected virtual AvaTaxSettings GetAvataxSettingsForOrder(CustomerOrder order)
+        {
+            if (order == null)
+            {
+                throw new ArgumentNullException(nameof(order));
+            }
+            AvaTaxSettings result = null;
+            if (!string.IsNullOrEmpty(order.StoreId))
+            {
+                var store = _storeService.GetById(order.StoreId);
+                var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
+                if (avaTaxProvider != null && avaTaxProvider.IsActive)
+                {
+                    result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
+                    if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
+                    {
+                        result.SourceAddress = _fulfillmentCenterService.GetByIds(new[] { store.MainFulfillmentCenterId }).FirstOrDefault()?.Address;
+                    }
+                }
+            }
+            return result;
         }
 
         protected virtual async Task SendOrderToAvaTax(CustomerOrder order, string companyCode, Address sourceAddress, AvaTaxClient avaTaxClient)

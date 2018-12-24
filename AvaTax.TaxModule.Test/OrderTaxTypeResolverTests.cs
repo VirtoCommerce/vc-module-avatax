@@ -13,7 +13,7 @@ using Xunit;
 namespace AvaTax.TaxModule.Test
 {
     [CLSCompliant(false)]
-    public class TaxTypeAdjustmentServiceTests
+    public class OrderTaxTypeResolverTests
     {
         private class TestShippingMethod : ShippingMethod
         {
@@ -34,7 +34,7 @@ namespace AvaTax.TaxModule.Test
 
         private readonly Mock<IStoreService> _storeService;
 
-        public TaxTypeAdjustmentServiceTests()
+        public OrderTaxTypeResolverTests()
         {
             _storeService = new Mock<IStoreService>();
         }
@@ -72,10 +72,10 @@ namespace AvaTax.TaxModule.Test
 
             _storeService.Setup(x => x.GetByIds(new[] {TestStoreId})).Returns(new[] { store });
 
-            var target = new TaxTypeAdjustmentService(_storeService.Object);
+            var target = new OrderTaxTypeResolver(_storeService.Object);
 
             // Act
-            target.AdjustTaxTypesFor(order);
+            target.ResolveTaxTypeForOrder(order);
 
             // Assert
             foreach (var shipment in order.Shipments)
