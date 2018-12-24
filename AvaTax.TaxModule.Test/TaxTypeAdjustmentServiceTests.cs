@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AvaTax.TaxModule.Data.Services;
 using Moq;
@@ -11,6 +12,7 @@ using Xunit;
 
 namespace AvaTax.TaxModule.Test
 {
+    [CLSCompliant(false)]
     public class TaxTypeAdjustmentServiceTests
     {
         private class TestShippingMethod : ShippingMethod
@@ -27,8 +29,8 @@ namespace AvaTax.TaxModule.Test
         }
 
         private const string TestStoreId = "TestStore";
-        private const string ShipmentMethodCode = "TestShippingMethod";
-        private const string ShipmentTaxType = "FR012345";
+        private const string TestShipmentMethodCode = "TestShippingMethod";
+        private const string TestTaxType = "FR012345";
 
         private readonly Mock<IStoreService> _storeService;
 
@@ -37,8 +39,10 @@ namespace AvaTax.TaxModule.Test
             _storeService = new Mock<IStoreService>();
         }
 
-        [Fact]
-        public void TestFillingTaxTypeForShipment()
+        [Theory]
+        [InlineData(null, TestTaxType, TestTaxType)]
+        [InlineData(TestTaxType, null, TestTaxType)]
+        public void TestFillingTaxTypeForShipment(string shipmentTaxType, string shippingMethodTaxType, string expectedTaxType)
         {
             // Arrange
             var order = new CustomerOrder
@@ -48,7 +52,8 @@ namespace AvaTax.TaxModule.Test
                 {
                     new Shipment
                     {
-                        ShipmentMethodCode = ShipmentMethodCode
+                        ShipmentMethodCode = TestShipmentMethodCode,
+                        TaxType = shipmentTaxType
                     }
                 }
             };
@@ -58,9 +63,9 @@ namespace AvaTax.TaxModule.Test
                 Id = TestStoreId,
                 ShippingMethods = new List<ShippingMethod>
                 {
-                    new TestShippingMethod(ShipmentMethodCode)
+                    new TestShippingMethod(TestShipmentMethodCode)
                     {
-                        TaxType = ShipmentTaxType
+                        TaxType = shippingMethodTaxType
                     }
                 }
             };
@@ -75,7 +80,7 @@ namespace AvaTax.TaxModule.Test
             // Assert
             foreach (var shipment in order.Shipments)
             {
-                Assert.Equal(ShipmentTaxType, shipment.TaxType);;
+                Assert.Equal(expectedTaxType, shipment.TaxType);;
             }
         }
     }
