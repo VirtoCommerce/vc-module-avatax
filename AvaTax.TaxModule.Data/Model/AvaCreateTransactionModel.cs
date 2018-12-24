@@ -49,7 +49,7 @@ namespace AvaTax.TaxModule.Data.Model
             return this;
         }
 
-        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, string requiredCompanyCode)
+        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, string requiredCompanyCode, Address sourceAddress)
         {
             code = order.Number;
             customerCode = order.CustomerId;
@@ -57,6 +57,22 @@ namespace AvaTax.TaxModule.Data.Model
             type = DocumentType.SalesInvoice;
             currencyCode = order.Currency;
             companyCode = requiredCompanyCode;
+
+            var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
+            if (shippingAddress != null && sourceAddress != null)
+            {
+                var avaSourceAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
+                avaSourceAddress.FromAddress(sourceAddress);
+
+                var avaShippingAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
+                avaShippingAddress.FromAddress(shippingAddress);
+
+                addresses = new AddressesModel
+                {
+                    shipFrom = avaSourceAddress,
+                    shipTo = avaShippingAddress
+                };
+            }
 
             lines = new List<LineItemModel>();
             foreach (var orderLine in order.Items.Where(x => !x.IsTransient()))
@@ -71,20 +87,6 @@ namespace AvaTax.TaxModule.Data.Model
                 var avaTaxLine = AbstractTypeFactory<AvaLineItem>.TryCreateInstance();
                 avaTaxLine.FromOrderShipment(shipment);
                 lines.Add(avaTaxLine);
-            }
-
-            var shippingAddress = order.Addresses?.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
-            if (shippingAddress != null)
-            {
-                var avaAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
-                avaAddress.FromAddress(shippingAddress);
-
-                addresses = new AddressesModel
-                {
-                    // TODO: set actual origin address (fulfillment center/store owner)?
-                    shipFrom = avaAddress,
-                    shipTo = avaAddress
-                };
             }
 
             return this;
