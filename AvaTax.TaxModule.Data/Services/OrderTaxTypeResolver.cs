@@ -26,8 +26,9 @@ namespace AvaTax.TaxModule.Data.Services
             var store = _storeService.GetByIds(new[] { order.StoreId }).SingleOrDefault();
             if (store != null)
             {
-                //Take the default TaxType from first active shipment method for the store of passed order (this behavior absolutely doesn't generic and should be changed in the next releases)
-                var defaultTaxType = store.ShippingMethods.FirstOrDefault(x => x.IsActive)?.TaxType;
+                var shipmentMethodCode = order.Shipments?.FirstOrDefault()?.ShipmentMethodCode;
+                //TODO: Takes the default Tax Type from first active shipping method relevant to first shipment of order (this behavior absolutely doesn't generic and can't be used for order has the multiple shipments)
+                var defaultTaxType = store.ShippingMethods.FirstOrDefault(x => x.IsActive && (string.IsNullOrEmpty(shipmentMethodCode) || x.Code.EqualsInvariant(shipmentMethodCode)))?.TaxType;
                 if (defaultTaxType != null)
                 {
                     var taxableObjects = order.GetFlatObjectsListWithInterface<ITaxable>();
