@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
+using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Platform.Core.Settings;
 
 namespace AvaTax.TaxModule.Web.Services
@@ -36,6 +37,7 @@ namespace AvaTax.TaxModule.Web.Services
         public string CompanyCode { get; set; }
         public string ServiceUrl { get; set; }
         public string AdminAreaUrl { get; set; }
+        public Address SourceAddress { get; set; }
         public bool IsEnabled { get; set; } = false;
     }
 }

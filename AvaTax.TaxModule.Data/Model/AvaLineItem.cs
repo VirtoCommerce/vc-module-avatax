@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Linq;
 using Avalara.AvaTax.RestClient;
+using VirtoCommerce.Domain.Commerce.Model;
+using VirtoCommerce.Domain.Inventory.Services;
 using VirtoCommerce.Domain.Order.Model;
+using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Tax.Model;
+using VirtoCommerce.Platform.Core.Common;
 
 namespace AvaTax.TaxModule.Data.Model
 {
@@ -27,6 +32,7 @@ namespace AvaTax.TaxModule.Data.Model
             taxCode = orderLine.TaxType;
             amount = orderLine.ExtendedPrice;
             quantity = orderLine.Quantity;
+
             return this;
         }
 
@@ -35,9 +41,10 @@ namespace AvaTax.TaxModule.Data.Model
             number = shipment.Id;
             itemCode = shipment.Number;
             description = shipment.ShipmentMethodCode;
-            taxCode = shipment.TaxType;
             quantity = 1;
             amount = shipment.Sum;
+            taxCode = shipment.TaxType;
+
             return this;
         }
     }
