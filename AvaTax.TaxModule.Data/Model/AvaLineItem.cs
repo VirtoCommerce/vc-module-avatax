@@ -36,26 +36,14 @@ namespace AvaTax.TaxModule.Data.Model
             return this;
         }
 
-        public virtual LineItemModel FromOrderShipment(Shipment shipment, Store store)
+        public virtual LineItemModel FromOrderShipment(Shipment shipment)
         {
             number = shipment.Id;
             itemCode = shipment.Number;
             description = shipment.ShipmentMethodCode;
             quantity = 1;
             amount = shipment.Sum;
-
-            // First, let's try to read the tax type from the shipment itself.
             taxCode = shipment.TaxType;
-
-            // If it is not filled, let's find the shipping method for this shipment and take the tax type from there.
-            if (string.IsNullOrEmpty(taxCode))
-            {
-                var shippingMethod = store.ShippingMethods.FirstOrDefault(x => x.Code == shipment.ShipmentMethodCode);
-                if (shippingMethod != null)
-                {
-                    taxCode = shippingMethod.TaxType;
-                }
-            }
 
             return this;
         }

@@ -14,13 +14,13 @@ using VirtoCommerce.Domain.Inventory.Services;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Search.ChangeFeed;
-using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
 using FulfillmentCenter = VirtoCommerce.Domain.Inventory.Model.FulfillmentCenter;
 
 namespace AvaTax.TaxModule.Data.Services
 {
+    [CLSCompliant(false)]
     public class OrdersSynchronizationService : IOrdersSynchronizationService
     {
         private const int BatchSize = 50;
@@ -28,14 +28,17 @@ namespace AvaTax.TaxModule.Data.Services
         private readonly ICustomerOrderService _orderService;
         private readonly IStoreService _storeService;
         private readonly IFulfillmentCenterService _fulfillmentCenterService;
+        private readonly ITaxTypeAdjustmentService _taxTypeAdjustmentService;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
         public OrdersSynchronizationService(ICustomerOrderService orderService, IStoreService storeService, 
-            IFulfillmentCenterService fulfillmentCenterService, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
+            IFulfillmentCenterService fulfillmentCenterService, ITaxTypeAdjustmentService taxTypeAdjustmentService,
+            Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
         {
             _orderService = orderService;
             _storeService = storeService;
             _fulfillmentCenterService = fulfillmentCenterService;
+            _taxTypeAdjustmentService = taxTypeAdjustmentService;
             _avaTaxClientFactory = avaTaxClientFactory;
         }
 
@@ -128,6 +131,8 @@ namespace AvaTax.TaxModule.Data.Services
                     var avaTaxProvider = store.TaxProviders.FirstOrDefault(x => x.Code == ModuleConstants.AvaTaxRateProviderCode);
                     if (avaTaxProvider != null && avaTaxProvider.IsActive)
                     {
+                        _taxTypeAdjustmentService.AdjustTaxTypesFor(order);
+
                         FulfillmentCenter fulfillmentCenter = null;
 
                         var fulfillmentCenterId = store.MainFulfillmentCenterId;
@@ -143,7 +148,7 @@ namespace AvaTax.TaxModule.Data.Services
                         {
                             var companyCode = avaTaxSettings.CompanyCode;
                             var sourceAddress = fulfillmentCenter?.Address;
-                            await SendOrderToAvaTax(order, store, companyCode, sourceAddress, avaTaxClient);
+                            await SendOrderToAvaTax(order, companyCode, sourceAddress, avaTaxClient);
                         }
                         catch (AvaTaxError e)
                         {
@@ -174,12 +179,12 @@ namespace AvaTax.TaxModule.Data.Services
             progressCallback(progressInfo);
         }
 
-        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, Store store, string companyCode, Address sourceAddress, AvaTaxClient avaTaxClient)
+        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, string companyCode, Address sourceAddress, AvaTaxClient avaTaxClient)
         {
             if (!order.IsCancelled)
             {
                 var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
-                createOrAdjustTransactionModel.FromOrder(order, store, companyCode, sourceAddress);
+                createOrAdjustTransactionModel.FromOrder(order, companyCode, sourceAddress);
                 var transactionModel = await avaTaxClient.CreateOrAdjustTransactionAsync(string.Empty, createOrAdjustTransactionModel);
             }
             else

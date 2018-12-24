@@ -5,7 +5,6 @@ using System.Threading;
 using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Order.Model;
-using VirtoCommerce.Domain.Store.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -50,7 +49,7 @@ namespace AvaTax.TaxModule.Data.Model
             return this;
         }
 
-        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, Store store, string requiredCompanyCode, Address sourceAddress)
+        public virtual AvaCreateTransactionModel FromOrder(CustomerOrder order, string requiredCompanyCode, Address sourceAddress)
         {
             code = order.Number;
             customerCode = order.CustomerId;
@@ -86,7 +85,7 @@ namespace AvaTax.TaxModule.Data.Model
             foreach (var shipment in order.Shipments ?? Enumerable.Empty<Shipment>())
             {
                 var avaTaxLine = AbstractTypeFactory<AvaLineItem>.TryCreateInstance();
-                avaTaxLine.FromOrderShipment(shipment, store);
+                avaTaxLine.FromOrderShipment(shipment);
                 lines.Add(avaTaxLine);
             }
 
