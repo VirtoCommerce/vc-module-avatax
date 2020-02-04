@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<module>
+    <id>VirtoCommerce.AvalaraTax</id>
+    <version>3.0.0</version>
+    <version-tag>rc.3</version-tag>
+    <platformVersion>3.0.0-rc.3</platformVersion>
+    <dependencies>
+        <dependency id="VirtoCommerce.Orders" version="3.0.0-rc.3" />
+        <dependency id="VirtoCommerce.Search" version="3.0.0-rc.3" />
+        <dependency id="VirtoCommerce.Inventory" version="3.0.0-rc.3" />
+        <dependency id="VirtoCommerce.Shipping" version="3.0.0-rc.3" />
+        <dependency id="VirtoCommerce.Store" version="3.0.0-rc.3" />
+        <dependency id="VirtoCommerce.Tax" version="3.0.0-rc.3" />
+    </dependencies>
+
+    <title>Avalara tax</title>
+    <description>APIs and UI for Avalara tax integration</description>
+    <authors>
+        <author>Virto Commerce</author>
+    </authors>
+    <owners>
+        <owner>Virto Commerce</owner>
+    </owners>
+    <projectUrl>https://virtocommerce.com/apps/extensions/integration-with-avalara-tax-service</projectUrl>
+    <iconUrl>Modules/$(VirtoCommerce.AvalaraTax)/Content/400.png</iconUrl>
+    <releaseNotes>First version.</releaseNotes>
+    <copyright>Copyright © 2011-2020 Virto Commerce. All rights reserved</copyright>
+    <tags>avalara tax</tags>
+
+    <assemblyFile>AvaTax.TaxModule.Web.dll</assemblyFile>
+    <moduleType>AvaTax.TaxModule.Web.Module, AvaTax.TaxModule.Web</moduleType>
+
+</module>

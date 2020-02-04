@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <noWarn>1591</noWarn>
+        <IsPackable>True</IsPackable>
+        <OutputType>Library</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="VirtoCommerce.CoreModule.Data" Version="3.0.0-rc.3" />
+        <PackageReference Include="VirtoCommerce.OrdersModule.Core" Version="3.0.0-rc.3" />
+        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0-rc3-0143" />
+        <PackageReference Include="VirtoCommerce.SearchModule.Core" Version="3.0.0-rc3" />
+        <PackageReference Include="VirtoCommerce.TaxModule.Core" Version="3.0.0-rc.3" />
+    </ItemGroup>
+</Project>
