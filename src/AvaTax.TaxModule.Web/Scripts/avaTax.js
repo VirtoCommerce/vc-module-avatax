@@ -48,7 +48,7 @@ angular.module(moduleName, [])
             // Register widget on Avalara tax provider properties blade
             widgetService.registerWidget({
                     isVisible: function (blade) {
-                        return blade.currentEntity.name == 'Avalara taxes' && authService.checkPermission('tax:manage');
+                        return blade.currentEntity && blade.currentEntity.name == 'Avalara taxes' && authService.checkPermission('tax:manage');
                     },
                     controller: 'virtoCommerce.avataxModule.testAvataxConnectionWidgetController',
                     template: 'Modules/$(VirtoCommerce.AvalaraTax)/Scripts/widgets/testAvataxConnectionWidget.tpl.html'
