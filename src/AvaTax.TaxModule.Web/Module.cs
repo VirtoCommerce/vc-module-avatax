@@ -40,7 +40,8 @@ namespace AvaTax.TaxModule.Web
         {
             var snapshot = serviceCollection.BuildServiceProvider();
 
-            serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => (settings) =>
+            
+            serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => settings =>
             {
                 var machineName = Environment.MachineName;
                 var avaTaxUri = new Uri(settings.ServiceUrl);
@@ -59,37 +60,18 @@ namespace AvaTax.TaxModule.Web
         {
             _appBuilder = appBuilder;
 
-
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
-            settingsRegistrar.RegisterSettings(ModuleConstants.Settings.Avalara.AllSettings, ModuleInfo.Id);
-            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.Avalara.AllSettings, nameof(AvaTaxRateProvider));
-
-
-            var settingsManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
-            
-
-            Func<AvaTaxRateProvider> avaTaxRateProviderFactory = () =>
-            {
-               
-                var avaTaxRateProvider = new AvaTaxRateProvider(
-                    appBuilder.ApplicationServices.GetRequiredService<ILogger<AvaTaxRateProvider>>(),
-                    appBuilder.ApplicationServices.GetRequiredService<Func<IAvaTaxSettings, AvaTaxClient>>(),
-                    null)
-                {
-                    LogoUrl = "Modules/$(Avalara.Tax)/Content/400.png"
-                };
-
-                var settingNames = ModuleConstants.Settings.Avalara.AllSettings.Select(x => x.Name);
-                var settings = settingsManager.GetObjectSettingsAsync(settingNames, avaTaxRateProvider.TypeName, avaTaxRateProvider.Id).GetAwaiter().GetResult().ToArray();
-
-
-                avaTaxRateProvider.Settings = settings;
-                return avaTaxRateProvider;
-
-            };
+            settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
 
             var taxProviderRegistrar = appBuilder.ApplicationServices.GetRequiredService<ITaxProviderRegistrar>();
-            taxProviderRegistrar.RegisterTaxProvider(avaTaxRateProviderFactory);
+            taxProviderRegistrar.RegisterTaxProvider(() =>
+            {
+                var logger = appBuilder.ApplicationServices.GetRequiredService<ILogger<AvaTaxRateProvider>>();
+                var avaTaxClientFactory = appBuilder.ApplicationServices.GetRequiredService<Func<IAvaTaxSettings, AvaTaxClient>>();
+                return new AvaTaxRateProvider(logger,avaTaxClientFactory);
+
+            });
+            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
 
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x => new Permission() { GroupName = "Avalara Tax", Name = x }).ToArray());

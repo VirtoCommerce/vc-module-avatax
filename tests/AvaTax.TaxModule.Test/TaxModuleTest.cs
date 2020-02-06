@@ -28,40 +28,34 @@ namespace AvaTax.TaxModule.Test
         private const string AvalaraCompanyCode = "APITrialCompany";
 
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
-        private const string ApplicationVersion = "2.x";
+        private const string ApplicationVersion = "3.x";
 
         private static readonly List<ObjectSettingEntry> Settings = new List<ObjectSettingEntry>
         {
             new ObjectSettingEntry
             {
                 Value = AvalaraUsername,
-                Name = ModuleConstants.Settings.Avalara.AccountNumber.Name,
+                Name = ModuleConstants.Settings.Credentials.AccountNumber.Name,
                 ValueType = SettingValueType.ShortText
             },
             new ObjectSettingEntry
             {
                 Value = AvalaraPassword,
-                Name = ModuleConstants.Settings.Avalara.LicenseKey.Name,
+                Name = ModuleConstants.Settings.Credentials.LicenseKey.Name,
                 ValueType = SettingValueType.SecureString
             },
             new ObjectSettingEntry
             {
                 Value = AvalaraServiceUrl,
-                Name = ModuleConstants.Settings.Avalara.ServiceUrl.Name,
+                Name = ModuleConstants.Settings.Credentials.ServiceUrl.Name,
                 ValueType = SettingValueType.ShortText
             },
             new ObjectSettingEntry
             {
                 Value = AvalaraCompanyCode,
-                Name = ModuleConstants.Settings.Avalara.CompanyCode.Name,
+                Name = ModuleConstants.Settings.Credentials.CompanyCode.Name,
                 ValueType = SettingValueType.ShortText
             },
-            new ObjectSettingEntry
-            {
-                Value = "True",
-                Name = ModuleConstants.Settings.IsEnabled,
-                ValueType = SettingValueType.Boolean
-            }
         };
 
         public static readonly IEnumerable<object[]> TestData = new List<object[]>
@@ -82,14 +76,14 @@ namespace AvaTax.TaxModule.Test
             var storeService = new Mock<IStoreService>();
             var taxProviderSearchService = new Mock<ITaxProviderSearchService>();
 
-            var taxProviderSearchCriteria = new TaxProviderSearchCriteria()
+            var taxProviderSearchCriteria = new TaxProviderSearchCriteria
             {
                 StoreIds = new[] { storeId },
                 Keyword = typeof(AvaTaxRateProvider).Name
             };
 
 
-            taxProviderSearchService.Setup(x => x.SearchTaxProvidersAsync(taxProviderSearchCriteria)).ReturnsAsync(new TaxProviderSearchResult()
+            taxProviderSearchService.Setup(x => x.SearchTaxProvidersAsync(taxProviderSearchCriteria)).ReturnsAsync(new TaxProviderSearchResult
             {
                 TotalCount = 1,
                 Results = new List<TaxProvider>
@@ -121,7 +115,8 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var logService = new Mock<ILogger<AvaTaxRateProvider>>();
-            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, Settings.ToArray());
+            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient);
+            avaTaxRateProvider.Settings = Settings;
 
             var context = new TaxEvaluationContext
             {

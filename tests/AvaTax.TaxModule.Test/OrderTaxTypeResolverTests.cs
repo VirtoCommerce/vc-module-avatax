@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Services;
 using Moq;
 using VirtoCommerce.CoreModule.Core.Common;
@@ -46,7 +47,7 @@ namespace AvaTax.TaxModule.Test
         [Theory]
         [InlineData(null, TestTaxType, TestTaxType)]
         [InlineData(TestTaxType, null, TestTaxType)]
-        public void TestFillingTaxTypeForShipment(string shipmentTaxType, string shippingMethodTaxType, string expectedTaxType)
+        public async Task TestFillingTaxTypeForShipment(string shipmentTaxType, string shippingMethodTaxType, string expectedTaxType)
         {
             // Arrange
             var order = new CustomerOrder
@@ -82,13 +83,10 @@ namespace AvaTax.TaxModule.Test
                 Keyword = TestShipmentMethodCode
             };
 
-            _shippingMethodsSearchService.Setup(x => x.SearchShippingMethodsAsync(searchCriteria)).ReturnsAsync(() =>
+            _shippingMethodsSearchService.Setup(x => x.SearchShippingMethodsAsync(searchCriteria)).ReturnsAsync(() => new ShippingMethodsSearchResult
             {
-                return new ShippingMethodsSearchResult()
-                {
-                    TotalCount = 1,
-                    Results = shippingMethods
-                };
+                TotalCount = 1,
+                Results = shippingMethods
             });
 
             _storeService.Setup(x => x.GetByIdsAsync(new[] { TestStoreId }, null)).ReturnsAsync(new[] { store });
@@ -96,12 +94,12 @@ namespace AvaTax.TaxModule.Test
             var target = new OrderTaxTypeResolver(_storeService.Object, _shippingMethodsSearchService.Object);
 
             // Act
-            target.ResolveTaxTypeForOrderAsync(order);
+            await target.ResolveTaxTypeForOrderAsync(order);
 
             // Assert
             foreach (var shipment in order.Shipments)
             {
-                Assert.Equal(expectedTaxType, shipment.TaxType); ;
+                Assert.Equal(expectedTaxType, shipment.TaxType); 
             }
         }
     }

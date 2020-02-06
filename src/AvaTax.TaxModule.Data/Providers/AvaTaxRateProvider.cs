@@ -9,7 +9,6 @@ using AvaTax.TaxModule.Web.Services;
 using Microsoft.Extensions.Logging;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.TaxModule.Core.Model;
 
 namespace AvaTax.TaxModule.Data.Providers
@@ -19,15 +18,14 @@ namespace AvaTax.TaxModule.Data.Providers
         private readonly AvalaraLogger _logger;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
 
-        public AvaTaxRateProvider()
+        public AvaTaxRateProvider() : base(nameof(AvaTaxRateProvider))
         {
-            Code = "Avalara Tax Provider";
+            
         }
 
-        public AvaTaxRateProvider(ILogger<AvaTaxRateProvider> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, params ObjectSettingEntry[] settings)
+        public AvaTaxRateProvider(ILogger<AvaTaxRateProvider> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
             : this()
         {
-            Settings = settings;
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
         }
@@ -46,7 +44,7 @@ namespace AvaTax.TaxModule.Data.Providers
 
         protected virtual List<TaxRate> GetTaxRates(TaxEvaluationContext evalContext)
         {
-            List<TaxRate> retVal = new List<TaxRate>();
+            var retVal = new List<TaxRate>();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
                 var avaSettings = AvaTaxSettings.FromSettings(Settings);

@@ -17,7 +17,7 @@
                 "labels": {
                     "start": "Start",
                     "end": "End",
-                    "stats": "Processed — {{ processedCount }} of {{ totalCount }} orders",
+                    "stats": "Processed â€” {{ processedCount }} of {{ totalCount }} orders",
                     "errors": "Errors"
                 }
             }
@@ -36,50 +36,58 @@
             }
         }
     },
-    "settings": {
-        "Avalara": {
-            "IsEnabled": {
-                "description": "Enable or disable tax calculation",
-                "title": "Calculate taxes"
-            },
-            "Credentials.AccountNumber": {
-                "description": "Account number provided by Avalara during registration process",
-                "title": "Avalara account number"
-            },
-            "Credentials.LicenseKey": {
-                "description": "Account License Key provided by Avalara during registration process",
-                "title": "Avalara account License Key"
-            },
-            "Credentials.CompanyCode": {
-                "description": "Company code that should match with the code provided to the company registered in Avalara admin manager",
-                "title": "Company code in Avalara system"
-            },
-            "Credentials.ServiceUrl": {
-                "description": "Link to Avalara API service",
-                "title": "Link to Avalara API service"
-            },
-            "Credentials.AdminAreaUrl": {
-                "description": "Link to Avalara admin page. Used for building links to AvaTax transactions.",
-                "title": "Link to Avalara admin page"
-            },
-            "ScheduledOrdersSynchronization.IsEnabled": {
-                "description": "Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)",
-                "title": "Send orders to AvaTax automatically"
-            },
-            "ScheduledOrdersSynchronization.CronExpression": {
-                "description": " x minutes use '0/x * * * *', x hours use '0 */x * * *',  you can set minutes also '15 */x * * *', x days '0 0 */x * *' ",
-                "title": "Schedule of automatic order synchronization (requires restart)"
-            }
+  "settings": {
+    "Avalara": {
+      "IsEnabled": {
+        "description": "Enable or disable tax calculation",
+        "title": "Calculate taxes"
+      },
+
+      "Credentials": {
+        "AccountNumber": {
+          "description": "Account number provided by Avalara during registration process",
+          "title": "Avalara account number"
         },
-        "module": {
-            "VirtoCommerce.AvalaraTax": {
-                "description": "APIs and UI for Avalara tax integration"
-            }
+        "LicenseKey": {
+          "description": "Account License Key provided by Avalara during registration process",
+          "title": "Avalara account License Key"
         },
-        "permissions": {
-            "tax:manage": "Permission to manage avalara tax settings."
+        "CompanyCode": {
+          "description":
+            "Company code that should match with the code provided to the company registered in Avalara admin manager",
+          "title": "Company code in Avalara system"
+        },
+        "ServiceUrl": {
+          "description": "Link to Avalara API service",
+          "title": "Link to Avalara API service"
+        },
+        "AdminAreaUrl": {
+          "description": "Link to Avalara admin page. Used for building links to AvaTax transactions.",
+          "title": "Link to Avalara admin page"
         }
+
+      },
+      "ScheduledOrdersSynchronization": {
+        "IsEnabled": {
+          "description": "Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)",
+          "title": "Send orders to AvaTax automatically"
+        },
+        "CronExpression": {
+          "description":
+            " x minutes use '0/x * * * *', x hours use '0 */x * * *',  you can set minutes also '15 */x * * *', x days '0 0 */x * *' ",
+          "title": "Schedule of automatic order synchronization (requires restart)"
+        }
+      }
     },
+    "module": {
+      "VirtoCommerce.AvalaraTax": {
+        "description": "APIs and UI for Avalara tax integration"
+      }
+    },
+    "permissions": {
+      "tax:manage": "Permission to manage avalara tax settings."
+    }
+  },
     "tax": {
         "labels": {
             "AvaTaxRateProvider": {

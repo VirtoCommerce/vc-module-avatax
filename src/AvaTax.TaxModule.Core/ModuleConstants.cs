@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using VirtoCommerce.Platform.Core.Settings;
 
 namespace AvaTax.TaxModule.Core
@@ -7,15 +8,8 @@ namespace AvaTax.TaxModule.Core
     {
         public static class Settings
         {
-            public static class Avalara
+            public static class Credentials
             {
-                public static SettingDescriptor AvalaraTaxEnabled = new SettingDescriptor
-                {
-                    Name = "Avalara.IsEnabled",
-                    GroupName = "Taxes|Avalara",
-                    ValueType = SettingValueType.Boolean,
-                };
-
                 public static SettingDescriptor AccountNumber = new SettingDescriptor
                 {
                     Name = "Avalara.Credentials.AccountNumber",
@@ -47,6 +41,34 @@ namespace AvaTax.TaxModule.Core
                     GroupName = "Taxes|Avalara",
                     ValueType = SettingValueType.ShortText,
                 };
+
+                public static IEnumerable<SettingDescriptor> Settings
+                {
+                    get
+                    {
+                        return new List<SettingDescriptor>
+                        {
+                            AccountNumber,
+                            LicenseKey,
+                            CompanyCode,
+                            ServiceUrl,
+                            AdminAreaUrl,
+                        };
+                    }
+                }
+
+            }
+
+            public static class ScheduledOrdersSynchronization
+            {
+                public static SettingDescriptor SynchronizationIsEnabled = new SettingDescriptor
+                {
+                    Name = "Avalara.ScheduledOrdersSynchronization.IsEnabled",
+                    GroupName = "Taxes|Avalara",
+                    ValueType = SettingValueType.Boolean,
+                    DefaultValue = false
+                };
+
                 public static SettingDescriptor SynchronizationCronExpression = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.CronExpression",
@@ -55,39 +77,27 @@ namespace AvaTax.TaxModule.Core
                     DefaultValue = "0 0 * * *"
                 };
 
-                public static IEnumerable<SettingDescriptor> AllSettings
+                public static IEnumerable<SettingDescriptor> Settings
                 {
                     get
                     {
                         return new List<SettingDescriptor>
                         {
-                            AvalaraTaxEnabled,
-                            AccountNumber,
-                            LicenseKey,
-                            CompanyCode,
-                            ServiceUrl,
-                            AdminAreaUrl,
+                            SynchronizationIsEnabled,
                             SynchronizationCronExpression
                         };
                     }
                 }
+
+
             }
 
-            public const string IsEnabled = "Avalara.IsEnabled";
-
+            public static IEnumerable<SettingDescriptor> AllSettings => Credentials.Settings.Concat(ScheduledOrdersSynchronization.Settings).ToList(); 
+            
             public static class Synchronization
             {
                 public const string LastExecutionDate = "Avalara.Synchronization.LastExecutionDate";
             }
-
-            //public static class Credentials
-            //{
-            //    public const string AccountNumber = "Avalara.Credentials.AccountNumber";
-            //    public const string LicenseKey = "Avalara.Credentials.LicenseKey";
-            //    public const string CompanyCode = "Avalara.Credentials.CompanyCode";
-            //    public const string ServiceUrl = "Avalara.Credentials.ServiceUrl";
-            //    public const string AdminAreaUrl = "Avalara.Credentials.AdminAreaUrl";
-            //}
 
             public static class ScheduledOrderSynchronization
             {
@@ -95,7 +105,6 @@ namespace AvaTax.TaxModule.Core
                 public const string CronExpression = "Avalara.ScheduledOrdersSynchronization.CronExpression";
             }
         }
-
 
         public static class Security
         {
@@ -105,9 +114,5 @@ namespace AvaTax.TaxModule.Core
                 public static string[] AllPermissions = new[] { TaxManage };
             }
         }
-
-       // public const string AvaTaxRateProviderCode = "AvaTaxRateProvider";
-
-
     }
 }

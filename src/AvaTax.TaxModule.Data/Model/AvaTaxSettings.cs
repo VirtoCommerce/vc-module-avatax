@@ -12,12 +12,11 @@ namespace AvaTax.TaxModule.Web.Services
         {
             return new AvaTaxSettings
             {
-                AccountNumber = settings.GetSettingValue(ModuleConstants.Settings.Avalara.AccountNumber.Name, string.Empty),
-                LicenseKey = settings.GetSettingValue(ModuleConstants.Settings.Avalara.LicenseKey.Name, string.Empty),
-                CompanyCode = settings.GetSettingValue(ModuleConstants.Settings.Avalara.CompanyCode.Name, string.Empty),
-                ServiceUrl = settings.GetSettingValue(ModuleConstants.Settings.Avalara.ServiceUrl.Name, string.Empty),
-                AdminAreaUrl = settings.GetSettingValue(ModuleConstants.Settings.Avalara.AdminAreaUrl.Name, string.Empty),
-                IsEnabled = settings.GetSettingValue(ModuleConstants.Settings.IsEnabled, false)
+                AccountNumber = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AccountNumber.Name, string.Empty),
+                LicenseKey = settings.GetSettingValue(ModuleConstants.Settings.Credentials.LicenseKey.Name, string.Empty),
+                CompanyCode = settings.GetSettingValue(ModuleConstants.Settings.Credentials.CompanyCode.Name, string.Empty),
+                ServiceUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.ServiceUrl.Name, string.Empty),
+                AdminAreaUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AdminAreaUrl.Name, string.Empty),
             };
         }
 
