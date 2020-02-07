@@ -37,6 +37,5 @@ namespace AvaTax.TaxModule.Web.Services
         public string ServiceUrl { get; set; }
         public string AdminAreaUrl { get; set; }
         public Address SourceAddress { get; set; }
-        public bool IsActive { get; set; } = false;
     }
 }

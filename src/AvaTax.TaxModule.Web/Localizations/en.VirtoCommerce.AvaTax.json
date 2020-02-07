@@ -38,20 +38,7 @@
     },
   "settings": {
     "Avalara": {
-      "IsEnabled": {
-        "description": "Enable or disable tax calculation",
-        "title": "Calculate taxes"
-      },
-
       "Credentials": {
-        "AccountNumber": {
-          "description": "Account number provided by Avalara during registration process",
-          "title": "Avalara account number"
-        },
-        "LicenseKey": {
-          "description": "Account License Key provided by Avalara during registration process",
-          "title": "Avalara account License Key"
-        },
         "CompanyCode": {
           "description":
             "Company code that should match with the code provided to the company registered in Avalara admin manager",

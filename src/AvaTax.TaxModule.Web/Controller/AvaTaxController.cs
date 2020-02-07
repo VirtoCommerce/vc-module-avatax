@@ -49,6 +49,8 @@ namespace AvaTax.TaxModule.Web.Controller
         [HttpPost]
         [Route("ping")]
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(PingResultModel), StatusCodes.Status200OK)]
         public Task<ActionResult> TestConnection([FromBody]AvaTaxSettings taxSetting)
         {
             ActionResult result = BadRequest();
@@ -63,13 +65,6 @@ namespace AvaTax.TaxModule.Web.Controller
 
                 taxSetting.AccountNumber = _options.AccountNumber;
                 taxSetting.LicenseKey = _options.LicenseKey;
-
-                if (!taxSetting.IsActive)
-                {
-                    const string errorMessage = "Tax calculation disabled, enable before testing connection.";
-                    result = BadRequest(errorMessage);
-                    throw new Exception(errorMessage);
-                }
 
                 if (!taxSetting.IsValid)
                 {

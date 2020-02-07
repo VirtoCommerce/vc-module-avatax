@@ -20,7 +20,6 @@ angular.module('virtoCommerce.avataxModule')
         }
         if (settings) {
             var avaSettings = avaSettingsFactory.loadAvaSettings(settings);
-            avaSettings.isActive = $scope.blade.parentBlade.currentEntity.isActive;
             avataxModuleResources.ping(avaSettings, function () {
                 $scope.background = "LightGreen";
                 $scope.blade.isLoading = false;
