@@ -1,4 +1,4 @@
-﻿using Avalara.AvaTax.RestClient;
+using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Providers;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.InventoryModule.Core.Services;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.CoreModule.Core.Common;
@@ -33,10 +34,12 @@ namespace AvaTax.TaxModule.Data.Services
         private readonly IOrderTaxTypeResolver _orderTaxTypeResolver;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly ITaxProviderSearchService _taxProviderSearchService;
+        private readonly AvaTaxSecureOptions _options;
 
         public OrdersSynchronizationService(ICustomerOrderService orderService, IStoreService storeService,
             IFulfillmentCenterService fulfillmentCenterService, IOrderTaxTypeResolver orderTaxTypeResolver,
-            Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, ITaxProviderSearchService taxProviderSearchService)
+            Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, ITaxProviderSearchService taxProviderSearchService,
+            IOptions<AvaTaxSecureOptions> options)
         {
             _orderService = orderService;
             _storeService = storeService;
@@ -44,6 +47,7 @@ namespace AvaTax.TaxModule.Data.Services
             _orderTaxTypeResolver = orderTaxTypeResolver;
             _avaTaxClientFactory = avaTaxClientFactory;
             _taxProviderSearchService = taxProviderSearchService;
+            _options = options.Value;
         }
 
         public async Task<AvaTaxOrderSynchronizationStatus> GetOrderSynchronizationStatusAsync(string orderId)
@@ -171,7 +175,7 @@ namespace AvaTax.TaxModule.Data.Services
                 var avaTaxProvider = taxProviders.Results.FirstOrDefault(x => x.IsActive);
                 if (avaTaxProvider != null)
                 {
-                    result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
+                    result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
                     if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
                     {
                         result.SourceAddress = (await _fulfillmentCenterService.GetByIdsAsync(new[] { store.MainFulfillmentCenterId }))?.FirstOrDefault()?.Address;

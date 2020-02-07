@@ -17,6 +17,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
+using Microsoft.Extensions.Options;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
@@ -30,10 +31,11 @@ namespace AvaTax.TaxModule.Web.Controller
         private readonly IAddressValidationService _addressValidationService;
         private readonly IPushNotificationManager _pushNotificationManager;
         private readonly IUserNameResolver _userNameResolver;
+        private readonly AvaTaxSecureOptions _options;
 
         [CLSCompliant(false)]
         public AvaTaxController(ILogger<AvaTaxController> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOrdersSynchronizationService ordersSynchronizationService,
-            IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver)
+            IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IOptions<AvaTaxSecureOptions> options)
         {
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
@@ -41,6 +43,7 @@ namespace AvaTax.TaxModule.Web.Controller
             _addressValidationService = addressValidationService;
             _pushNotificationManager = pushNotificationManager;
             _userNameResolver = userNameResolver;
+            _options = options.Value;
         }
 
         [HttpPost]
@@ -58,7 +61,10 @@ namespace AvaTax.TaxModule.Web.Controller
                     throw new Exception(errorMessage);
                 }
 
-                if (!taxSetting.IsEnabled)
+                taxSetting.AccountNumber = _options.AccountNumber;
+                taxSetting.LicenseKey = _options.LicenseKey;
+
+                if (!taxSetting.IsActive)
                 {
                     const string errorMessage = "Tax calculation disabled, enable before testing connection.";
                     result = BadRequest(errorMessage);

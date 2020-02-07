@@ -9,18 +9,12 @@ angular.module(moduleName, [])
     .factory('virtoCommerce.avataxModule.avaSettingsFactory', [function () {
 
         function loadAvaSettings(settings) {
-            var isEnabledSetting = findSettingByName(settings, "Avalara.IsEnabled");
-            var accountNumberSetting = findSettingByName(settings, "Avalara.Credentials.AccountNumber");
-            var licenseKeySetting = findSettingByName(settings, "Avalara.Credentials.LicenseKey");
             var serviceUrlSetting = findSettingByName(settings, "Avalara.Credentials.ServiceUrl");
             var companyCodeSetting = findSettingByName(settings, "Avalara.Credentials.CompanyCode");
 
             var result = null;
-            if (isEnabledSetting && accountNumberSetting && licenseKeySetting && serviceUrlSetting && companyCodeSetting) {
+            if (serviceUrlSetting && companyCodeSetting) {
                 result = {
-                    isEnabled: getCurrentValueOf(isEnabledSetting),
-                    accountNumber: getCurrentValueOf(accountNumberSetting),
-                    licenseKey: getCurrentValueOf(licenseKeySetting),
                     serviceUrl: getCurrentValueOf(serviceUrlSetting),
                     companyCode: getCurrentValueOf(companyCodeSetting)
                 };

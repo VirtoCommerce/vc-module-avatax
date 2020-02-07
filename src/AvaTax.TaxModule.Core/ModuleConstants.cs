@@ -10,19 +10,6 @@ namespace AvaTax.TaxModule.Core
         {
             public static class Credentials
             {
-                public static SettingDescriptor AccountNumber = new SettingDescriptor
-                {
-                    Name = "Avalara.Credentials.AccountNumber",
-                    GroupName = "Taxes|Avalara",
-                    ValueType = SettingValueType.Integer,
-                };
-
-                public static SettingDescriptor LicenseKey = new SettingDescriptor
-                {
-                    Name = "Avalara.Credentials.LicenseKey",
-                    GroupName = "Taxes|Avalara",
-                    ValueType = SettingValueType.SecureString,
-                };
                 public static SettingDescriptor CompanyCode = new SettingDescriptor
                 {
                     Name = "Avalara.Credentials.CompanyCode",
@@ -48,8 +35,6 @@ namespace AvaTax.TaxModule.Core
                     {
                         return new List<SettingDescriptor>
                         {
-                            AccountNumber,
-                            LicenseKey,
                             CompanyCode,
                             ServiceUrl,
                             AdminAreaUrl,
@@ -99,11 +84,6 @@ namespace AvaTax.TaxModule.Core
                 public const string LastExecutionDate = "Avalara.Synchronization.LastExecutionDate";
             }
 
-            public static class ScheduledOrderSynchronization
-            {
-                public const string IsEnabled = "Avalara.ScheduledOrdersSynchronization.IsEnabled";
-                public const string CronExpression = "Avalara.ScheduledOrdersSynchronization.CronExpression";
-            }
         }
 
         public static class Security

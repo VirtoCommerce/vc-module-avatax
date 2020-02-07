@@ -1,4 +1,4 @@
-﻿using Avalara.AvaTax.RestClient;
+using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Providers;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.StoreModule.Core.Services;
 using VirtoCommerce.TaxModule.Core.Model;
@@ -22,14 +23,15 @@ namespace AvaTax.TaxModule.Data.Services
         private readonly IStoreService _storeService;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly ITaxProviderSearchService _taxProviderSearchService;
+        private readonly AvaTaxSecureOptions _options;
 
 
-        public AddressValidationService(IStoreService storeService, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, ITaxProviderSearchService taxProviderSearchService)
+        public AddressValidationService(IStoreService storeService, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, ITaxProviderSearchService taxProviderSearchService, IOptions<AvaTaxSecureOptions> options)
         {
             _storeService = storeService;
             _avaTaxClientFactory = avaTaxClientFactory;
             _taxProviderSearchService = taxProviderSearchService;
-
+            _options = options.Value;
         }
 
         public async Task<AddressValidationResult> ValidateAddressAsync(Address address, string storeId)
@@ -53,7 +55,7 @@ namespace AvaTax.TaxModule.Data.Services
                 throw new ArgumentException($"Store '{storeId}' does not use AvaTaxRateProvider, so it can't be used for address validation.");
             }
 
-            var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings);
+            var avaTaxSettings = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
 
             var addressValidationInfo = AbstractTypeFactory<AvaAddressValidationInfo>.TryCreateInstance();
             addressValidationInfo.FromAddress(address);

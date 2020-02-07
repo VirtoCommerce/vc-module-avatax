@@ -12,7 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Providers;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
@@ -39,8 +41,8 @@ namespace AvaTax.TaxModule.Web
         public void Initialize(IServiceCollection serviceCollection)
         {
             var snapshot = serviceCollection.BuildServiceProvider();
+            var configuration = snapshot.GetService<IConfiguration>();
 
-            
             serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => settings =>
             {
                 var machineName = Environment.MachineName;
@@ -54,6 +56,8 @@ namespace AvaTax.TaxModule.Web
             serviceCollection.AddTransient<IAddressValidationService, AddressValidationService>();
             serviceCollection.AddTransient<IOrdersSynchronizationService, OrdersSynchronizationService>();
             serviceCollection.AddTransient<IOrderTaxTypeResolver, OrderTaxTypeResolver>();
+
+            serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -66,22 +70,23 @@ namespace AvaTax.TaxModule.Web
             var taxProviderRegistrar = appBuilder.ApplicationServices.GetRequiredService<ITaxProviderRegistrar>();
             taxProviderRegistrar.RegisterTaxProvider(() =>
             {
+                var avalaraOptions = appBuilder.ApplicationServices.GetRequiredService<IOptions<AvaTaxSecureOptions>>();
                 var logger = appBuilder.ApplicationServices.GetRequiredService<ILogger<AvaTaxRateProvider>>();
                 var avaTaxClientFactory = appBuilder.ApplicationServices.GetRequiredService<Func<IAvaTaxSettings, AvaTaxClient>>();
-                return new AvaTaxRateProvider(logger,avaTaxClientFactory);
+                return new AvaTaxRateProvider(logger,avaTaxClientFactory, avalaraOptions);
 
             });
-            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
+            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.Credentials.Settings, nameof(AvaTaxRateProvider));
 
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x => new Permission() { GroupName = "Avalara Tax", Name = x }).ToArray());
 
             var settingManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
 
-            var processJobEnabled = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrderSynchronization.IsEnabled, false);
+            var processJobEnabled = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled.Name, false);
             if (processJobEnabled)
             {
-                var cronExpression = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrderSynchronization.CronExpression, "0 0 * * *");
+                var cronExpression = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression.Name, "0 0 * * *");
                 RecurringJob.AddOrUpdate<OrdersSynchronizationJob>("SendOrdersToAvaTaxJob", x => x.RunScheduled(JobCancellationToken.Null, null), cronExpression);
             }
             else

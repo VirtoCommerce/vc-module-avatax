@@ -8,12 +8,12 @@ namespace AvaTax.TaxModule.Web.Services
 {
     public class AvaTaxSettings : IAvaTaxSettings
     {
-        public static AvaTaxSettings FromSettings(IEnumerable<ObjectSettingEntry> settings)
+        public static AvaTaxSettings FromSettings(IEnumerable<ObjectSettingEntry> settings, AvaTaxSecureOptions options)
         {
             return new AvaTaxSettings
             {
-                AccountNumber = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AccountNumber.Name, string.Empty),
-                LicenseKey = settings.GetSettingValue(ModuleConstants.Settings.Credentials.LicenseKey.Name, string.Empty),
+                AccountNumber = options.AccountNumber,
+                LicenseKey = options.LicenseKey,
                 CompanyCode = settings.GetSettingValue(ModuleConstants.Settings.Credentials.CompanyCode.Name, string.Empty),
                 ServiceUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.ServiceUrl.Name, string.Empty),
                 AdminAreaUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AdminAreaUrl.Name, string.Empty),
@@ -37,6 +37,6 @@ namespace AvaTax.TaxModule.Web.Services
         public string ServiceUrl { get; set; }
         public string AdminAreaUrl { get; set; }
         public Address SourceAddress { get; set; }
-        public bool IsEnabled { get; set; } = false;
+        public bool IsActive { get; set; } = false;
     }
 }

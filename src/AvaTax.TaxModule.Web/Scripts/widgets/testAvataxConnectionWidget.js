@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.avataxModule')
+angular.module('virtoCommerce.avataxModule')
     .controller('virtoCommerce.avataxModule.testAvataxConnectionWidgetController', ['$scope', 'platformWebApp.bladeNavigationService', 'virtoCommerce.avataxModule.resources', 'virtoCommerce.avataxModule.avaSettingsFactory', function ($scope, bladeNavigationService, avataxModuleResources, avaSettingsFactory) {
     $scope.widget.refresh = function () {
         $scope.background = "transparent";
@@ -16,10 +16,11 @@
             settings = $scope.blade.currentEntities['Avalara'];
         }
         if (!settings) {
-            settings = $scope.blade.currentEntity.settings
+            settings = $scope.blade.currentEntity.settings;
         }
         if (settings) {
             var avaSettings = avaSettingsFactory.loadAvaSettings(settings);
+            avaSettings.isActive = $scope.blade.parentBlade.currentEntity.isActive;
             avataxModuleResources.ping(avaSettings, function () {
                 $scope.background = "LightGreen";
                 $scope.blade.isLoading = false;

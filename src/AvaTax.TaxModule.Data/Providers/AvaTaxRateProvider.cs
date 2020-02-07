@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Avalara.AvaTax.RestClient;
+using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Logging;
 using AvaTax.TaxModule.Data.Model;
 using AvaTax.TaxModule.Web.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.TaxModule.Core.Model;
@@ -17,17 +19,19 @@ namespace AvaTax.TaxModule.Data.Providers
     {
         private readonly AvalaraLogger _logger;
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
+        private readonly AvaTaxSecureOptions _options;
 
         public AvaTaxRateProvider() : base(nameof(AvaTaxRateProvider))
         {
             
         }
 
-        public AvaTaxRateProvider(ILogger<AvaTaxRateProvider> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory)
+        public AvaTaxRateProvider(ILogger<AvaTaxRateProvider> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOptions<AvaTaxSecureOptions> options)
             : this()
         {
             _logger = new AvalaraLogger(log);
             _avaTaxClientFactory = avaTaxClientFactory;
+            _options = options.Value;
         }
 
         public override IEnumerable<TaxRate> CalculateRates(IEvaluationContext context)
@@ -47,7 +51,7 @@ namespace AvaTax.TaxModule.Data.Providers
             var retVal = new List<TaxRate>();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
             {
-                var avaSettings = AvaTaxSettings.FromSettings(Settings);
+                var avaSettings = AvaTaxSettings.FromSettings(Settings, _options);
                 Validate(avaSettings);
 
                 var companyCode = avaSettings.CompanyCode;
@@ -91,9 +95,9 @@ namespace AvaTax.TaxModule.Data.Providers
 
         protected virtual void Validate(IAvaTaxSettings settings)
         {
-            if (!settings.IsEnabled || !settings.IsValid)
+            if (!settings.IsValid)
             {
-                throw new Exception("Tax calculation disabled or credentials not provided");
+                throw new Exception("Tax credentials not provided");
             }
         }
     }

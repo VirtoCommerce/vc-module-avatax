@@ -7,6 +7,7 @@ using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Providers;
 using AvaTax.TaxModule.Data.Services;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.StoreModule.Core.Services;
@@ -30,20 +31,14 @@ namespace AvaTax.TaxModule.Test
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "3.x";
 
+        private AvaTaxSecureOptions Options = new AvaTaxSecureOptions
+        {
+            AccountNumber = AvalaraUsername,
+            LicenseKey = AvalaraPassword
+        };
+
         private static readonly List<ObjectSettingEntry> Settings = new List<ObjectSettingEntry>
         {
-            new ObjectSettingEntry
-            {
-                Value = AvalaraUsername,
-                Name = ModuleConstants.Settings.Credentials.AccountNumber.Name,
-                ValueType = SettingValueType.ShortText
-            },
-            new ObjectSettingEntry
-            {
-                Value = AvalaraPassword,
-                Name = ModuleConstants.Settings.Credentials.LicenseKey.Name,
-                ValueType = SettingValueType.SecureString
-            },
             new ObjectSettingEntry
             {
                 Value = AvalaraServiceUrl,
@@ -101,7 +96,10 @@ namespace AvaTax.TaxModule.Test
                 Id = storeId
             });
 
-            var target = new AddressValidationService(storeService.Object, CreateAvaTaxClient, taxProviderSearchService.Object);
+            var options = new Mock<IOptions<AvaTaxSecureOptions>>();
+            options.Setup(x=>x.Value).Returns(Options);
+
+            var target = new AddressValidationService(storeService.Object, CreateAvaTaxClient, taxProviderSearchService.Object, options.Object);
 
             // Act
             var result = await target.ValidateAddressAsync(address, storeId);
@@ -115,7 +113,10 @@ namespace AvaTax.TaxModule.Test
         {
             //arrange
             var logService = new Mock<ILogger<AvaTaxRateProvider>>();
-            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient);
+            var options = new Mock<IOptions<AvaTaxSecureOptions>>();
+            options.Setup(x => x.Value).Returns(Options);
+
+            var avaTaxRateProvider = new AvaTaxRateProvider(logService.Object, CreateAvaTaxClient, options.Object);
             avaTaxRateProvider.Settings = Settings;
 
             var context = new TaxEvaluationContext
