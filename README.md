@@ -15,14 +15,21 @@ Installing the module:
 
 # Settings
 ## Avalara connection settings
-The module can be configured in two places:
+The module can be configured in three places:
+* Platfrom config file: appsettings.json
 * Platform-wide settings: Settings -> Taxes -> Avalara or Modules -> Installed -> Avalara tax -> Settings
 * Store-specific settings: Stores -> (your store) -> Tax providers -> Avalara taxes
 
-Both of these places have the following settings:
-* **Avalara.Tax.IsEnabled** - Enable or disable tax calculation
-* **Avalara.Tax.Credentials.AccountNumber** - Account number provided by Avalara during registration process
-* **Avalara.Tax.Credentials.LicenseKey** - Account License Key provided by Avalara during registration process
+**AccountNumber** and **LicenseKey** provided by Avalara during registration process should be configured in appsetting.json:
+```json
+ "Tax": {
+        "Avalara": {
+            "AccountNumber": "********",
+            "LicenseKey": "**************"
+        }
+    }
+```
+Other not secured credential settings should be configured at **Store-specific settings: Stores -> (your store) -> Tax providers -> Avalara taxes**
 * **Avalara.Tax.Credentials.CompanyCode** - Company code that should match the code provided to the company registered in Avalara admin manager. This allows to store transactions for different stores to different AvaTax companies if necessary.
 * **Avalara.Tax.Credentials.ServiceUrl** - Link to Avalara API service:
     * `https://sandbox-rest.avatax.com` for the development environment;
@@ -31,6 +38,8 @@ Both of these places have the following settings:
     * `https://admin-development.avalara.net` for the development environment;
     * `https://admin-avatax.avalara.net` for the production environment.
     AvaTax module uses this setting to build the URL to the transaction. Note that environments for both **Avalara.Tax.Credentials.ServiceUrl** and **Avalara.Tax.Credentials.AdminAreaUrl** settings should match.
+
+Settings for automatic order synchronization should be configured at **Platform-wide settings: Settings -> Taxes -> Avalara or Modules -> Installed -> Avalara tax -> Settings**
 * **Avalara.Tax.ScheduledOrdersSynchronization.IsEnabled** - Enable or disable automatic order synchronization with AvaTax
 * **Avalara.Tax.ScheduledOrdersSynchronization.CronExpression** - CRON expression for the automatic order synchronization schedule. By default, it runs orders synchronization once every day.
 
@@ -42,8 +51,8 @@ Also, both of these blades have the "Test connection with AvaTax" widget. You ca
 
     ![Test connection widget, error message](https://user-images.githubusercontent.com/1835759/48473017-1eee3c00-e82a-11e8-8489-a08ab261ce01.png)
 
-> Note: if the tax calculation is disabled (**Avalara.Tax.IsEnabled** is turned off), the Avalara tax provider will ignore any tax requests, and this may lead to incorrect tax calculation. To help you prevent this, the connection test will fail if the tax calculation is turned off, even if the service URL and Avalara credentials are correct.
-> ![Test connection widget, failure due to disabled tax calculation](https://user-images.githubusercontent.com/1835759/48472424-d6824e80-e828-11e8-9f27-c4c555f5abcf.png)
+> Note: if the tax calculation is disabled (**Avalara.Tax.IsEnabled** is turned off), the Avalara tax provider will ignore any tax requests, and this may lead to incorrect tax calculation. 
+
 
 ## Sending transactions to AvaTax
 `Avalara.Tax` module allows to create AvaTax transactions for orders. It creates a `SalesInvoice` transaction for orders:
