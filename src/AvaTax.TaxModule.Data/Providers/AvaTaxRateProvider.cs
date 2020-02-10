@@ -21,9 +21,9 @@ namespace AvaTax.TaxModule.Data.Providers
         private readonly Func<IAvaTaxSettings, AvaTaxClient> _avaTaxClientFactory;
         private readonly AvaTaxSecureOptions _options;
 
-        public AvaTaxRateProvider() : base(nameof(AvaTaxRateProvider))
+        public AvaTaxRateProvider() 
         {
-            
+            Code = nameof(AvaTaxRateProvider);
         }
 
         public AvaTaxRateProvider(ILogger<AvaTaxRateProvider> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOptions<AvaTaxSecureOptions> options)
