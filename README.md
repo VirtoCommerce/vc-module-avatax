@@ -20,7 +20,7 @@ The module can be configured in three places:
 * Platform-wide settings: Settings -> Taxes -> Avalara or Modules -> Installed -> Avalara tax -> Settings
 * Store-specific settings: Stores -> (your store) -> Tax providers -> Avalara taxes
 
-**AccountNumber** and **LicenseKey** provided by Avalara during registration process should be configured in appsetting.json:
+Confidential account settings **AccountNumber** and **LicenseKey** provided by Avalara during registration process should be configured in appsetting.json:
 ```json
  "Tax": {
         "Avalara": {
@@ -29,7 +29,7 @@ The module can be configured in three places:
         }
     }
 ```
-Other not secured credential settings should be configured at **Store-specific settings: Stores -> (your store) -> Tax providers -> Avalara taxes**
+Others nonconfidential settings settings should be configured at **Store-specific settings: Stores -> (your store) -> Tax providers -> Avalara taxes**
 * **Avalara.Tax.Credentials.CompanyCode** - Company code that should match the code provided to the company registered in Avalara admin manager. This allows to store transactions for different stores to different AvaTax companies if necessary.
 * **Avalara.Tax.Credentials.ServiceUrl** - Link to Avalara API service:
     * `https://sandbox-rest.avatax.com` for the development environment;
