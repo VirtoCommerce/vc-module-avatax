@@ -111,7 +111,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [HttpPost]
         [Route("orders/synchronize")]
         [Authorize(ModuleConstants.Security.Permissions.TaxManage)]
-        public async Task<ActionResult<OrdersSynchronizationPushNotification>> SynchronizeOrders(OrdersSynchronizationRequest request)
+        public async Task<ActionResult<OrdersSynchronizationPushNotification>> SynchronizeOrders([FromBody]OrdersSynchronizationRequest request)
         {
             var notification = await Enqueue(request);
             await _pushNotificationManager.SendAsync(notification);
@@ -130,7 +130,7 @@ namespace AvaTax.TaxModule.Web.Controller
 
         [HttpPost]
         [Route("address/validate")]
-        public async Task<ActionResult<AddressValidationResult>> ValidateAddress(AddressValidationRequest request)
+        public async Task<ActionResult<AddressValidationResult>> ValidateAddress([FromBody] AddressValidationRequest request)
         {
             var result = await _addressValidationService.ValidateAddressAsync(request.Address, request.StoreId);
             return Ok(result);
