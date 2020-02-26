@@ -57,7 +57,7 @@ namespace AvaTax.TaxModule.Data.Model
             type = DocumentType.SalesInvoice;
             currencyCode = order.Currency;
             companyCode = requiredCompanyCode;
-            commit = order.InPayments.All(x => x.IsApproved);
+            commit = true;
 
             var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
             if (shippingAddress != null && sourceAddress != null)
