@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Order.Model;
-using VirtoCommerce.Domain.Payment.Model;
 using VirtoCommerce.Domain.Tax.Model;
 using VirtoCommerce.Platform.Core.Common;
 
@@ -58,7 +57,7 @@ namespace AvaTax.TaxModule.Data.Model
             type = DocumentType.SalesInvoice;
             currencyCode = order.Currency;
             companyCode = requiredCompanyCode;
-            commit = order.InPayments.All(x => x.PaymentStatus == PaymentStatus.Paid);
+            commit = order.InPayments.All(x => x.IsApproved);
 
             var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
             if (shippingAddress != null && sourceAddress != null)
