@@ -122,7 +122,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [Route("orders/{jobId}/cancel")]
         [Authorize(ModuleConstants.Security.Permissions.TaxManage)]
-        public async Task<ActionResult> CancelOrdersSynchronization(string jobId)
+        public ActionResult CancelOrdersSynchronization(string jobId)
         {
             BackgroundJob.Delete(jobId);
             return NoContent();

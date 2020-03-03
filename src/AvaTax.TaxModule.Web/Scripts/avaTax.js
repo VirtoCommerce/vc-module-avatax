@@ -61,7 +61,9 @@ angular.module(moduleName, [])
 
             // Register manual order synchronization widget on order details blade
             widgetService.registerWidget({
-                    isVisible: true,
+                    isVisible: function (blade) {
+                        return blade.id && blade.id === 'orderDetail';
+                    },
                     controller: 'virtoCommerce.avataxModule.runOrderSynchronizationWidgetController',
                     template: 'Modules/$(VirtoCommerce.AvalaraTax)/Scripts/widgets/runOrderSynchronizationWidget.tpl.html'
                 },
