@@ -10,12 +10,12 @@
 
     <ItemGroup>
         <PackageReference Include="Avalara.AvaTax" Version="18.9.0.234" />
-        <PackageReference Include="VirtoCommerce.InventoryModule.Core" Version="3.0.0-rc.3" />
-        <PackageReference Include="VirtoCommerce.OrdersModule.Core" Version="3.0.0-rc.3" />
-        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0-rc3-0143" />
-        <PackageReference Include="VirtoCommerce.ShippingModule.Core" Version="3.0.0-rc.3" />
-        <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.0.0-rc.3" />
-        <PackageReference Include="VirtoCommerce.TaxModule.Core" Version="3.0.0-rc.3" />
+        <PackageReference Include="VirtoCommerce.InventoryModule.Core" Version="3.0.0-rc.4" />
+        <PackageReference Include="VirtoCommerce.OrdersModule.Core" Version="3.0.0-rc.4" />
+        <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0-rc4" />
+        <PackageReference Include="VirtoCommerce.ShippingModule.Core" Version="3.0.0-rc.4" />
+        <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.0.0-rc.4" />
+        <PackageReference Include="VirtoCommerce.TaxModule.Core" Version="3.0.0-rc.4" />
     </ItemGroup>
 
     <ItemGroup>
