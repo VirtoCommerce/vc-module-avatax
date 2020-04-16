@@ -1,19 +1,18 @@
+using System;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
-using AvaTax.TaxModule.Web.Services;
-using Newtonsoft.Json;
-using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Providers;
+using AvaTax.TaxModule.Web.Services;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using VirtoCommerce.InventoryModule.Core.Services;
 using VirtoCommerce.OrdersModule.Core.Model;
-using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.OrdersModule.Core.Services;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.SearchModule.Core.Services;
@@ -169,7 +168,8 @@ namespace AvaTax.TaxModule.Data.Services
 
                 var taxProviders = await _taxProviderSearchService.SearchTaxProvidersAsync(new TaxProviderSearchCriteria
                 {
-                    Keyword = typeof(AvaTaxRateProvider).Name
+                    Keyword = typeof(AvaTaxRateProvider).Name,
+                    StoreIds = new[] { store.Id }
                 });
 
                 var avaTaxProvider = taxProviders.Results.FirstOrDefault(x => x.IsActive);
