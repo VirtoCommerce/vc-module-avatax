@@ -42,7 +42,7 @@ angular.module(moduleName, [])
             // Register widget on Avalara tax provider properties blade
             widgetService.registerWidget({
                     isVisible: function (blade) {
-                        return blade.currentEntity && blade.currentEntity.name == 'Avalara taxes' && authService.checkPermission('tax:manage');
+                        return blade.currentEntity && blade.currentEntity.name === 'Avalara taxes' && authService.checkPermission('tax:manage');
                     },
                     controller: 'virtoCommerce.avataxModule.testAvataxConnectionWidgetController',
                     template: 'Modules/$(VirtoCommerce.AvalaraTax)/Scripts/widgets/testAvataxConnectionWidget.tpl.html'
@@ -52,7 +52,7 @@ angular.module(moduleName, [])
             // Register widget in module settings
             widgetService.registerWidget({
                     isVisible: function (blade) {
-                        return blade.currentEntities && blade.currentEntities['Avalara'];
+                        return blade.currentEntities && blade.currentEntities['Avalara'] && authService.checkPermission('tax:manage');
                     },
                     controller: 'virtoCommerce.avataxModule.testAvataxConnectionWidgetController',
                     template: 'Modules/$(VirtoCommerce.AvalaraTax)/Scripts/widgets/testAvataxConnectionWidget.tpl.html'
@@ -62,7 +62,7 @@ angular.module(moduleName, [])
             // Register manual order synchronization widget on order details blade
             widgetService.registerWidget({
                     isVisible: function (blade) {
-                        return blade.id && blade.id === 'orderDetail';
+                        return blade.id && blade.id === 'orderDetail' && authService.checkPermission('tax:manage');
                     },
                     controller: 'virtoCommerce.avataxModule.runOrderSynchronizationWidgetController',
                     template: 'Modules/$(VirtoCommerce.AvalaraTax)/Scripts/widgets/runOrderSynchronizationWidget.tpl.html'
