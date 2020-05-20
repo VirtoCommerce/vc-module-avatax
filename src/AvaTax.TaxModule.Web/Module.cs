@@ -1,25 +1,26 @@
-using Avalara.AvaTax.RestClient;
-using AvaTax.TaxModule.Core;
-using AvaTax.TaxModule.Core.Services;
-using AvaTax.TaxModule.Data;
-using AvaTax.TaxModule.Data.Services;
-using AvaTax.TaxModule.Web.BackgroundJobs;
-using Hangfire;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Avalara.AvaTax.RestClient;
+using AvaTax.TaxModule.Core;
+using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Data.BackgroundJobs;
+using AvaTax.TaxModule.Data.Handlers;
 using AvaTax.TaxModule.Data.Providers;
+using AvaTax.TaxModule.Data.Services;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.Platform.Core.Bus;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Core.Settings.Events;
 using VirtoCommerce.TaxModule.Core.Model;
 using ModuleConstants = AvaTax.TaxModule.Core.ModuleConstants;
 
@@ -56,6 +57,8 @@ namespace AvaTax.TaxModule.Web
             serviceCollection.AddTransient<IAddressValidationService, AddressValidationService>();
             serviceCollection.AddTransient<IOrdersSynchronizationService, OrdersSynchronizationService>();
             serviceCollection.AddTransient<IOrderTaxTypeResolver, OrderTaxTypeResolver>();
+            serviceCollection.AddTransient<ObjectSettingEntryChangedEventHandler>();
+            serviceCollection.AddTransient<BackgroundJobsRunner>();
 
             serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
         }
@@ -73,7 +76,7 @@ namespace AvaTax.TaxModule.Web
                 var avalaraOptions = appBuilder.ApplicationServices.GetRequiredService<IOptions<AvaTaxSecureOptions>>();
                 var logger = appBuilder.ApplicationServices.GetRequiredService<ILogger<AvaTaxRateProvider>>();
                 var avaTaxClientFactory = appBuilder.ApplicationServices.GetRequiredService<Func<IAvaTaxSettings, AvaTaxClient>>();
-                return new AvaTaxRateProvider(logger,avaTaxClientFactory, avalaraOptions);
+                return new AvaTaxRateProvider(logger, avaTaxClientFactory, avalaraOptions);
 
             });
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.Credentials.Settings, nameof(AvaTaxRateProvider));
@@ -81,18 +84,14 @@ namespace AvaTax.TaxModule.Web
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x => new Permission() { GroupName = "Avalara Tax", Name = x }).ToArray());
 
-            var settingManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
+            //Subscribe for Orders Synchronization job configuration changes
+            var inProcessBus = appBuilder.ApplicationServices.GetService<IHandlerRegistrar>();
+            inProcessBus.RegisterHandler<ObjectSettingChangedEvent>(async (message, token) => await appBuilder.ApplicationServices.GetService<ObjectSettingEntryChangedEventHandler>().Handle(message));
 
-            var processJobEnabled = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled.Name, false);
-            if (processJobEnabled)
-            {
-                var cronExpression = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression.Name, "0 0 * * *");
-                RecurringJob.AddOrUpdate<OrdersSynchronizationJob>("SendOrdersToAvaTaxJob", x => x.RunScheduled(JobCancellationToken.Null, null), cronExpression);
-            }
-            else
-            {
-                RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
-            }
+            //Schedule periodic Orders Synchronization job
+            appBuilder.ApplicationServices.GetService<BackgroundJobsRunner>().StartStopOrdersSynchronizationJob();
+            var jobsRunner = appBuilder.ApplicationServices.GetService<BackgroundJobsRunner>();
+            jobsRunner.StartStopOrdersSynchronizationJob().GetAwaiter().GetResult();
         }
 
         public Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,

@@ -1,13 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.PushNotifications;
 
-namespace AvaTax.TaxModule.Web.Models.PushNotifications
+namespace AvaTax.TaxModule.Data.Model.PushNotifications
 {
     public class OrdersSynchronizationPushNotification : PushNotification
     {
-        public OrdersSynchronizationPushNotification(string creator) 
+        public OrdersSynchronizationPushNotification(string creator)
             : base(creator)
         {
             NotifyType = "AvaTaxOrdersSynchronization";

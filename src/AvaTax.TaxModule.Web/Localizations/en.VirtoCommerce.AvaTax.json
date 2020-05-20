@@ -56,13 +56,13 @@
       },
       "ScheduledOrdersSynchronization": {
         "IsEnabled": {
-          "description": "Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)",
+          "description": "Enable scheduled synchronization of VC Platform orders with AvaTax",
           "title": "Send orders to AvaTax automatically"
         },
         "CronExpression": {
           "description":
             " x minutes use '0/x * * * *', x hours use '0 */x * * *',  you can set minutes also '15 */x * * *', x days '0 0 */x * *' ",
-          "title": "Schedule of automatic order synchronization (requires restart)"
+          "title": "Schedule of automatic order synchronization"
         }
       }
     },
