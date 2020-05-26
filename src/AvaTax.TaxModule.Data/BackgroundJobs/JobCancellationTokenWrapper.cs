@@ -1,7 +1,7 @@
-﻿using Hangfire;
+using Hangfire;
 using VirtoCommerce.Platform.Core.Common;
 
-namespace AvaTax.TaxModule.Web.BackgroundJobs
+namespace AvaTax.TaxModule.Data.BackgroundJobs
 {
     /// <summary>
     /// Wrapper for Hangfire's IJobCancellationToken
