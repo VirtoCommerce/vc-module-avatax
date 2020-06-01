@@ -1,22 +1,17 @@
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
-using AvaTax.TaxModule.Data;
 using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.BackgroundJobs;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Core.ExportImport;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -25,7 +20,7 @@ using ModuleConstants = AvaTax.TaxModule.Core.ModuleConstants;
 
 namespace AvaTax.TaxModule.Web
 {
-    public class Module : IModule, IExportSupport, IImportSupport
+    public class Module : IModule 
     {
         public void Uninstall()
         {
@@ -33,7 +28,6 @@ namespace AvaTax.TaxModule.Web
         }
 
         public ManifestModuleInfo ModuleInfo { get; set; }
-        private IApplicationBuilder _appBuilder;
 
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "3.x";
@@ -62,8 +56,6 @@ namespace AvaTax.TaxModule.Web
 
         public void PostInitialize(IApplicationBuilder appBuilder)
         {
-            _appBuilder = appBuilder;
-
             var settingsRegistrar = appBuilder.ApplicationServices.GetRequiredService<ISettingsRegistrar>();
             settingsRegistrar.RegisterSettings(ModuleConstants.Settings.AllSettings, ModuleInfo.Id);
 
@@ -93,18 +85,6 @@ namespace AvaTax.TaxModule.Web
             {
                 RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
             }
-        }
-
-        public Task ExportAsync(Stream outStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task ImportAsync(Stream inputStream, ExportImportOptions options, Action<ExportImportProgressInfo> progressCallback,
-            ICancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
         }
     }
 }
