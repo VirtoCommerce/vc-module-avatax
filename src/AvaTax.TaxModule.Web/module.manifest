@@ -24,7 +24,7 @@
   <projectUrl>https://virtocommerce.com/apps/extensions/integration-with-avalara-tax-service</projectUrl>
   <iconUrl>Modules/$(VirtoCommerce.AvalaraTax)/Content/400.png</iconUrl>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright В© 2011-2020 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2020 Virto Commerce. All rights reserved</copyright>
   <tags>avalara tax</tags>
   <assemblyFile>AvaTax.TaxModule.Web.dll</assemblyFile>
   <moduleType>AvaTax.TaxModule.Web.Module, AvaTax.TaxModule.Web</moduleType>
