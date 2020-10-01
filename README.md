@@ -97,7 +97,7 @@ This module can also provide the exemption number for selected customers to the 
 4. Fill the exemption certificate number to the value of this property.
 
 # License
-Copyright (c) Virtosoftware Ltd.  All rights reserved.
+Copyright (c) Virto Solutions LTD.  All rights reserved.
 
 Licensed under the Virto Commerce Open Software License (the "License"); you
 may not use this file except in compliance with the License. You may
