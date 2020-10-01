@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Avalara.AvaTax.RestClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Avalara.AvaTax.RestClient;
 using VirtoCommerce.Domain.Commerce.Model;
 using VirtoCommerce.Domain.Order.Model;
 using VirtoCommerce.Domain.Tax.Model;
@@ -57,6 +57,7 @@ namespace AvaTax.TaxModule.Data.Model
             type = DocumentType.SalesInvoice;
             currencyCode = order.Currency;
             companyCode = requiredCompanyCode;
+            commit = true;
 
             var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
             if (shippingAddress != null && sourceAddress != null)
