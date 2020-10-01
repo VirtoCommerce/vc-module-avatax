@@ -16,7 +16,6 @@ using VirtoCommerce.Domain.Order.Services;
 using VirtoCommerce.Domain.Search.ChangeFeed;
 using VirtoCommerce.Domain.Store.Services;
 using VirtoCommerce.Platform.Core.Common;
-using FulfillmentCenter = VirtoCommerce.Domain.Inventory.Model.FulfillmentCenter;
 
 namespace AvaTax.TaxModule.Data.Services
 {
@@ -182,7 +181,7 @@ namespace AvaTax.TaxModule.Data.Services
             else
             {
                 var voidTransactionModel = new VoidTransactionModel { code = VoidReasonCode.DocVoided };
-                var transactionModel = await avaTaxClient.VoidTransactionAsync(companyCode, order.Number, DocumentType.Any, voidTransactionModel);
+                var transactionModel = await avaTaxClient.VoidTransactionAsync(companyCode, order.Number, DocumentType.Any, string.Empty, voidTransactionModel);
             }
         }
 
