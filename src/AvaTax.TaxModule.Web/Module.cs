@@ -74,7 +74,7 @@ namespace AvaTax.TaxModule.Web
                 return new AvaTaxRateProvider(logger,avaTaxClientFactory, avalaraOptions);
 
             });
-            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.Credentials.Settings, nameof(AvaTaxRateProvider));
+            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
 
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x => new Permission() { GroupName = "Avalara Tax", Name = x }).ToArray());

@@ -13,19 +13,19 @@ namespace AvaTax.TaxModule.Core
                 public static SettingDescriptor CompanyCode = new SettingDescriptor
                 {
                     Name = "Avalara.Credentials.CompanyCode",
-                    GroupName = "Taxes|Avalara",
+                    GroupName = "Tax|Avalara",
                     ValueType = SettingValueType.ShortText,
                 };
                 public static SettingDescriptor ServiceUrl = new SettingDescriptor
                 {
                     Name = "Avalara.Credentials.ServiceUrl",
-                    GroupName = "Taxes|Avalara",
+                    GroupName = "Tax|Avalara",
                     ValueType = SettingValueType.ShortText,
                 };
                 public static SettingDescriptor AdminAreaUrl = new SettingDescriptor
                 {
                     Name = "Avalara.Credentials.AdminAreaUrl",
-                    GroupName = "Taxes|Avalara",
+                    GroupName = "Tax|Avalara",
                     ValueType = SettingValueType.ShortText,
                 };
 
@@ -49,7 +49,7 @@ namespace AvaTax.TaxModule.Core
                 public static SettingDescriptor SynchronizationIsEnabled = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.IsEnabled",
-                    GroupName = "Taxes|Avalara",
+                    GroupName = "Tax|Avalara",
                     ValueType = SettingValueType.Boolean,
                     DefaultValue = false
                 };
@@ -57,7 +57,7 @@ namespace AvaTax.TaxModule.Core
                 public static SettingDescriptor SynchronizationCronExpression = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.CronExpression",
-                    GroupName = "Taxes|Avalara",
+                    GroupName = "Tax|Avalara",
                     ValueType = SettingValueType.ShortText,
                     DefaultValue = "0 0 * * *"
                 };
