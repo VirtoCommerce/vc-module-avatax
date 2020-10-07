@@ -17,6 +17,10 @@ using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.TaxModule.Core.Model;
 using ModuleConstants = AvaTax.TaxModule.Core.ModuleConstants;
+using AvaTax.TaxModule.Data.Repositories;
+using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Data.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace AvaTax.TaxModule.Web
 {
@@ -36,6 +40,8 @@ namespace AvaTax.TaxModule.Web
         {
             var snapshot = serviceCollection.BuildServiceProvider();
             var configuration = snapshot.GetService<IConfiguration>();
+            var connectionString = configuration.GetConnectionString("VirtoCommerce.Tax") ?? configuration.GetConnectionString("VirtoCommerce");
+            serviceCollection.AddDbContext<AvaTaxDbContext>(options => options.UseSqlServer(connectionString));
 
             serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => settings =>
             {
@@ -68,7 +74,7 @@ namespace AvaTax.TaxModule.Web
                 return new AvaTaxRateProvider(logger,avaTaxClientFactory, avalaraOptions);
 
             });
-            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.Credentials.Settings, nameof(AvaTaxRateProvider));
+            settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
 
             var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x => new Permission() { GroupName = "Avalara Tax", Name = x }).ToArray());
@@ -84,6 +90,12 @@ namespace AvaTax.TaxModule.Web
             else
             {
                 RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
+            }
+
+            using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
+            {
+                var dbContext = serviceScope.ServiceProvider.GetRequiredService<AvaTaxDbContext>();
+                dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
             }
         }
     }
