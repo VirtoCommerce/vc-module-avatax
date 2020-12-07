@@ -1,4 +1,7 @@
 # Avalara.Tax
+
+[![CI status](https://github.com/VirtoCommerce/vc-module-avatax/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-avatax/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax)
+
 Avalara.Tax module provides real time integration with Avalara Tax automation. This module is officially <a href="https://www.avalara.com/integrations/virto-commerce" target="_blank">certified by Avalara</a> to be compatible with Avalara API.
 
 ![Avalara Tax UI](https://user-images.githubusercontent.com/1835759/48475050-84442c00-e82e-11e8-899f-10452b382ec1.png)
