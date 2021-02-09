@@ -1,4 +1,4 @@
-﻿angular.module('virtoCommerce.avataxModule')
+angular.module('virtoCommerce.avataxModule')
     .controller('virtoCommerce.avataxModule.ordersSynchronizationProgressController', ['$scope', function ($scope) {
         var blade = $scope.blade;
 
@@ -20,6 +20,6 @@
         }];
 
         blade.title = blade.notification.title;
-        blade.headIcon = 'fa-file-text';
+        blade.headIcon = 'fa fa-file-text';
         blade.isLoading = false;
     }]);
