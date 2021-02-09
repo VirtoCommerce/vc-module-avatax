@@ -8,7 +8,7 @@ angular.module('virtoCommerce.avataxModule')
         blade.isLoading = false;
     };
 
-    blade.headIcon = 'fa-file-text';
+    blade.headIcon = 'fa fa-file-text';
 
 
     blade.toolbarCommands = [
