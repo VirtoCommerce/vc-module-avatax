@@ -5,6 +5,10 @@
     <noWarn>1591</noWarn>
     <IsPackable>True</IsPackable>
     <OutputType>Library</OutputType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalara.AvaTax" Version="18.9.0.234" />
