@@ -17,6 +17,7 @@ using VirtoCommerce.TaxModule.Core.Services;
 using Xunit;
 using Address = VirtoCommerce.TaxModule.Core.Model.Address;
 using Store = VirtoCommerce.StoreModule.Core.Model.Store;
+using System.Threading.Tasks;
 
 namespace AvaTax.TaxModule.Test
 {
@@ -62,8 +63,7 @@ namespace AvaTax.TaxModule.Test
 
         [Theory]
         [MemberData(nameof(TestData))]
-        [CLSCompliant(false)]
-        public async void TestAddressValidation(Address address, bool expectedIsValid)
+        public async Task TestAddressValidation(Address address, bool expectedIsValid)
         {
             const string storeId = "some-test-store";
 
@@ -76,7 +76,6 @@ namespace AvaTax.TaxModule.Test
                 StoreIds = new[] { storeId },
                 Keyword = typeof(AvaTaxRateProvider).Name
             };
-
 
             taxProviderSearchService.Setup(x => x.SearchTaxProvidersAsync(taxProviderSearchCriteria)).ReturnsAsync(new TaxProviderSearchResult
             {
@@ -97,7 +96,7 @@ namespace AvaTax.TaxModule.Test
             });
 
             var options = new Mock<IOptions<AvaTaxSecureOptions>>();
-            options.Setup(x=>x.Value).Returns(Options);
+            options.Setup(x => x.Value).Returns(Options);
 
             var target = new AddressValidationService(storeService.Object, CreateAvaTaxClient, taxProviderSearchService.Object, options.Object);
 
@@ -192,7 +191,6 @@ namespace AvaTax.TaxModule.Test
 
         private static ICollection<TaxLine> GetContextTaxLines()
         {
-
             return new[]
             {
                 new TaxLine
