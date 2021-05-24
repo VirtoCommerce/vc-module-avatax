@@ -46,7 +46,7 @@ namespace AvaTax.TaxModule.Core
 
             public static class ScheduledOrdersSynchronization
             {
-                public static SettingDescriptor SynchronizationIsEnabled = new SettingDescriptor
+                public static SettingDescriptor SynchronizationIsEnabled { get; } = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.IsEnabled",
                     GroupName = "Tax|Avalara",
@@ -54,7 +54,7 @@ namespace AvaTax.TaxModule.Core
                     DefaultValue = false
                 };
 
-                public static SettingDescriptor SynchronizationCronExpression = new SettingDescriptor
+                public static SettingDescriptor SynchronizationCronExpression { get; } = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.CronExpression",
                     GroupName = "Tax|Avalara",
@@ -62,7 +62,7 @@ namespace AvaTax.TaxModule.Core
                     DefaultValue = "0 0 * * *"
                 };
 
-                public static SettingDescriptor LastExecutionDate = new SettingDescriptor
+                public static SettingDescriptor LastExecutionDate { get; } = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.LastExecutionDate",
                     GroupName = "Tax|Avalara",
