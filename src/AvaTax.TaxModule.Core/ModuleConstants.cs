@@ -62,6 +62,13 @@ namespace AvaTax.TaxModule.Core
                     DefaultValue = "0 0 * * *"
                 };
 
+                public static SettingDescriptor LastExecutionDate = new SettingDescriptor
+                {
+                    Name = "Avalara.ScheduledOrdersSynchronization.LastExecutionDate",
+                    GroupName = "Tax|Avalara",
+                    ValueType = SettingValueType.DateTime
+                };
+
                 public static IEnumerable<SettingDescriptor> Settings
                 {
                     get
@@ -69,21 +76,14 @@ namespace AvaTax.TaxModule.Core
                         return new List<SettingDescriptor>
                         {
                             SynchronizationIsEnabled,
-                            SynchronizationCronExpression
+                            SynchronizationCronExpression,
+                            LastExecutionDate
                         };
                     }
                 }
-
-
             }
 
-            public static IEnumerable<SettingDescriptor> AllSettings => Credentials.Settings.Concat(ScheduledOrdersSynchronization.Settings).ToList(); 
-            
-            public static class Synchronization
-            {
-                public const string LastExecutionDate = "Avalara.Synchronization.LastExecutionDate";
-            }
-
+            public static IEnumerable<SettingDescriptor> AllSettings => Credentials.Settings.Concat(ScheduledOrdersSynchronization.Settings).ToList();
         }
 
         public static class Security
