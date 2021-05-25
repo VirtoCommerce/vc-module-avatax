@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using AvaTax.TaxModule.Core;
@@ -42,16 +42,16 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
 
         [DisableConcurrentExecution(10)]
         // "DisableConcurrentExecutionAttribute" prevents to start simultaneous job payloads.
-	// Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
+        // Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
         // Then it tries to receive job lock during timeout. If the lock received, the job starts payload.
         // When the job is awaiting desired timeout for lock release, it stucks in "processing" anyway. (Therefore, you should not to set long timeouts (like 24*60*60), this will cause a lot of stucked jobs and performance degradation.)
         // Then, if timeout is over and the lock NOT acquired, the job falls into "scheduled" state (this is default fail-retry scenario).
-	// Failed job goes to "Failed" state (by default) after retries exhausted.
+        // Failed job goes to "Failed" state (by default) after retries exhausted.
         public async Task RunScheduled(IJobCancellationToken cancellationToken, PerformContext context)
         {
             var currentTime = DateTime.UtcNow;
 
-            var lastRunTime = _settingsManager.GetValue(ModuleConstants.Settings.Synchronization.LastExecutionDate, (DateTime?)null);
+            var lastRunTime = _settingsManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.LastExecutionDate.Name, (DateTime?)null);
 
             // NOTE: if lastRunTime is null, the order syncronization job is running first time, and it should process all orders in the database.
             //       To do so, we'll need to pass null for both startTime and endTime.
@@ -64,11 +64,11 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
 
             await PerformOrderSynchronization(ordersFeed, ProgressCallback, cancellationToken);
 
-            _settingsManager.SetValue(ModuleConstants.Settings.Synchronization.LastExecutionDate, currentTime);
+            _settingsManager.SetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.LastExecutionDate.Name, currentTime);
         }
 
         [DisableConcurrentExecution(10)]
-        public async Task RunManually(string[] orderIds, OrdersSynchronizationPushNotification notification, 
+        public async Task RunManually(string[] orderIds, OrdersSynchronizationPushNotification notification,
             IJobCancellationToken cancellationToken, PerformContext context)
         {
             var ordersFeed = new InMemoryIndexDocumentChangeFeed(orderIds, IndexDocumentChangeType.Modified, BatchSize);

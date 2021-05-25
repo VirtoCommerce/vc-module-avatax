@@ -46,7 +46,7 @@ namespace AvaTax.TaxModule.Core
 
             public static class ScheduledOrdersSynchronization
             {
-                public static SettingDescriptor SynchronizationIsEnabled = new SettingDescriptor
+                public static SettingDescriptor SynchronizationIsEnabled { get; } = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.IsEnabled",
                     GroupName = "Tax|Avalara",
@@ -54,12 +54,19 @@ namespace AvaTax.TaxModule.Core
                     DefaultValue = false
                 };
 
-                public static SettingDescriptor SynchronizationCronExpression = new SettingDescriptor
+                public static SettingDescriptor SynchronizationCronExpression { get; } = new SettingDescriptor
                 {
                     Name = "Avalara.ScheduledOrdersSynchronization.CronExpression",
                     GroupName = "Tax|Avalara",
                     ValueType = SettingValueType.ShortText,
                     DefaultValue = "0 0 * * *"
+                };
+
+                public static SettingDescriptor LastExecutionDate { get; } = new SettingDescriptor
+                {
+                    Name = "Avalara.ScheduledOrdersSynchronization.LastExecutionDate",
+                    GroupName = "Tax|Avalara",
+                    ValueType = SettingValueType.DateTime
                 };
 
                 public static IEnumerable<SettingDescriptor> Settings
@@ -69,21 +76,14 @@ namespace AvaTax.TaxModule.Core
                         return new List<SettingDescriptor>
                         {
                             SynchronizationIsEnabled,
-                            SynchronizationCronExpression
+                            SynchronizationCronExpression,
+                            LastExecutionDate
                         };
                     }
                 }
-
-
             }
 
-            public static IEnumerable<SettingDescriptor> AllSettings => Credentials.Settings.Concat(ScheduledOrdersSynchronization.Settings).ToList(); 
-            
-            public static class Synchronization
-            {
-                public const string LastExecutionDate = "Avalara.Synchronization.LastExecutionDate";
-            }
-
+            public static IEnumerable<SettingDescriptor> AllSettings => Credentials.Settings.Concat(ScheduledOrdersSynchronization.Settings).ToList();
         }
 
         public static class Security
