@@ -18,8 +18,8 @@
   <releaseNotes>First version.</releaseNotes>
   <copyright>Copyright © 2011-2021 Virto Commerce. All rights reserved</copyright>
   <tags>avalara tax</tags>
-  <assemblyFile>AvaTax.TaxModule.Web.dll</assemblyFile>
-  <moduleType>AvaTax.TaxModule.Web.Module, AvaTax.TaxModule.Web</moduleType>
+  <assemblyFile>VirtoCommerce.AvalaraTaxModule.Web.dll</assemblyFile>
+  <moduleType>AvaTax.TaxModule.Web.Module, VirtoCommerce.AvalaraTaxModule.Web</moduleType>
   <dependencies>
     <dependency id="VirtoCommerce.Orders" version="3.0.0" />
     <dependency id="VirtoCommerce.Search" version="3.0.0" />
