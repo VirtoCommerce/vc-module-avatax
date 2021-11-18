@@ -119,7 +119,7 @@ namespace AvaTax.TaxModule.Data.Services
                     var avaTaxSettings = await GetAvataxSettingsForOrder(order);
                     if (avaTaxSettings != null)
                     {
-                        _orderTaxTypeResolver.ResolveTaxTypeForOrderAsync(order);
+                        await _orderTaxTypeResolver.ResolveTaxTypeForOrderAsync(order);
 
                         var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
                         try
