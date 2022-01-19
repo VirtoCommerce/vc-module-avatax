@@ -1,16 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <noWarn>1591</noWarn>
     <IsPackable>True</IsPackable>
     <OutputType>Library</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Hangfire" Version="1.7.9" />
-    <PackageReference Include="VirtoCommerce.OrdersModule.Core" Version="3.1.0" />
-    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.0.0" />
-    <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.1.0" />
+    <PackageReference Include="Hangfire" Version="1.7.14" />
+    <PackageReference Include="VirtoCommerce.OrdersModule.Core" Version="3.200.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Core" Version="3.200.0" />
+    <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.200.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvaTax.TaxModule.Core\VirtoCommerce.AvalaraTaxModule.Core.csproj" />
