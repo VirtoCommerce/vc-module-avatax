@@ -10,6 +10,10 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
+    <PropertyGroup>
+        <!-- Project is not a test project -->
+        <SonarQubeTestProject>false</SonarQubeTestProject>
+    </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="Avalara.AvaTax" Version="18.9.0.234" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
