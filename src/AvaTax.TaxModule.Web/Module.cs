@@ -1,26 +1,26 @@
+using System;
+using System.Linq;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Data.Providers;
+using AvaTax.TaxModule.Data.Repositories;
 using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.BackgroundJobs;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using AvaTax.TaxModule.Data.Providers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.TaxModule.Core.Model;
 using ModuleConstants = AvaTax.TaxModule.Core.ModuleConstants;
-using AvaTax.TaxModule.Data.Repositories;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace AvaTax.TaxModule.Web
 {
@@ -74,7 +74,7 @@ namespace AvaTax.TaxModule.Web
                 var avalaraOptions = appBuilder.ApplicationServices.GetRequiredService<IOptions<AvaTaxSecureOptions>>();
                 var logger = appBuilder.ApplicationServices.GetRequiredService<ILogger<AvaTaxRateProvider>>();
                 var avaTaxClientFactory = appBuilder.ApplicationServices.GetRequiredService<Func<IAvaTaxSettings, AvaTaxClient>>();
-                return new AvaTaxRateProvider(logger,avaTaxClientFactory, avalaraOptions);
+                return new AvaTaxRateProvider(logger, avaTaxClientFactory, avalaraOptions);
 
             });
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
