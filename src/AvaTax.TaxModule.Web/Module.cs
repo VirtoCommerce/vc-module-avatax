@@ -24,7 +24,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AvaTax.TaxModule.Web
 {
-    public class Module : IModule 
+    public class Module : IModule, IHasConfiguration
     {
         public void Uninstall()
         {
@@ -33,15 +33,18 @@ namespace AvaTax.TaxModule.Web
 
         public ManifestModuleInfo ModuleInfo { get; set; }
 
+        public IConfiguration Configuration { get; set; }
+
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "3.x";
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var snapshot = serviceCollection.BuildServiceProvider();
-            var configuration = snapshot.GetService<IConfiguration>();
-            var connectionString = configuration.GetConnectionString("VirtoCommerce.Tax") ?? configuration.GetConnectionString("VirtoCommerce");
-            serviceCollection.AddDbContext<AvaTaxDbContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<AvaTaxDbContext>((provider, options) =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
+            });
 
             serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => settings =>
             {
@@ -57,7 +60,7 @@ namespace AvaTax.TaxModule.Web
             serviceCollection.AddTransient<IOrdersSynchronizationService, OrdersSynchronizationService>();
             serviceCollection.AddTransient<IOrderTaxTypeResolver, OrderTaxTypeResolver>();
 
-            serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
+            serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(Configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
