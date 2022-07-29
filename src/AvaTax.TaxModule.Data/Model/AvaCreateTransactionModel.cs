@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -59,7 +59,8 @@ namespace AvaTax.TaxModule.Data.Model
             currencyCode = order.Currency;
             companyCode = requiredCompanyCode;
 
-            var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping);
+            var shippingAddress = order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.Shipping) ??
+                                  order.Addresses.FirstOrDefault(x => x.AddressType == AddressType.BillingAndShipping);
             if (shippingAddress != null && sourceAddress != null)
             {
                 var avaSourceAddress = AbstractTypeFactory<AvaAddressLocationInfo>.TryCreateInstance();
