@@ -1,30 +1,30 @@
+using System;
+using System.Linq;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
+using AvaTax.TaxModule.Data.Providers;
+using AvaTax.TaxModule.Data.Repositories;
 using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.BackgroundJobs;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using AvaTax.TaxModule.Data.Providers;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
+using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.TaxModule.Core.Model;
 using ModuleConstants = AvaTax.TaxModule.Core.ModuleConstants;
-using AvaTax.TaxModule.Data.Repositories;
-using VirtoCommerce.Platform.Core.Common;
-using VirtoCommerce.Platform.Data.Extensions;
-using Microsoft.EntityFrameworkCore;
 
 namespace AvaTax.TaxModule.Web
 {
-    public class Module : IModule 
+    public class Module : IModule, IHasConfiguration
     {
         public void Uninstall()
         {
@@ -33,15 +33,18 @@ namespace AvaTax.TaxModule.Web
 
         public ManifestModuleInfo ModuleInfo { get; set; }
 
+        public IConfiguration Configuration { get; set; }
+
         private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
         private const string ApplicationVersion = "3.x";
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            var snapshot = serviceCollection.BuildServiceProvider();
-            var configuration = snapshot.GetService<IConfiguration>();
-            var connectionString = configuration.GetConnectionString("VirtoCommerce.Tax") ?? configuration.GetConnectionString("VirtoCommerce");
-            serviceCollection.AddDbContext<AvaTaxDbContext>(options => options.UseSqlServer(connectionString));
+            serviceCollection.AddDbContext<AvaTaxDbContext>((provider, options) =>
+            {
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
+            });
 
             serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => settings =>
             {
@@ -57,7 +60,7 @@ namespace AvaTax.TaxModule.Web
             serviceCollection.AddTransient<IOrdersSynchronizationService, OrdersSynchronizationService>();
             serviceCollection.AddTransient<IOrderTaxTypeResolver, OrderTaxTypeResolver>();
 
-            serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
+            serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(Configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
         }
 
         public void PostInitialize(IApplicationBuilder appBuilder)
@@ -71,7 +74,7 @@ namespace AvaTax.TaxModule.Web
                 var avalaraOptions = appBuilder.ApplicationServices.GetRequiredService<IOptions<AvaTaxSecureOptions>>();
                 var logger = appBuilder.ApplicationServices.GetRequiredService<ILogger<AvaTaxRateProvider>>();
                 var avaTaxClientFactory = appBuilder.ApplicationServices.GetRequiredService<Func<IAvaTaxSettings, AvaTaxClient>>();
-                return new AvaTaxRateProvider(logger,avaTaxClientFactory, avalaraOptions);
+                return new AvaTaxRateProvider(logger, avaTaxClientFactory, avalaraOptions);
 
             });
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
