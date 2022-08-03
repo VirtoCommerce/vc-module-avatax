@@ -3,7 +3,7 @@
   <id>VirtoCommerce.AvalaraTax</id>
   <version>3.5.2</version>
   <version-tag />
-  <platformVersion>3.100.0</platformVersion>
+  <platformVersion>3.66.0</platformVersion>
   <title>Avalara tax</title>
   <description>APIs and UI for Avalara tax integration</description>
   <authors>
