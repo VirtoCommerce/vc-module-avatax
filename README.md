@@ -83,11 +83,12 @@ It displays the following information:
 * Raw AvaTax transaction representation.
 
 ## Address validation
-This module also contains an action for validating addresses using AvaTax:
-* Path: `/api/tax/avatax/address/validate`
-* Method: `POST`
-* Parameters:
-    * `request` - an instance of [`AddressValidationRequest` class](https://github.com/VirtoCommerce/vc-module-avatax/blob/master/AvaTax.TaxModule.Web/Models/AddressValidationRequest.cs). It contains the address to validate and the `storeId` to extract AvaTax connection settings for address validation.
+This module also contains an action for validating addresses using AvaTax.
+
+```cmd
+curl -X POST "https://my-admin.virtocommerce.comapi/tax/avatax/address/validate" -H "accept:text/json" 
+```
+Parameters: `request` - an instance of [`AddressValidationRequest` class](https://github.com/VirtoCommerce/vc-module-avatax/blob/master/AvaTax.TaxModule.Web/Models/AddressValidationRequest.cs). It contains the address to validate and the `storeId` to extract AvaTax connection settings for address validation.
 
 This method can be used in storefront theme to prevent creation of order with invalid (not acceptable by AvaTax) address.
 
