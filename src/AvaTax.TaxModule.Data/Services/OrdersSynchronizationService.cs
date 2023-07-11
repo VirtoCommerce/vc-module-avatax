@@ -161,27 +161,36 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 throw new ArgumentNullException(nameof(order));
             }
-            AvaTaxSettings result = null;
-            if (!string.IsNullOrEmpty(order.StoreId))
+
+            if (string.IsNullOrEmpty(order.StoreId))
             {
-                var store = await _storeService.GetByIdAsync(order.StoreId);
-
-                var taxProviders = await _taxProviderSearchService.SearchAsync(new TaxProviderSearchCriteria
-                {
-                    Keyword = nameof(AvaTaxRateProvider),
-                    StoreIds = new[] { store.Id }
-                });
-
-                var avaTaxProvider = taxProviders.Results.FirstOrDefault(x => x.IsActive);
-                if (avaTaxProvider != null)
-                {
-                    result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
-                    if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
-                    {
-                        result.SourceAddress = (await _fulfillmentCenterService.GetByIdAsync(store.MainFulfillmentCenterId))?.Address;
-                    }
-                }
+                return null;
             }
+
+            var store = await _storeService.GetByIdAsync(order.StoreId);
+            if (store is null)
+            {
+                return null;
+            }
+
+            var taxProviders = await _taxProviderSearchService.SearchAsync(new TaxProviderSearchCriteria
+            {
+                Keyword = nameof(AvaTaxRateProvider),
+                StoreIds = new[] { store.Id }
+            });
+
+            var avaTaxProvider = taxProviders.Results.FirstOrDefault(x => x.IsActive);
+            if (avaTaxProvider is null)
+            {
+                return null;
+            }
+
+            var result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
+            if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
+            {
+                result.SourceAddress = (await _fulfillmentCenterService.GetByIdAsync(store.MainFulfillmentCenterId))?.Address;
+            }
+
             return result;
         }
 
