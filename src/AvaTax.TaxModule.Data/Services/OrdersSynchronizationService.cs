@@ -51,7 +51,7 @@ namespace AvaTax.TaxModule.Data.Services
 
         public async Task<AvaTaxOrderSynchronizationStatus> GetOrderSynchronizationStatusAsync(string orderId)
         {
-            var order = (await _orderService.GetByIdsAsync(new[] { orderId })).FirstOrDefault();
+            var order = await _orderService.GetByIdAsync(orderId);
             if (order == null)
             {
                 throw new ArgumentException("Order with given ID does not exist.", nameof(orderId));
@@ -112,7 +112,7 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 var searchResult = await ordersFeed.GetNextBatch();
                 var orderIds = searchResult.Select(x => x.DocumentId).ToArray();
-                var orders = await _orderService.GetByIdsAsync(orderIds);
+                var orders = await _orderService.GetAsync(orderIds);
 
                 foreach (var order in orders)
                 {
@@ -166,9 +166,9 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 var store = await _storeService.GetByIdAsync(order.StoreId);
 
-                var taxProviders = await _taxProviderSearchService.SearchTaxProvidersAsync(new TaxProviderSearchCriteria
+                var taxProviders = await _taxProviderSearchService.SearchAsync(new TaxProviderSearchCriteria
                 {
-                    Keyword = typeof(AvaTaxRateProvider).Name,
+                    Keyword = nameof(AvaTaxRateProvider),
                     StoreIds = new[] { store.Id }
                 });
 
@@ -178,7 +178,7 @@ namespace AvaTax.TaxModule.Data.Services
                     result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
                     if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
                     {
-                        result.SourceAddress = (await _fulfillmentCenterService.GetByIdsAsync(new[] { store.MainFulfillmentCenterId }))?.FirstOrDefault()?.Address;
+                        result.SourceAddress = (await _fulfillmentCenterService.GetByIdAsync(store.MainFulfillmentCenterId))?.Address;
                     }
                 }
             }
