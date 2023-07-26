@@ -1,14 +1,14 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Model;
-using AvaTax.TaxModule.Web.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AvaTax.TaxModule.Data.Providers;
+using AvaTax.TaxModule.Web.Services;
 using Microsoft.Extensions.Options;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.StoreModule.Core.Services;
@@ -25,8 +25,11 @@ namespace AvaTax.TaxModule.Data.Services
         private readonly ITaxProviderSearchService _taxProviderSearchService;
         private readonly AvaTaxSecureOptions _options;
 
-
-        public AddressValidationService(IStoreService storeService, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, ITaxProviderSearchService taxProviderSearchService, IOptions<AvaTaxSecureOptions> options)
+        public AddressValidationService(
+            IStoreService storeService,
+            Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory,
+            ITaxProviderSearchService taxProviderSearchService,
+            IOptions<AvaTaxSecureOptions> options)
         {
             _storeService = storeService;
             _avaTaxClientFactory = avaTaxClientFactory;
@@ -42,12 +45,12 @@ namespace AvaTax.TaxModule.Data.Services
                 throw new ArgumentException("Store with specified storeId does not exist.", nameof(storeId));
             }
 
-            var taxProviderSearchCriteria = new TaxProviderSearchCriteria()
+            var taxProviderSearchCriteria = new TaxProviderSearchCriteria
             {
                 StoreIds = new[] { store.Id },
-                Keyword = typeof(AvaTaxRateProvider).Name
+                Keyword = nameof(AvaTaxRateProvider)
             };
-            var avaTaxProviders = await _taxProviderSearchService.SearchTaxProvidersAsync(taxProviderSearchCriteria);
+            var avaTaxProviders = await _taxProviderSearchService.SearchAsync(taxProviderSearchCriteria);
             var avaTaxProvider = avaTaxProviders.Results.FirstOrDefault(x => x.IsActive);
 
             if (avaTaxProvider == null)
@@ -66,7 +69,7 @@ namespace AvaTax.TaxModule.Data.Services
 
             try
             {
-                var addressResolutionModel = avaTaxClient.ResolveAddressPost(addressValidationInfo);
+                var addressResolutionModel = await avaTaxClient.ResolveAddressPostAsync(addressValidationInfo);
 
                 // If the address cannot be resolved, it's coordinates will be null.
                 // This might mean that the address is invalid.

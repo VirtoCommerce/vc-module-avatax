@@ -84,10 +84,10 @@ namespace AvaTax.TaxModule.Web
 
             var settingManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
 
-            var processJobEnabled = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled.Name, false);
+            var processJobEnabled = settingManager.GetValue<bool>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled);
             if (processJobEnabled)
             {
-                var cronExpression = settingManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression.Name, "0 0 * * *");
+                var cronExpression = settingManager.GetValue<string>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression);
                 RecurringJob.AddOrUpdate<OrdersSynchronizationJob>("SendOrdersToAvaTaxJob", x => x.RunScheduled(JobCancellationToken.Null, null), cronExpression);
             }
             else

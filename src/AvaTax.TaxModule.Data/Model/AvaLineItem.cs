@@ -1,11 +1,9 @@
-﻿using Avalara.AvaTax.RestClient;
-using System;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.TaxModule.Core.Model;
 
 namespace AvaTax.TaxModule.Data.Model
 {
-    [CLSCompliant(false)]
     public class AvaLineItem : LineItemModel
     {
         public virtual LineItemModel FromTaxLine(TaxLine taxLine)

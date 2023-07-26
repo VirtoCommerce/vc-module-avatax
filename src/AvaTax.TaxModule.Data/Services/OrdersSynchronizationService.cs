@@ -51,7 +51,7 @@ namespace AvaTax.TaxModule.Data.Services
 
         public async Task<AvaTaxOrderSynchronizationStatus> GetOrderSynchronizationStatusAsync(string orderId)
         {
-            var order = (await _orderService.GetByIdsAsync(new[] { orderId })).FirstOrDefault();
+            var order = await _orderService.GetByIdAsync(orderId);
             if (order == null)
             {
                 throw new ArgumentException("Order with given ID does not exist.", nameof(orderId));
@@ -112,7 +112,7 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 var searchResult = await ordersFeed.GetNextBatch();
                 var orderIds = searchResult.Select(x => x.DocumentId).ToArray();
-                var orders = await _orderService.GetByIdsAsync(orderIds);
+                var orders = await _orderService.GetAsync(orderIds);
 
                 foreach (var order in orders)
                 {
@@ -161,27 +161,36 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 throw new ArgumentNullException(nameof(order));
             }
-            AvaTaxSettings result = null;
-            if (!string.IsNullOrEmpty(order.StoreId))
+
+            if (string.IsNullOrEmpty(order.StoreId))
             {
-                var store = await _storeService.GetByIdAsync(order.StoreId);
-
-                var taxProviders = await _taxProviderSearchService.SearchTaxProvidersAsync(new TaxProviderSearchCriteria
-                {
-                    Keyword = typeof(AvaTaxRateProvider).Name,
-                    StoreIds = new[] { store.Id }
-                });
-
-                var avaTaxProvider = taxProviders.Results.FirstOrDefault(x => x.IsActive);
-                if (avaTaxProvider != null)
-                {
-                    result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
-                    if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
-                    {
-                        result.SourceAddress = (await _fulfillmentCenterService.GetByIdsAsync(new[] { store.MainFulfillmentCenterId }))?.FirstOrDefault()?.Address;
-                    }
-                }
+                return null;
             }
+
+            var store = await _storeService.GetByIdAsync(order.StoreId);
+            if (store is null)
+            {
+                return null;
+            }
+
+            var taxProviders = await _taxProviderSearchService.SearchAsync(new TaxProviderSearchCriteria
+            {
+                Keyword = nameof(AvaTaxRateProvider),
+                StoreIds = new[] { store.Id }
+            });
+
+            var avaTaxProvider = taxProviders.Results.FirstOrDefault(x => x.IsActive);
+            if (avaTaxProvider is null)
+            {
+                return null;
+            }
+
+            var result = AvaTaxSettings.FromSettings(avaTaxProvider.Settings, _options);
+            if (result.SourceAddress == null && store.MainFulfillmentCenterId != null)
+            {
+                result.SourceAddress = (await _fulfillmentCenterService.GetByIdAsync(store.MainFulfillmentCenterId))?.Address;
+            }
+
             return result;
         }
 

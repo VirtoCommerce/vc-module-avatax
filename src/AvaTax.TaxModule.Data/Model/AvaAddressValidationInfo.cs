@@ -1,10 +1,8 @@
-﻿using Avalara.AvaTax.RestClient;
-using System;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.TaxModule.Core.Model;
 
 namespace AvaTax.TaxModule.Data.Model
 {
-    [CLSCompliant(false)]
     public class AvaAddressValidationInfo : AddressValidationInfo
     {
         public virtual AvaAddressValidationInfo FromAddress(Address address)

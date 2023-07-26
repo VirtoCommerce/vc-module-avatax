@@ -1,13 +1,14 @@
-using Avalara.AvaTax.RestClient;
-using Moq;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Providers;
 using AvaTax.TaxModule.Data.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Moq;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.StoreModule.Core.Services;
@@ -17,7 +18,6 @@ using VirtoCommerce.TaxModule.Core.Services;
 using Xunit;
 using Address = VirtoCommerce.TaxModule.Core.Model.Address;
 using Store = VirtoCommerce.StoreModule.Core.Model.Store;
-using System.Threading.Tasks;
 
 namespace AvaTax.TaxModule.Test
 {
@@ -77,10 +77,12 @@ namespace AvaTax.TaxModule.Test
                 Keyword = typeof(AvaTaxRateProvider).Name
             };
 
-            taxProviderSearchService.Setup(x => x.SearchTaxProvidersAsync(taxProviderSearchCriteria)).ReturnsAsync(new TaxProviderSearchResult
-            {
-                TotalCount = 1,
-                Results = new List<TaxProvider>
+            taxProviderSearchService
+                .Setup(x => x.SearchAsync(taxProviderSearchCriteria, It.IsAny<bool>()))
+                .ReturnsAsync(new TaxProviderSearchResult
+                {
+                    TotalCount = 1,
+                    Results = new List<TaxProvider>
                 {
                     new AvaTaxRateProvider
                     {
@@ -88,12 +90,11 @@ namespace AvaTax.TaxModule.Test
                         Settings = Settings
                     }
                 }
-            });
+                });
 
-            storeService.Setup(x => x.GetByIdAsync(storeId, null)).ReturnsAsync(new Store
-            {
-                Id = storeId
-            });
+            storeService
+                .Setup(x => x.GetAsync(new[] { storeId }, It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(new[] { new Store { Id = storeId } });
 
             var options = new Mock<IOptions<AvaTaxSecureOptions>>();
             options.Setup(x => x.Value).Returns(Options);

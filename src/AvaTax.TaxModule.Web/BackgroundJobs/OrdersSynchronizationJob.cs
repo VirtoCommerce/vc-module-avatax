@@ -19,7 +19,6 @@ using VirtoCommerce.SearchModule.Data.Services;
 
 namespace AvaTax.TaxModule.Web.BackgroundJobs
 {
-    [CLSCompliant(false)]
     public class OrdersSynchronizationJob
     {
         private const int BatchSize = 50;
@@ -51,9 +50,9 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         {
             var currentTime = DateTime.UtcNow;
 
-            var lastRunTime = _settingsManager.GetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.LastExecutionDate.Name, (DateTime?)null);
+            var lastRunTime = await _settingsManager.GetValueAsync<DateTime?>(ModuleConstants.Settings.ScheduledOrdersSynchronization.LastExecutionDate);
 
-            // NOTE: if lastRunTime is null, the order syncronization job is running first time, and it should process all orders in the database.
+            // NOTE: if lastRunTime is null, the order synchronization job is running first time, and it should process all orders in the database.
             //       To do so, we'll need to pass null for both startTime and endTime.
             var intervalEndTime = lastRunTime == null ? null : (DateTime?)currentTime;
             var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderSearchService, lastRunTime, intervalEndTime, BatchSize);
@@ -102,7 +101,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             {
                 notification.Finished = DateTime.UtcNow;
                 notification.Description = "Process finished " + (notification.Errors.Any() ? "with errors" : "successfully");
-                _pushNotificationManager.Send(notification);
+                await _pushNotificationManager.SendAsync(notification);
             }
         }
 

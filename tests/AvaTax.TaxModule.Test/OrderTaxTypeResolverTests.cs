@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,7 +14,6 @@ using Xunit;
 
 namespace AvaTax.TaxModule.Test
 {
-    [CLSCompliant(false)]
     public class OrderTaxTypeResolverTests
     {
         private class TestShippingMethod : ShippingMethod
@@ -83,13 +81,17 @@ namespace AvaTax.TaxModule.Test
                 Keyword = TestShipmentMethodCode
             };
 
-            _shippingMethodsSearchService.Setup(x => x.SearchShippingMethodsAsync(searchCriteria)).ReturnsAsync(() => new ShippingMethodsSearchResult
-            {
-                TotalCount = 1,
-                Results = shippingMethods
-            });
+            _shippingMethodsSearchService
+                .Setup(x => x.SearchAsync(searchCriteria, It.IsAny<bool>()))
+                .ReturnsAsync(() => new ShippingMethodsSearchResult
+                {
+                    TotalCount = 1,
+                    Results = shippingMethods
+                });
 
-            _storeService.Setup(x => x.GetByIdsAsync(new[] { TestStoreId }, null)).ReturnsAsync(new[] { store });
+            _storeService
+                .Setup(x => x.GetAsync(new[] { TestStoreId }, It.IsAny<string>(), It.IsAny<bool>()))
+                .ReturnsAsync(new[] { store });
 
             var target = new OrderTaxTypeResolver(_storeService.Object, _shippingMethodsSearchService.Object);
 
@@ -99,7 +101,7 @@ namespace AvaTax.TaxModule.Test
             // Assert
             foreach (var shipment in order.Shipments)
             {
-                Assert.Equal(expectedTaxType, shipment.TaxType); 
+                Assert.Equal(expectedTaxType, shipment.TaxType);
             }
         }
     }
