@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
@@ -26,17 +25,11 @@ namespace AvaTax.TaxModule.Web
 {
     public class Module : IModule, IHasConfiguration
     {
-        public void Uninstall()
-        {
-            throw new NotImplementedException();
-        }
-
         public ManifestModuleInfo ModuleInfo { get; set; }
-
         public IConfiguration Configuration { get; set; }
 
-        private const string ApplicationName = "AvaTax.TaxModule for VirtoCommerce";
-        private const string ApplicationVersion = "3.x";
+        private const string _applicationName = "AvaTax.TaxModule for VirtoCommerce";
+        private const string _applicationVersion = "3.x";
 
         public void Initialize(IServiceCollection serviceCollection)
         {
@@ -50,7 +43,7 @@ namespace AvaTax.TaxModule.Web
             {
                 var machineName = Environment.MachineName;
                 var avaTaxUri = new Uri(settings.ServiceUrl);
-                var result = new AvaTaxClient(ApplicationName, ApplicationVersion, machineName, avaTaxUri)
+                var result = new AvaTaxClient(_applicationName, _applicationVersion, machineName, avaTaxUri)
                     .WithSecurity(settings.AccountNumber, settings.LicenseKey);
 
                 return result;
@@ -79,15 +72,15 @@ namespace AvaTax.TaxModule.Web
             });
             settingsRegistrar.RegisterSettingsForType(ModuleConstants.Settings.AllSettings, nameof(AvaTaxRateProvider));
 
-            var permissionsProvider = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
-            permissionsProvider.RegisterPermissions(ModuleConstants.Security.Permissions.AllPermissions.Select(x => new Permission() { GroupName = "Avalara Tax", Name = x }).ToArray());
+            var permissionsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
+            permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Avalara Tax", ModuleConstants.Security.Permissions.AllPermissions);
 
-            var settingManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
+            var settingsManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
 
-            var processJobEnabled = settingManager.GetValue<bool>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled);
+            var processJobEnabled = settingsManager.GetValue<bool>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled);
             if (processJobEnabled)
             {
-                var cronExpression = settingManager.GetValue<string>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression);
+                var cronExpression = settingsManager.GetValue<string>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression);
                 RecurringJob.AddOrUpdate<OrdersSynchronizationJob>("SendOrdersToAvaTaxJob", x => x.RunScheduled(JobCancellationToken.Null, null), cronExpression);
             }
             else
@@ -95,11 +88,13 @@ namespace AvaTax.TaxModule.Web
                 RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
             }
 
-            using (var serviceScope = appBuilder.ApplicationServices.CreateScope())
-            {
-                var dbContext = serviceScope.ServiceProvider.GetRequiredService<AvaTaxDbContext>();
-                dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
-            }
+            using var serviceScope = appBuilder.ApplicationServices.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<AvaTaxDbContext>();
+            dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
+        }
+        public void Uninstall()
+        {
+            // Nothing to do here
         }
     }
 }

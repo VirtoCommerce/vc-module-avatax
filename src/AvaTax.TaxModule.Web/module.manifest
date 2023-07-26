@@ -26,7 +26,7 @@
   <iconUrl>Modules/$(VirtoCommerce.AvalaraTax)/Content/400.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011-2021 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011–2023 Virto Commerce. All rights reserved</copyright>
   <tags>avalara tax</tags>
   <assemblyFile>VirtoCommerce.AvalaraTaxModule.Web.dll</assemblyFile>
   <moduleType>AvaTax.TaxModule.Web.Module, VirtoCommerce.AvalaraTaxModule.Web</moduleType>
