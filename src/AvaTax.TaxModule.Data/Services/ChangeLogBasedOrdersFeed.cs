@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,7 +41,7 @@ namespace AvaTax.TaxModule.Data.Services
                 if (_startDate == null && _endDate == null)
                 {
                     var criteria = new CustomerOrderSearchCriteria { Skip = 0, Take = 0 };
-                    var searchResult = _orderSearchService.SearchCustomerOrdersAsync(criteria).GetAwaiter().GetResult();
+                    var searchResult = _orderSearchService.SearchAsync(criteria).GetAwaiter().GetResult();
                     return searchResult.TotalCount;
                 }
                 else
@@ -75,7 +75,7 @@ namespace AvaTax.TaxModule.Data.Services
             if (_startDate == null && _endDate == null)
             {
                 var searchCriteria = new CustomerOrderSearchCriteria { Skip = skip, Take = take };
-                var searchResult = await _orderSearchService.SearchCustomerOrdersAsync(searchCriteria);
+                var searchResult = await _orderSearchService.SearchAsync(searchCriteria);
                 return searchResult.Results
                                    .Select(x => new IndexDocumentChange
                                    {

@@ -1,12 +1,10 @@
-﻿using Avalara.AvaTax.RestClient;
-using System;
+using Avalara.AvaTax.RestClient;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 using Address = VirtoCommerce.CoreModule.Core.Common.Address;
 
 namespace AvaTax.TaxModule.Data.Model
 {
-    [CLSCompliant(false)]
     public class AvaCreateOrAdjustTransactionModel : CreateOrAdjustTransactionModel
     {
         public virtual AvaCreateOrAdjustTransactionModel FromOrder(CustomerOrder order, string companyCode, Address sourceAddress)

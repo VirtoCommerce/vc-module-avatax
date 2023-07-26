@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
@@ -11,13 +13,11 @@ using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using System;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
-using Microsoft.Extensions.Options;
 
 namespace AvaTax.TaxModule.Web.Controller
 {
@@ -33,7 +33,6 @@ namespace AvaTax.TaxModule.Web.Controller
         private readonly IUserNameResolver _userNameResolver;
         private readonly AvaTaxSecureOptions _options;
 
-        [CLSCompliant(false)]
         public AvaTaxController(ILogger<AvaTaxController> log, Func<IAvaTaxSettings, AvaTaxClient> avaTaxClientFactory, IOrdersSynchronizationService ordersSynchronizationService,
             IAddressValidationService addressValidationService, IPushNotificationManager pushNotificationManager, IUserNameResolver userNameResolver, IOptions<AvaTaxSecureOptions> options)
         {
@@ -51,7 +50,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(PingResultModel), StatusCodes.Status200OK)]
-        public Task<ActionResult> TestConnection([FromBody]AvaTaxSettings taxSetting)
+        public Task<ActionResult> TestConnection([FromBody] AvaTaxSettings taxSetting)
         {
             ActionResult result = BadRequest();
             LogInvoker<AvalaraLogger.TaxRequestContext>.Execute(log =>
@@ -111,7 +110,7 @@ namespace AvaTax.TaxModule.Web.Controller
         [HttpPost]
         [Route("orders/synchronize")]
         [Authorize(ModuleConstants.Security.Permissions.TaxManage)]
-        public async Task<ActionResult<OrdersSynchronizationPushNotification>> SynchronizeOrders([FromBody]OrdersSynchronizationRequest request)
+        public async Task<ActionResult<OrdersSynchronizationPushNotification>> SynchronizeOrders([FromBody] OrdersSynchronizationRequest request)
         {
             var notification = await Enqueue(request);
             await _pushNotificationManager.SendAsync(notification);

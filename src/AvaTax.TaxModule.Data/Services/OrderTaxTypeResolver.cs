@@ -1,7 +1,7 @@
-﻿using AvaTax.TaxModule.Core.Services;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using AvaTax.TaxModule.Core.Services;
 using VirtoCommerce.CoreModule.Core.Tax;
 using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
@@ -28,12 +28,12 @@ namespace AvaTax.TaxModule.Data.Services
             {
                 throw new ArgumentNullException(nameof(order));
             }
-            var store = (await _storeService.GetByIdsAsync(new[] { order.StoreId })).SingleOrDefault();
+            var store = await _storeService.GetByIdAsync(order.StoreId);
             if (store != null)
             {
                 var shipmentMethodCode = order.Shipments?.FirstOrDefault()?.ShipmentMethodCode;
 
-                var shippingMethods = await _shippingMethodsSearchService.SearchShippingMethodsAsync(new ShippingMethodsSearchCriteria
+                var shippingMethods = await _shippingMethodsSearchService.SearchAsync(new ShippingMethodsSearchCriteria
                 {
                     IsActive = true,
                     Keyword = shipmentMethodCode

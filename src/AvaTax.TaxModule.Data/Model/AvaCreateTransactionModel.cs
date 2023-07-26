@@ -4,14 +4,13 @@ using System.Linq;
 using System.Threading;
 using Avalara.AvaTax.RestClient;
 using VirtoCommerce.CoreModule.Core.Common;
+using VirtoCommerce.OrdersModule.Core.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.TaxModule.Core.Model;
-using VirtoCommerce.OrdersModule.Core.Model;
 using Address = VirtoCommerce.CoreModule.Core.Common.Address;
 
 namespace AvaTax.TaxModule.Data.Model
 {
-    [CLSCompliant(false)]
     public class AvaCreateTransactionModel : CreateTransactionModel
     {
         public virtual bool IsValid => addresses != null && !lines.IsNullOrEmpty();
