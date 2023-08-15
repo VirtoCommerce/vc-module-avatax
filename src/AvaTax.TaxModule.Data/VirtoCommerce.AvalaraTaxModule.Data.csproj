@@ -16,11 +16,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Avalara.AvaTax" Version="18.9.0.234" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.13">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.13" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
     <PackageReference Include="VirtoCommerce.InventoryModule.Core" Version="3.402.0" />
     <PackageReference Include="VirtoCommerce.ShippingModule.Core" Version="3.400.0" />
