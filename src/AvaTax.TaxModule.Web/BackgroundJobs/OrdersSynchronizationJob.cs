@@ -39,13 +39,6 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             _settingsManager = settingsManager;
         }
 
-        [DisableConcurrentExecution(10)]
-        // "DisableConcurrentExecutionAttribute" prevents to start simultaneous job payloads.
-        // Should have short timeout, because this attribute implemented by following manner: newly started job falls into "processing" state immediately.
-        // Then it tries to receive job lock during timeout. If the lock received, the job starts payload.
-        // When the job is awaiting desired timeout for lock release, it stucks in "processing" anyway. (Therefore, you should not to set long timeouts (like 24*60*60), this will cause a lot of stucked jobs and performance degradation.)
-        // Then, if timeout is over and the lock NOT acquired, the job falls into "scheduled" state (this is default fail-retry scenario).
-        // Failed job goes to "Failed" state (by default) after retries exhausted.
         public async Task RunScheduled(IJobCancellationToken cancellationToken, PerformContext context)
         {
             var currentTime = DateTime.UtcNow;
@@ -57,16 +50,11 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             var intervalEndTime = lastRunTime == null ? null : (DateTime?)currentTime;
             var ordersFeed = new ChangeLogBasedOrdersFeed(_changeLogService, _orderSearchService, lastRunTime, intervalEndTime, BatchSize);
 
-            void ProgressCallback(AvaTaxOrdersSynchronizationProgress progress)
-            {
-            }
-
-            await PerformOrderSynchronization(ordersFeed, ProgressCallback, cancellationToken);
+            await PerformOrderSynchronization(ordersFeed, (AvaTaxOrdersSynchronizationProgress x) => { }, cancellationToken);
 
             _settingsManager.SetValue(ModuleConstants.Settings.ScheduledOrdersSynchronization.LastExecutionDate.Name, currentTime);
         }
 
-        [DisableConcurrentExecution(10)]
         public async Task RunManually(string[] orderIds, OrdersSynchronizationPushNotification notification,
             IJobCancellationToken cancellationToken, PerformContext context)
         {
@@ -105,11 +93,11 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             }
         }
 
-        private async Task PerformOrderSynchronization(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback,
+        private Task PerformOrderSynchronization(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback,
             IJobCancellationToken cancellationToken)
         {
             var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
-            await _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationTokenWrapper);
+            return _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationTokenWrapper);
         }
     }
 }

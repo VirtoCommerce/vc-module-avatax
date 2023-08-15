@@ -3,21 +3,17 @@ using Avalara.AvaTax.RestClient;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Providers;
-using AvaTax.TaxModule.Data.Repositories;
 using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.BackgroundJobs;
 using Hangfire;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
-using VirtoCommerce.Platform.Data.Extensions;
 using VirtoCommerce.TaxModule.Core.Model;
 using ModuleConstants = AvaTax.TaxModule.Core.ModuleConstants;
 
@@ -33,12 +29,6 @@ namespace AvaTax.TaxModule.Web
 
         public void Initialize(IServiceCollection serviceCollection)
         {
-            serviceCollection.AddDbContext<AvaTaxDbContext>((provider, options) =>
-            {
-                var configuration = provider.GetRequiredService<IConfiguration>();
-                options.UseSqlServer(configuration.GetConnectionString(ModuleInfo.Id) ?? configuration.GetConnectionString("VirtoCommerce"));
-            });
-
             serviceCollection.AddTransient<Func<IAvaTaxSettings, AvaTaxClient>>(provider => settings =>
             {
                 var machineName = Environment.MachineName;
@@ -87,10 +77,6 @@ namespace AvaTax.TaxModule.Web
             {
                 RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
             }
-
-            using var serviceScope = appBuilder.ApplicationServices.CreateScope();
-            var dbContext = serviceScope.ServiceProvider.GetRequiredService<AvaTaxDbContext>();
-            dbContext.Database.MigrateIfNotApplied(MigrationName.GetUpdateV2MigrationName(ModuleInfo.Id));
         }
         public void Uninstall()
         {

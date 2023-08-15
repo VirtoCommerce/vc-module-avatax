@@ -1,4 +1,4 @@
-# Avalara.Tax
+# Avalara Tax Provider
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-avatax/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-avatax/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax)
 
@@ -6,18 +6,18 @@ Avalara.Tax module provides real time integration with Avalara Tax automation. T
 
 ![Avalara Tax UI](https://user-images.githubusercontent.com/1835759/48475050-84442c00-e82e-11e8-899f-10452b382ec1.png)
 
-# Documentation
-User guide: <a href="https://virtocommerce.com/docs/vc2userguide/order-management/working-with-taxes" target="_blank">Working with taxes in Avalara tax module</a>.
+## Documentation
+[Working with taxes in Avalara tax module](https://docs.virtocommerce.org/new/user_docs/integrations/avalara/taxes-calculation/)
 
-# Installation
+## Installation
 Installing the module:
 * Automatically: in VC Manager go to Configuration -> Modules -> Avalara tax -> Install
 * Manually: 
     * Download module zip package from https://github.com/VirtoCommerce/vc-module-avatax/releases. 
     * Open the VC Platform Manager, go to Configuration -> Modules -> Advanced -> upload module package -> Install and choose the package downloaded on previous step.
 
-# Settings
-## Avalara connection settings
+## Settings
+### Avalara connection settings
 The module can be configured in three places:
 * Platfrom config file: appsettings.json
 * Platform-wide settings: Settings -> Taxes -> Avalara or Modules -> Installed -> Avalara tax -> Settings
@@ -57,7 +57,7 @@ Also, both of these blades have the "Test connection with AvaTax" widget. You ca
 > Note: if the tax calculation is disabled (**Avalara.Tax.IsEnabled** is turned off), the Avalara tax provider will ignore any tax requests, and this may lead to incorrect tax calculation. 
 
 
-## Sending transactions to AvaTax
+### Sending transactions to AvaTax
 `Avalara.Tax` module allows to create AvaTax transactions for orders. It creates a `SalesInvoice` transaction for orders:
 * Document code matches order number;
 * Document date matches order date;
@@ -82,7 +82,7 @@ It displays the following information:
 * Link to the AvaTax transaction corresponding to the order;
 * Raw AvaTax transaction representation.
 
-## Address validation
+### Address validation
 This module also contains an action for validating addresses using AvaTax.
 
 ```cmd
@@ -92,7 +92,7 @@ Parameters: `request` - an instance of [`AddressValidationRequest` class](https:
 
 This method can be used in storefront theme to prevent creation of order with invalid (not acceptable by AvaTax) address.
 
-## Configuring tax types
+### Configuring tax types
 Cart/order items should be assigned to tax category in order to calculate taxes correctly. That can be done by applying tax codes to the catalog items. That is called "Tax type" in VirtoCommerce platform. If none of the codes assigned to the item Avalara will calculate taxes by applying default code. So if that is the right choice in your case, you can leave "Tax Type" property value blank. Otherwise define available tax types in general settings of VirtoCommerce platform and apply appropriate types to the items. Note that you can apply tax type to the whole category of items. In that case all items in particular category and in nested subcategories will have the selected tax type code.
 
 The tax type can be selected in the following locations:
@@ -102,14 +102,14 @@ The tax type can be selected in the following locations:
 
 > Note that the available tax types can be configured in VC Platform settings: Settings -> Commerce -> General -> Tax types.
 
-## Tax exemptions
+### Tax exemptions
 This module can also provide the exemption number for selected customers to the Avalara Tax API. To configure it, follow these steps:
 1. Open the customer details for the customer you want to configure exemption for;
 2. Open dynamic properties for that customer;
 3. Add the dynamic property named `Tax exempt` and select the `ShortText` type.
 4. Fill the exemption certificate number to the value of this property.
 
-# License
+## License
 Copyright (c) Virto Solutions LTD.  All rights reserved.
 
 Licensed under the Virto Commerce Open Software License (the "License"); you
