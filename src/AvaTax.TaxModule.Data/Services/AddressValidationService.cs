@@ -84,7 +84,7 @@ namespace AvaTax.TaxModule.Data.Services
 
                 if (!addressResolutionModel.validatedAddresses.IsNullOrEmpty())
                 {
-                    validatedAddresess.AddRange(addressResolutionModel.validatedAddresses.Select(x => ((AvaValidatedAddressInfo)x).ToAddress()));
+                    validatedAddresess.AddRange(addressResolutionModel.validatedAddresses.Select(x => x.ToAddress()));
                 }
             }
             catch (AvaTaxError e)
