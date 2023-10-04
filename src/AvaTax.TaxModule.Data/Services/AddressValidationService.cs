@@ -10,6 +10,7 @@ using AvaTax.TaxModule.Data.Model;
 using AvaTax.TaxModule.Data.Providers;
 using AvaTax.TaxModule.Web.Services;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.AvalaraTaxModule.Data.Model;
 using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.StoreModule.Core.Services;
 using VirtoCommerce.TaxModule.Core.Model;
@@ -66,6 +67,7 @@ namespace AvaTax.TaxModule.Data.Services
             var avaTaxClient = _avaTaxClientFactory(avaTaxSettings);
             bool addressIsValid;
             var messages = new List<string>();
+            var validatedAddresess = new List<Address>();
 
             try
             {
@@ -78,6 +80,11 @@ namespace AvaTax.TaxModule.Data.Services
                 if (!addressResolutionModel.messages.IsNullOrEmpty())
                 {
                     messages.AddRange(addressResolutionModel.messages.Select(x => $"{x.summary} {x.details}"));
+                }
+
+                if (!addressResolutionModel.validatedAddresses.IsNullOrEmpty())
+                {
+                    validatedAddresess.AddRange(addressResolutionModel.validatedAddresses.Select(x => x.ToAddress()));
                 }
             }
             catch (AvaTaxError e)
@@ -94,6 +101,7 @@ namespace AvaTax.TaxModule.Data.Services
             return new AddressValidationResult
             {
                 Address = address,
+                ValidatedAddresses = validatedAddresess,
                 AddressIsValid = addressIsValid,
                 Messages = messages.ToArray()
             };

@@ -1,4 +1,5 @@
 using Avalara.AvaTax.RestClient;
+using VirtoCommerce.Platform.Core.Common;
 using VirtoCommerce.TaxModule.Core.Model;
 
 namespace AvaTax.TaxModule.Data.Model
@@ -10,9 +11,9 @@ namespace AvaTax.TaxModule.Data.Model
             line1 = address.Line1;
             line2 = address.Line2;
             city = address.City;
-            region = address.RegionName;
+            region = address.RegionId;
             postalCode = address.PostalCode;
-            country = address.CountryName;
+            country = address.CountryCode;
             return this;
         }
     }
