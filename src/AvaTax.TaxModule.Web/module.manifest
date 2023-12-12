@@ -1,16 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <module xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <id>VirtoCommerce.AvalaraTax</id>
-  <version>3.403.0</version>
+  <version>3.800.0</version>
   <version-tag />
-  <platformVersion>3.400.0</platformVersion>
+  <platformVersion>3.800.0-alpha.12831-net8</platformVersion>
   <dependencies>
-    <dependency id="VirtoCommerce.Inventory" version="3.402.0" />
-    <dependency id="VirtoCommerce.Orders" version="3.400.0" />
-    <dependency id="VirtoCommerce.Search" version="3.401.0" />
-    <dependency id="VirtoCommerce.Shipping" version="3.400.0" />
-    <dependency id="VirtoCommerce.Store" version="3.400.0" />
-    <dependency id="VirtoCommerce.Tax" version="3.400.0" />
+    <dependency id="VirtoCommerce.Inventory" version="3.800.0-alpha.442-pt-14740-net8" />
+    <dependency id="VirtoCommerce.Orders" version="3.800.0-alpha.1200-pt-14740-net8" />
+    <dependency id="VirtoCommerce.Search" version="3.800.0-alpha.726-pt-14740-net" />
+    <dependency id="VirtoCommerce.Shipping" version="3.800.0-alpha.177-pt-14740-net8" />
+    <dependency id="VirtoCommerce.Store" version="3.800.0-alpha.676-pt-14740-net8" />
+    <dependency id="VirtoCommerce.Tax" version="3.800.0-alpha.170-pt-14740-net8" />
   </dependencies>
   <title>Avalara Tax Provider</title>
   <description>Provides real time integration with Avalara Tax https://www.avalara.com/</description>
@@ -24,7 +24,7 @@
   <iconUrl>Modules/$(VirtoCommerce.AvalaraTax)/Content/400.png</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
-  <copyright>Copyright © 2011–2023 Virto Commerce. All rights reserved</copyright>
+  <copyright>Copyright © 2011-2024 Virto Commerce. All rights reserved</copyright>
   <tags>avalara tax</tags>
   <assemblyFile>VirtoCommerce.AvalaraTaxModule.Web.dll</assemblyFile>
   <moduleType>AvaTax.TaxModule.Web.Module, VirtoCommerce.AvalaraTaxModule.Web</moduleType>

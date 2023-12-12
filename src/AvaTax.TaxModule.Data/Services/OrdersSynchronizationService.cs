@@ -95,7 +95,6 @@ namespace AvaTax.TaxModule.Data.Services
 
         public async Task SynchronizeOrdersAsync(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
         {
-            // TODO: how to find order count when ordersFeed.TotalsCount is null?
             var totalCount = (long)ordersFeed.TotalCount;
 
             var progressInfo = new AvaTaxOrdersSynchronizationProgress
@@ -194,18 +193,20 @@ namespace AvaTax.TaxModule.Data.Services
             return result;
         }
 
-        protected virtual async Task SendOrderToAvaTax(CustomerOrder order, string companyCode, Address sourceAddress, AvaTaxClient avaTaxClient)
+        protected virtual async Task<TransactionModel> SendOrderToAvaTax(CustomerOrder order, string companyCode, Address sourceAddress, AvaTaxClient avaTaxClient)
         {
             if (!order.IsCancelled)
             {
                 var createOrAdjustTransactionModel = AbstractTypeFactory<AvaCreateOrAdjustTransactionModel>.TryCreateInstance();
                 createOrAdjustTransactionModel.FromOrder(order, companyCode, sourceAddress);
                 var transactionModel = await avaTaxClient.CreateOrAdjustTransactionAsync(string.Empty, createOrAdjustTransactionModel);
+                return transactionModel;
             }
             else
             {
                 var voidTransactionModel = new VoidTransactionModel { code = VoidReasonCode.DocVoided };
-                var transactionModel = await avaTaxClient.VoidTransactionAsync(companyCode, order.Number, DocumentType.Any, voidTransactionModel);
+                var transactionModel = await avaTaxClient.VoidTransactionAsync(companyCode, order.Number, DocumentType.Any, string.Empty, voidTransactionModel);
+                return transactionModel;
             }
         }
 
