@@ -1,6 +1,6 @@
+using System.Collections.Generic;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Services;
-using System.Collections.Generic;
 using VirtoCommerce.CoreModule.Core.Common;
 using VirtoCommerce.Platform.Core.Settings;
 
@@ -14,9 +14,9 @@ namespace AvaTax.TaxModule.Web.Services
             {
                 AccountNumber = options.AccountNumber,
                 LicenseKey = options.LicenseKey,
-                CompanyCode = settings.GetSettingValue(ModuleConstants.Settings.Credentials.CompanyCode.Name, string.Empty),
-                ServiceUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.ServiceUrl.Name, string.Empty),
-                AdminAreaUrl = settings.GetSettingValue(ModuleConstants.Settings.Credentials.AdminAreaUrl.Name, string.Empty),
+                CompanyCode = settings.GetValue<string>(ModuleConstants.Settings.Credentials.CompanyCode),
+                ServiceUrl = settings.GetValue<string>(ModuleConstants.Settings.Credentials.ServiceUrl),
+                AdminAreaUrl = settings.GetValue<string>(ModuleConstants.Settings.Credentials.AdminAreaUrl),
             };
         }
 
