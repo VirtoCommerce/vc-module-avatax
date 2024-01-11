@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <noWarn>1591</noWarn>
     <IsPackable>True</IsPackable>
@@ -15,12 +15,12 @@
     <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalara.AvaTax" Version="18.9.0.234" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="VirtoCommerce.InventoryModule.Core" Version="3.402.0" />
-    <PackageReference Include="VirtoCommerce.ShippingModule.Core" Version="3.400.0" />
-    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.400.0" />
-    <PackageReference Include="VirtoCommerce.TaxModule.Data" Version="3.400.0" />
+    <PackageReference Include="Avalara.AvaTax" Version="23.11.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+    <PackageReference Include="VirtoCommerce.InventoryModule.Core" Version="3.800.0" />
+    <PackageReference Include="VirtoCommerce.ShippingModule.Core" Version="3.800.0" />
+    <PackageReference Include="VirtoCommerce.StoreModule.Core" Version="3.800.0" />
+    <PackageReference Include="VirtoCommerce.TaxModule.Data" Version="3.800.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvaTax.TaxModule.Core\VirtoCommerce.AvalaraTaxModule.Core.csproj" />
