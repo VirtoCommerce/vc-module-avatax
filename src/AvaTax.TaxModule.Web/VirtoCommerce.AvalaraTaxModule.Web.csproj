@@ -11,8 +11,8 @@
     <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.800.0" />
-    <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.800.0" />
+    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.853.0" />
+    <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.804.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvaTax.TaxModule.Core\VirtoCommerce.AvalaraTaxModule.Core.csproj" />
