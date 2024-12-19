@@ -10,7 +10,7 @@
                     "transaction-in-avatax": "Transaction in AvaTax",
                     "link-to-transaction": "Link to transaction:",
                     "raw-transaction-content": "Raw transaction",
-                    "not-sent-to-avatax": "The order was not sent to AvaTax."
+                    "not-sent-to-avatax": "The order was not sent to AvaTax"
                 }
             },
             "orders-synchronization-progress": {
@@ -28,9 +28,9 @@
             "run-order-synchronization": {
                 "labels": {
                     "waiting-for-status": "Waiting for AvaTax status...",
-                    "store-does-not-use-avatax": "AvaTax is not enabled for this order's store.",
+                    "store-does-not-use-avatax": "AvaTax is not enabled for this order's store",
                     "sent-to-avatax": "Sent to AvaTax:",
-                    "error": "Could not get date of last synchronization with AvaTax.",
+                    "error": "Failed to get date of last synchronization with AvaTax",
                     "send-to-avatax": "Click to send this order to AvaTax"
                 }
             }
@@ -40,31 +40,29 @@
     "Avalara": {
       "Credentials": {
         "CompanyCode": {
-          "description":
-            "Company code that should match with the code provided to the company registered in Avalara admin manager",
+          "description": "Enter company code that matches the code assigned to the company in Avalara Admin Manager",
           "title": "Company code in Avalara system"
         },
         "ServiceUrl": {
-          "description": "Link to Avalara API service",
+          "description": "Provide the link to the Avalara API service",
           "title": "Link to Avalara API service"
         },
         "AdminAreaUrl": {
-          "description": "Link to Avalara admin page. Used for building links to AvaTax transactions.",
+          "description": "Enter the link to the Avalara admin page for building links to AvaTax transactions",
           "title": "Link to Avalara admin page"
         }
-
       },
       "ScheduledOrdersSynchronization": {
         "IsEnabled": {
           "description": "Enable scheduled synchronization of VC Platform orders with AvaTax (requires restart)",
-          "title": "Send orders to AvaTax automatically"
+          "title": "Automatic order synchronization with AvaTax"
         },
         "CronExpression": {
-          "description": " x minutes use '0/x * * * *', x hours use '0 */x * * *',  you can set minutes also '15 */x * * *', x days '0 0 */x * *' ",
+          "description": "Use '0/x * * * *' for every x minutes, '0 */x * * *' for every x hours, '15 */x * * *' to specify minutes within x hours, or '0 0 */x * *' for every x days",
           "title": "Schedule of automatic order synchronization (requires restart)"
         },
         "LastExecutionDate": {
-          "description": "If empty the order syncronization job will process all orders in the database.",
+          "description": "Set the date to process orders from that date onwards. Leave blank to process all orders",
           "title": "Last synchronization date"
         }
       }
@@ -75,14 +73,14 @@
       }
     },
     "permissions": {
-      "tax:manage": "Permission to manage avalara tax settings."
+      "tax:manage": "Permission to manage avalara tax settings"
     }
   },
     "tax": {
         "labels": {
             "AvaTaxRateProvider": {
-                "name": "Avalara Tax Provider",
-                "description": "Avalara Tax Provider"
+                "name": "Avalara tax provider",
+                "description": "Avalara tax provider"
             }
         }
     }

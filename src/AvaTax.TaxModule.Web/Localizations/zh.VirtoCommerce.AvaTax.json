@@ -1,0 +1,87 @@
+{
+  "avaTax": {
+      "blades": {
+          "order-synchronization-status": {
+              "title": "AvaTax中的订单",
+              "title-new": "缺少AvaTax交易",
+              "subtitle": "AvaTax交易详情",
+              "labels": {
+                  "last-sync-date": "最后一次发送到AvaTax",
+                  "transaction-in-avatax": "AvaTax中的交易",
+                  "link-to-transaction": "交易链接：",
+                  "raw-transaction-content": "原始交易内容",
+                  "not-sent-to-avatax": "订单未发送到AvaTax"
+              }
+          },
+          "orders-synchronization-progress": {
+              "labels": {
+                  "start": "开始",
+                  "end": "结束",
+                  "stats": "已处理 — {{ processedCount }} 个订单，共 {{ totalCount }} 个订单",
+                  "errors": "错误"
+              }
+          }
+      },
+      "commands": {
+          "test-connection": "测试与AvaTax的连接",
+          "send-to-avatax": "发送到AvaTax",
+          "run-order-synchronization": {
+              "labels": {
+                  "waiting-for-status": "等待AvaTax状态...",
+                  "store-does-not-use-avatax": "此订单的商店未启用AvaTax",
+                  "sent-to-avatax": "已发送到AvaTax：",
+                  "error": "获取最后一次AvaTax同步日期失败",
+                  "send-to-avatax": "点击发送此订单到AvaTax"
+              }
+          }
+      }
+  },
+  "settings": {
+      "Avalara": {
+          "Credentials": {
+              "CompanyCode": {
+                  "description": "输入与Avalara Admin Manager中分配的公司代码匹配的公司代码",
+                  "title": "Avalara系统中的公司代码"
+              },
+              "ServiceUrl": {
+                  "description": "提供AvaTax API服务的链接",
+                  "title": "AvaTax API服务链接"
+              },
+              "AdminAreaUrl": {
+                  "description": "输入Avalara管理页面的链接，用于创建指向AvaTax交易的链接",
+                  "title": "Avalara管理页面链接"
+              }
+          },
+          "ScheduledOrdersSynchronization": {
+              "IsEnabled": {
+                  "description": "启用VC平台订单与AvaTax的计划同步（需要重启）",
+                  "title": "与AvaTax的自动订单同步"
+              },
+              "CronExpression": {
+                  "description": "使用'0/x * * * *'表示每x分钟，'0 */x * * *'表示每x小时，'15 */x * * *'表示x小时内的指定分钟，'0 0 */x * *'表示每x天",
+                  "title": "自动订单同步计划（需要重启）"
+              },
+              "LastExecutionDate": {
+                  "description": "设置从该日期开始处理订单。留空以处理所有订单",
+                  "title": "最后同步日期"
+              }
+          }
+      },
+      "module": {
+          "VirtoCommerce.AvalaraTax": {
+              "description": "用于Avalara税务集成的API和UI"
+          }
+      },
+      "permissions": {
+          "tax:manage": "管理Avalara税务设置的权限"
+      }
+  },
+  "tax": {
+      "labels": {
+          "AvaTaxRateProvider": {
+              "name": "Avalara税务提供商",
+              "description": "Avalara税务提供商"
+          }
+      }
+  }
+}

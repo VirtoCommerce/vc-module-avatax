@@ -1,39 +1,87 @@
-﻿{
+{
   "avaTax": {
-    "blades": {
-      "order-synchronization-status": {
-        "title": "Заказ в AvaTax",
-        "title-new": "Информация о заказе в AvaTax отсутствует",
-        "subtitle": "Подробности о транзакции в AvaTax",
-        "labels": {
-          "last-sync-date": "Дата отправки в AvaTax",
-          "transaction-in-avatax": "Транзакция в AvaTax",
-          "link-to-transaction": "Ссылка на транзакцию",
-          "raw-transaction-content": "Содержимое транзакции",
-          "not-sent-to-avatax": "Заказ не был отправлен в AvaTax."
-        }
+      "blades": {
+          "order-synchronization-status": {
+              "title": "Заказ в AvaTax",
+              "title-new": "Транзакция AvaTax отсутствует",
+              "subtitle": "Детали транзакции AvaTax",
+              "labels": {
+                  "last-sync-date": "Последний отправленный в AvaTax",
+                  "transaction-in-avatax": "Транзакция в AvaTax",
+                  "link-to-transaction": "Ссылка на транзакцию:",
+                  "raw-transaction-content": "Сырая транзакция",
+                  "not-sent-to-avatax": "Заказ не был отправлен в AvaTax"
+              }
+          },
+          "orders-synchronization-progress": {
+              "labels": {
+                  "start": "Начало",
+                  "end": "Конец",
+                  "stats": "Обработано — {{ processedCount }} из {{ totalCount }} заказов",
+                  "errors": "Ошибки"
+              }
+          }
       },
-      "orders-synchronization-progress": {
-        "labels": {
-          "start": "Начало",
-          "end": "Конец",
-          "stats": "Обработано — {{ processedCount }} из {{ totalCount }} заказов",
-          "errors": "Ошибки"
-        }
+      "commands": {
+          "test-connection": "Тестировать подключение к AvaTax",
+          "send-to-avatax": "Отправить в AvaTax",
+          "run-order-synchronization": {
+              "labels": {
+                  "waiting-for-status": "Ожидание статуса от AvaTax...",
+                  "store-does-not-use-avatax": "AvaTax не включен для магазина этого заказа",
+                  "sent-to-avatax": "Отправлено в AvaTax:",
+                  "error": "Не удалось получить дату последней синхронизации с AvaTax",
+                  "send-to-avatax": "Нажмите, чтобы отправить этот заказ в AvaTax"
+              }
+          }
       }
-    },
-    "commands": {
-      "test-connection": "Проверить соединение с AvaTax",
-      "send-to-avatax": "Отправить в AvaTax",
-      "run-order-synchronization": {
-        "labels": {
-          "waiting-for-status": "Ожидание состояния заказа в AvaTax...",
-          "store-does-not-use-avatax": "Служба AvaTax не активирована для магазина этого заказа.",
-          "sent-to-avatax": "Заказ отправлен в AvaTax:",
-          "error": "Получение отправки заказа в AvaTax завершилось неудачей.",
-          "send-to-avatax": "Нажмите для отправки заказа в AvaTax"
-        }
+  },
+  "settings": {
+      "Avalara": {
+          "Credentials": {
+              "CompanyCode": {
+                  "description": "Введите код компании, который соответствует коду, присвоенному компании в Avalara Admin Manager",
+                  "title": "Код компании в системе Avalara"
+              },
+              "ServiceUrl": {
+                  "description": "Предоставьте ссылку на сервис API AvaTax",
+                  "title": "Ссылка на сервис API AvaTax"
+              },
+              "AdminAreaUrl": {
+                  "description": "Введите ссылку на административную страницу Avalara для создания ссылок на транзакции AvaTax",
+                  "title": "Ссылка на административную страницу Avalara"
+              }
+          },
+          "ScheduledOrdersSynchronization": {
+              "IsEnabled": {
+                  "description": "Включить плановую синхронизацию заказов платформы VC с AvaTax (требуется перезагрузка)",
+                  "title": "Автоматическая синхронизация заказов с AvaTax"
+              },
+              "CronExpression": {
+                  "description": "Используйте '0/x * * * *' для каждых x минут, '0 */x * * *' для каждых x часов, '15 */x * * *' для указания минут в пределах x часов или '0 0 */x * *' для каждых x дней",
+                  "title": "Расписание автоматической синхронизации заказов (требуется перезагрузка)"
+              },
+              "LastExecutionDate": {
+                  "description": "Установите дату начала обработки заказов. Оставьте пустым, чтобы обработать все заказы",
+                  "title": "Дата последней синхронизации"
+              }
+          }
+      },
+      "module": {
+          "VirtoCommerce.AvalaraTax": {
+              "description": "API и пользовательский интерфейс для интеграции налога Avalara"
+          }
+      },
+      "permissions": {
+          "tax:manage": "Разрешение на управление настройками налога Avalara"
       }
-    }
+  },
+  "tax": {
+      "labels": {
+          "AvaTaxRateProvider": {
+              "name": "Поставщик налога Avalara",
+              "description": "Поставщик налога Avalara"
+          }
+      }
   }
 }

@@ -1,0 +1,87 @@
+{
+  "avaTax": {
+      "blades": {
+          "order-synchronization-status": {
+              "title": "AvaTaxの注文",
+              "title-new": "AvaTaxの取引が欠落しています",
+              "subtitle": "AvaTaxの取引の詳細",
+              "labels": {
+                  "last-sync-date": "最後の送信日時 AvaTaxへ",
+                  "transaction-in-avatax": "AvaTaxの取引",
+                  "link-to-transaction": "取引へのリンク：",
+                  "raw-transaction-content": "生データ取引",
+                  "not-sent-to-avatax": "注文はAvaTaxに送信されていません"
+              }
+          },
+          "orders-synchronization-progress": {
+              "labels": {
+                  "start": "開始",
+                  "end": "終了",
+                  "stats": "処理済み — {{ processedCount }} / {{ totalCount }} 注文",
+                  "errors": "エラー"
+              }
+          }
+      },
+      "commands": {
+          "test-connection": "AvaTaxとの接続をテスト",
+          "send-to-avatax": "AvaTaxに送信",
+          "run-order-synchronization": {
+              "labels": {
+                  "waiting-for-status": "AvaTaxのステータスを待機中...",
+                  "store-does-not-use-avatax": "この注文の店舗はAvaTaxを使用していません",
+                  "sent-to-avatax": "AvaTaxへ送信：",
+                  "error": "AvaTaxとの最後の同期日付の取得に失敗しました",
+                  "send-to-avatax": "この注文をAvaTaxに送信するにはクリック"
+              }
+          }
+      }
+  },
+  "settings": {
+      "Avalara": {
+          "Credentials": {
+              "CompanyCode": {
+                  "description": "Avalara Admin Managerで割り当てられた会社コードと一致するコードを入力",
+                  "title": "Avalaraシステム内の会社コード"
+              },
+              "ServiceUrl": {
+                  "description": "AvaTax APIサービスへのリンクを提供",
+                  "title": "AvaTax APIサービスへのリンク"
+              },
+              "AdminAreaUrl": {
+                  "description": "AvaTax取引のリンクを作成するためのAvalara管理ページのリンクを入力",
+                  "title": "Avalara管理ページへのリンク"
+              }
+          },
+          "ScheduledOrdersSynchronization": {
+              "IsEnabled": {
+                  "description": "VCプラットフォームの注文とAvaTaxのスケジュール同期を有効にする（再起動が必要）",
+                  "title": "AvaTaxとの自動注文同期"
+              },
+              "CronExpression": {
+                  "description": "'0/x * * * *'はx分ごと、'0 */x * * *'はx時間ごと、'15 */x * * *'はx時間内の指定した分を指定、'0 0 */x * *'はx日ごとに指定",
+                  "title": "自動注文同期のスケジュール（再起動が必要）"
+              },
+              "LastExecutionDate": {
+                  "description": "この日付以降の注文を処理するための日付を設定します。空白のままで全ての注文を処理します",
+                  "title": "最後の同期日"
+              }
+          }
+      },
+      "module": {
+          "VirtoCommerce.AvalaraTax": {
+              "description": "Avalara税の統合用APIとUI"
+          }
+      },
+      "permissions": {
+          "tax:manage": "Avalara税設定の管理権限"
+      }
+  },
+  "tax": {
+      "labels": {
+          "AvaTaxRateProvider": {
+              "name": "Avalara税プロバイダー",
+              "description": "Avalara税プロバイダー"
+          }
+      }
+  }
+}
