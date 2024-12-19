@@ -1,39 +1,87 @@
-﻿{
+{
   "avaTax": {
-    "blades": {
-      "order-synchronization-status": {
-        "title": "Bestellung in AvaTax",
-        "title-new": "AvaTax-Transaktion fehlt",
-        "subtitle": "Details zur AvaTax-Transaktion",
-        "labels": {
-          "last-sync-date": "Letzte Sendung an AvaTax",
-          "transaction-in-avatax": "Transaktion in AvaTax",
-          "link-to-transaction": "Link zur Transaktion",
-          "raw-transaction-content": "Inhalt der Transaktion",
-          "not-sent-to-avatax": "Die Bestellung wurde nicht an AvaTax gesendet."
-        }
+      "blades": {
+          "order-synchronization-status": {
+              "title": "Bestellung in AvaTax",
+              "title-new": "AvaTax-Transaktion fehlt",
+              "subtitle": "Details der AvaTax-Transaktion",
+              "labels": {
+                  "last-sync-date": "Letzter Versand an AvaTax",
+                  "transaction-in-avatax": "Transaktion in AvaTax",
+                  "link-to-transaction": "Link zur Transaktion:",
+                  "raw-transaction-content": "Unbearbeitete Transaktion",
+                  "not-sent-to-avatax": "Die Bestellung wurde nicht an AvaTax gesendet"
+              }
+          },
+          "orders-synchronization-progress": {
+              "labels": {
+                  "start": "Start",
+                  "end": "Ende",
+                  "stats": "Verarbeitet — {{ processedCount }} von {{ totalCount }} Bestellungen",
+                  "errors": "Fehler"
+              }
+          }
       },
-      "orders-synchronization-progress": {
-        "labels": {
-          "start": "Start",
-          "end": "Ende",
-          "stats": "Verarbeitet — {{ processedCount }} von {{ totalCount }} Bestellungen",
-          "errors": "Fehler"
-        }
+      "commands": {
+          "test-connection": "Verbindung mit AvaTax testen",
+          "send-to-avatax": "An AvaTax senden",
+          "run-order-synchronization": {
+              "labels": {
+                  "waiting-for-status": "Warte auf AvaTax-Status...",
+                  "store-does-not-use-avatax": "AvaTax ist für dieses Geschäft nicht aktiviert",
+                  "sent-to-avatax": "An AvaTax gesendet:",
+                  "error": "Abrufen des letzten Synchronisationsdatums mit AvaTax fehlgeschlagen",
+                  "send-to-avatax": "Klicken, um diese Bestellung an AvaTax zu senden"
+              }
+          }
       }
-    },
-    "commands": {
-      "test-connection": "Verbindung mit AvaTax testen",
-      "send-to-avatax": "Senden Sie an AvaTax",
-      "run-order-synchronization": {
-        "labels": {
-          "waiting-for-status": "Warten auf den Bestellstatus in AvaTax...",
-          "store-does-not-use-avatax": "AvaTax ist für das Geschäft dieses Auftrags nicht aktiviert.",
-          "sent-to-avatax": "An AvaTax gesendet:",
-          "error": "Datum der letzten Synchronisierung mit AvaTax konnte nicht abgerufen werden.",
-          "send-to-avatax": "Klicken Sie hier, um diese Bestellung an AvaTax zu senden"
-        }
+  },
+  "settings": {
+      "Avalara": {
+          "Credentials": {
+              "CompanyCode": {
+                  "description": "Geben Sie den Unternehmenscode ein, der mit dem Code in Avalara Admin Manager übereinstimmt",
+                  "title": "Unternehmenscode im Avalara-System"
+              },
+              "ServiceUrl": {
+                  "description": "Geben Sie den Link zum Avalara API-Dienst an",
+                  "title": "Link zum Avalara API-Dienst"
+              },
+              "AdminAreaUrl": {
+                  "description": "Geben Sie den Link zur Avalara-Admin-Seite ein, um Links zu AvaTax-Transaktionen zu erstellen",
+                  "title": "Link zur Avalara-Admin-Seite"
+              }
+          },
+          "ScheduledOrdersSynchronization": {
+              "IsEnabled": {
+                  "description": "Geplante Synchronisation von VC Platform-Bestellungen mit AvaTax aktivieren (erfordert Neustart)",
+                  "title": "Automatische Bestellsynchronisation mit AvaTax"
+              },
+              "CronExpression": {
+                  "description": "Verwenden Sie '0/x * * * *' für alle x Minuten, '0 */x * * *' für alle x Stunden, '15 */x * * *' für bestimmte Minuten in x Stunden oder '0 0 */x * *' für alle x Tage",
+                  "title": "Zeitplan für automatische Bestellsynchronisation (erfordert Neustart)"
+              },
+              "LastExecutionDate": {
+                  "description": "Legen Sie das Datum fest, ab dem Bestellungen verarbeitet werden sollen. Leer lassen, um alle Bestellungen zu verarbeiten",
+                  "title": "Letztes Synchronisationsdatum"
+              }
+          }
+      },
+      "module": {
+          "VirtoCommerce.AvalaraTax": {
+              "description": "APIs und UI für die Integration der Avalara-Steuern"
+          }
+      },
+      "permissions": {
+          "tax:manage": "Berechtigung zur Verwaltung der Avalara-Steuereinstellungen"
       }
-    }
+  },
+  "tax": {
+      "labels": {
+          "AvaTaxRateProvider": {
+              "name": "Avalara-Steueranbieter",
+              "description": "Avalara-Steueranbieter"
+          }
+      }
   }
 }

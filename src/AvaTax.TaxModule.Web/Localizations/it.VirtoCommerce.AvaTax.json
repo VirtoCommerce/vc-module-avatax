@@ -1,0 +1,87 @@
+{
+  "avaTax": {
+      "blades": {
+          "order-synchronization-status": {
+              "title": "Ordine in AvaTax",
+              "title-new": "Transazione AvaTax mancante",
+              "subtitle": "Dettagli della transazione AvaTax",
+              "labels": {
+                  "last-sync-date": "Ultimo invio ad AvaTax",
+                  "transaction-in-avatax": "Transazione in AvaTax",
+                  "link-to-transaction": "Link alla transazione:",
+                  "raw-transaction-content": "Transazione grezza",
+                  "not-sent-to-avatax": "L'ordine non è stato inviato ad AvaTax"
+              }
+          },
+          "orders-synchronization-progress": {
+              "labels": {
+                  "start": "Inizio",
+                  "end": "Fine",
+                  "stats": "Elaborati — {{ processedCount }} di {{ totalCount }} ordini",
+                  "errors": "Errori"
+              }
+          }
+      },
+      "commands": {
+          "test-connection": "Testa la connessione con AvaTax",
+          "send-to-avatax": "Invia ad AvaTax",
+          "run-order-synchronization": {
+              "labels": {
+                  "waiting-for-status": "In attesa dello stato di AvaTax...",
+                  "store-does-not-use-avatax": "AvaTax non è abilitato per il negozio di questo ordine",
+                  "sent-to-avatax": "Inviato ad AvaTax:",
+                  "error": "Impossibile ottenere la data dell'ultima sincronizzazione con AvaTax",
+                  "send-to-avatax": "Clicca per inviare questo ordine ad AvaTax"
+              }
+          }
+      }
+  },
+  "settings": {
+      "Avalara": {
+          "Credentials": {
+              "CompanyCode": {
+                  "description": "Inserisci il codice aziendale che corrisponde a quello assegnato in Avalara Admin Manager",
+                  "title": "Codice aziendale nel sistema Avalara"
+              },
+              "ServiceUrl": {
+                  "description": "Fornisci il link al servizio API di Avalara",
+                  "title": "Link al servizio API di Avalara"
+              },
+              "AdminAreaUrl": {
+                  "description": "Inserisci il link alla pagina amministrativa di Avalara per creare collegamenti alle transazioni AvaTax",
+                  "title": "Link alla pagina amministrativa di Avalara"
+              }
+          },
+          "ScheduledOrdersSynchronization": {
+              "IsEnabled": {
+                  "description": "Abilita la sincronizzazione programmata degli ordini della piattaforma VC con AvaTax (richiede il riavvio)",
+                  "title": "Sincronizzazione automatica degli ordini con AvaTax"
+              },
+              "CronExpression": {
+                  "description": "Usa '0/x * * * *' per ogni x minuti, '0 */x * * *' per ogni x ore, '15 */x * * *' per minuti specifici nelle x ore o '0 0 */x * *' per ogni x giorni",
+                  "title": "Pianificazione della sincronizzazione automatica degli ordini (richiede il riavvio)"
+              },
+              "LastExecutionDate": {
+                  "description": "Imposta la data da cui elaborare gli ordini. Lascia vuoto per elaborare tutti gli ordini",
+                  "title": "Data dell'ultima sincronizzazione"
+              }
+          }
+      },
+      "module": {
+          "VirtoCommerce.AvalaraTax": {
+              "description": "API e interfaccia utente per l'integrazione fiscale Avalara"
+          }
+      },
+      "permissions": {
+          "tax:manage": "Autorizzazione per gestire le impostazioni fiscali Avalara"
+      }
+  },
+  "tax": {
+      "labels": {
+          "AvaTaxRateProvider": {
+              "name": "Fornitore fiscale Avalara",
+              "description": "Fornitore fiscale Avalara"
+          }
+      }
+  }
+}
