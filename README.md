@@ -1,20 +1,11 @@
-# Avalara Tax Provider
+# Virto Commerce Avalara Tax Module
 
 [![CI status](https://github.com/VirtoCommerce/vc-module-avatax/workflows/Module%20CI/badge.svg?branch=dev)](https://github.com/VirtoCommerce/vc-module-avatax/actions?query=workflow%3A"Module+CI") [![Quality gate](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=alert_status&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Reliability rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=reliability_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Security rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=security_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax) [![Sqale rating](https://sonarcloud.io/api/project_badges/measure?project=VirtoCommerce_vc-module-avatax&metric=sqale_rating&branch=dev)](https://sonarcloud.io/dashboard?id=VirtoCommerce_vc-module-avatax)
 
-Avalara.Tax module provides real time integration with Avalara Tax automation. This module is officially <a href="https://www.avalara.com/integrations/virto-commerce" target="_blank">certified by Avalara</a> to be compatible with Avalara API.
+The Avalara Tax module provides real time integration with Avalara Tax automation. This module is officially <a href="https://www.avalara.com/integrations/virto-commerce" target="_blank">certified by Avalara</a> to be compatible with Avalara API.
 
 ![Avalara Tax UI](https://user-images.githubusercontent.com/1835759/48475050-84442c00-e82e-11e8-899f-10452b382ec1.png)
 
-## Documentation
-[Working with taxes in Avalara tax module](https://docs.virtocommerce.org/new/user_docs/integrations/avalara/taxes-calculation/)
-
-## Installation
-Installing the module:
-* Automatically: in VC Manager go to Configuration -> Modules -> Avalara tax -> Install
-* Manually: 
-    * Download module zip package from https://github.com/VirtoCommerce/vc-module-avatax/releases. 
-    * Open the VC Platform Manager, go to Configuration -> Modules -> Advanced -> upload module package -> Install and choose the package downloaded on previous step.
 
 ## Settings
 ### Avalara connection settings
@@ -108,6 +99,24 @@ This module can also provide the exemption number for selected customers to the 
 2. Open dynamic properties for that customer;
 3. Add the dynamic property named `Tax exempt` and select the `ShortText` type.
 4. Fill the exemption certificate number to the value of this property.
+
+## Documentation
+
+* [AvaTax module user documentation](https://docs.virtocommerce.org/platform/user-guide/integrations/avalara/overview/)
+* [REST API](https://virtostart-demo-admin.govirto.com/docs/index.html?urls.primaryName=VirtoCommerce.AvalaraTax)
+* [Tax providers configuration](https://docs.virtocommerce.org/platform/developer-guide/Configuration-Reference/appsettingsjson/#tax)
+* [View on GitHub](https://github.com/VirtoCommerce/vc-module-avatax)
+
+
+## References
+
+* [Deployment](https://docs.virtocommerce.org/platform/developer-guide/Tutorials-and-How-tos/Tutorials/deploy-module-from-source-code/)
+* [Installation](https://docs.virtocommerce.org/platform/user-guide/modules-installation/)
+* [Home](https://virtocommerce.com)
+* [Community](https://www.virtocommerce.org)
+* [Download latest release](https://github.com/VirtoCommerce/vc-module-avatax/releases/latest)
+
+
 
 ## License
 Copyright (c) Virto Solutions LTD.  All rights reserved.
