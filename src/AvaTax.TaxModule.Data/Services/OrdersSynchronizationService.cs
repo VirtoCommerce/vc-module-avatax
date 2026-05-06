@@ -127,11 +127,10 @@ namespace AvaTax.TaxModule.Data.Services
                         }
                         catch (AvaTaxError e)
                         {
-                            var errorDetails = e.error.error;
-                            var joinedMessages = string.Join(Environment.NewLine,
-                                errorDetails.details.Select(x => $"{x.severity}: {x.message} {x.description}"));
+                            var errorDetails = e.error?.error;
+                            var joinedMessages = string.Join(Environment.NewLine, errorDetails?.details?.Select(x => $"{x.severity}: {x.message} {x.description}") ?? []);
 
-                            var errorMessage = $"Order #{order.Number}: {errorDetails.message}{Environment.NewLine}{joinedMessages}";
+                            var errorMessage = $"Order #{order.Number}: {errorDetails?.message}{Environment.NewLine}{joinedMessages}";
                             progressInfo.Errors.Add(errorMessage);
                         }
                     }
