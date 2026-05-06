@@ -80,11 +80,12 @@ namespace AvaTax.TaxModule.Data.Services
                 }
                 catch (AvaTaxError e)
                 {
-                    var errorDetails = e.error.error;
-                    var joinedMessages = string.Join(Environment.NewLine, errorDetails.details.Select(x => $"{x.severity}: {x.message} {x.description}"));
+                    var errorDetails = e.error?.error;
+                    var joinedMessages = string.Join(Environment.NewLine, errorDetails?.details?.Select(x => $"{x.severity}: {x.message} {x.description}") ?? []);
+                    var errorMessage = string.Join(Environment.NewLine, new[] { errorDetails?.code.ToString(), errorDetails?.message, joinedMessages }
+                        .Where(s => !string.IsNullOrEmpty(s)));
 
-                    var errorMessage = $"{errorDetails.message}{Environment.NewLine}{joinedMessages}";
-                    result.Errors = new[] { errorMessage };
+                    result.Errors = [errorMessage.IsNullOrEmpty() ? e.Message : errorMessage];
                     result.HasErrors = true;
                 }
             }
@@ -127,11 +128,12 @@ namespace AvaTax.TaxModule.Data.Services
                         }
                         catch (AvaTaxError e)
                         {
-                            var errorDetails = e.error.error;
-                            var joinedMessages = string.Join(Environment.NewLine,
-                                errorDetails.details.Select(x => $"{x.severity}: {x.message} {x.description}"));
+                            var errorDetails = e.error?.error;
+                            var joinedMessages = string.Join(Environment.NewLine, errorDetails?.details?.Select(x => $"{x.severity}: {x.message} {x.description}") ?? []);
+                            joinedMessages = string.Join(Environment.NewLine, new[] { errorDetails?.code.ToString(), errorDetails?.message, joinedMessages }
+                                .Where(s => !string.IsNullOrEmpty(s)));
 
-                            var errorMessage = $"Order #{order.Number}: {errorDetails.message}{Environment.NewLine}{joinedMessages}";
+                            var errorMessage = $"Order #{order.Number}: {(joinedMessages.IsNullOrEmpty() ? e.Message : joinedMessages)}";
                             progressInfo.Errors.Add(errorMessage);
                         }
                     }
