@@ -80,11 +80,11 @@ namespace AvaTax.TaxModule.Data.Services
                 }
                 catch (AvaTaxError e)
                 {
-                    var errorDetails = e.error.error;
-                    var joinedMessages = string.Join(Environment.NewLine, errorDetails.details.Select(x => $"{x.severity}: {x.message} {x.description}"));
-
-                    var errorMessage = $"{errorDetails.message}{Environment.NewLine}{joinedMessages}";
-                    result.Errors = new[] { errorMessage };
+                    var errorDetails = e.error?.error;
+                    var joinedMessages = string.Join(Environment.NewLine, errorDetails?.details?.Select(x => $"{x.severity}: {x.message} {x.description}") ?? []);
+                    var errorMessage = string.Join(Environment.NewLine, new[] { errorDetails?.code.ToString(), errorDetails?.message, joinedMessages }
+                        .Where(s => !string.IsNullOrEmpty(s)));
+                    result.Errors = [errorMessage];
                     result.HasErrors = true;
                 }
             }
