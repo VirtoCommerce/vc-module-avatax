@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Avalara Tax">
+  <title>Avalara Tax</title>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="92%" y2="100%">
+      <stop offset="0%" stop-color="#5FD080"/>
+      <stop offset="100%" stop-color="#2FA85A"/>
+    </linearGradient>
+    <filter id="lift" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0B4F2A" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+
+  <g transform="translate(64,64)" filter="url(#lift)">
+    <!-- Avalara orange "A" (legs, open crossbar) -->
+    <path d="M0,-42 L35,38 L17,38 L0,-2 L-17,38 L-35,38 Z" fill="#F47A20"/>
+    <!-- Integrated blue checkmark -->
+    <path d="M-15,7 L-5,17 L19,-9" fill="none" stroke="#1B4DA0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
