@@ -23,7 +23,7 @@
     <owner>Virto Commerce</owner>
   </owners>
   <projectUrl>https://github.com/VirtoCommerce/vc-module-avatax</projectUrl>
-  <iconUrl>Modules/$(VirtoCommerce.AvalaraTax)/Content/400.png</iconUrl>
+  <iconUrl>Modules/$(VirtoCommerce.AvalaraTax)/Content/logo.svg</iconUrl>
   <requireLicenseAcceptance>false</requireLicenseAcceptance>
   <releaseNotes>First version.</releaseNotes>
   <copyright>Copyright © 2011-2025 Virto Commerce. All rights reserved</copyright>
