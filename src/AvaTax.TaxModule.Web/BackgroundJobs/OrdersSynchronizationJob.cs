@@ -96,8 +96,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         private Task PerformOrderSynchronization(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback,
             IJobCancellationToken cancellationToken)
         {
-            var cancellationTokenWrapper = new JobCancellationTokenWrapper(cancellationToken);
-            return _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationTokenWrapper);
+            return _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationToken.ShutdownToken);
         }
     }
 }

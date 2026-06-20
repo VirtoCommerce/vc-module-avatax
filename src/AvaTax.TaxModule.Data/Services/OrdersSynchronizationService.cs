@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -94,7 +95,7 @@ namespace AvaTax.TaxModule.Data.Services
             return result;
         }
 
-        public async Task SynchronizeOrdersAsync(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, ICancellationToken cancellationToken)
+        public async Task SynchronizeOrdersAsync(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback, CancellationToken cancellationToken)
         {
             var totalCount = (long)ordersFeed.TotalCount;
 
@@ -106,11 +107,11 @@ namespace AvaTax.TaxModule.Data.Services
             };
             progressCallback(progressInfo);
 
-            cancellationToken?.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
             for (long i = 0; i < totalCount; i += BatchSize)
             {
-                var searchResult = await ordersFeed.GetNextBatch();
+                var searchResult = await ordersFeed.GetNextBatch(cancellationToken);
                 var orderIds = searchResult.Select(x => x.DocumentId).ToArray();
                 var orders = await _orderService.GetAsync(orderIds);
 
@@ -143,7 +144,7 @@ namespace AvaTax.TaxModule.Data.Services
                         progressInfo.Errors.Add(errorMessage);
                     }
 
-                    cancellationToken?.ThrowIfCancellationRequested();
+                    cancellationToken.ThrowIfCancellationRequested();
                 }
 
                 var processedCount = Math.Min(i + orderIds.Length, totalCount);
