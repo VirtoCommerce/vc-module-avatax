@@ -19,19 +19,6 @@ using VirtoCommerce.SearchModule.Data.Services;
 
 namespace AvaTax.TaxModule.Web.BackgroundJobs
 {
-    public class OrdersSynchronizationJobPayload
-    {
-        /// <summary>
-        /// Orders to send for a manual run started from the admin UI. Ignored for a scheduled run.
-        /// </summary>
-        public string[] OrderIds { get; set; } = [];
-
-        /// <summary>
-        /// Push notification to report progress through, for a manual run. <c>null</c> for a scheduled run.
-        /// </summary>
-        public OrdersSynchronizationPushNotification Notification { get; set; }
-    }
-
     public class OrdersSynchronizationJob : IBackgroundJobHandler<OrdersSynchronizationJobPayload>
     {
         private const int BatchSize = 50;
