@@ -5,12 +5,12 @@ using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Providers;
 using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.BackgroundJobs;
-using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.Modularity;
 using VirtoCommerce.Platform.Core.Security;
 using VirtoCommerce.Platform.Core.Settings;
@@ -43,6 +43,16 @@ namespace AvaTax.TaxModule.Web
             serviceCollection.AddTransient<IOrdersSynchronizationService, OrdersSynchronizationService>();
             serviceCollection.AddTransient<IOrderTaxTypeResolver, OrderTaxTypeResolver>();
 
+            // Scheduled order synchronization. It used to be added or removed once in PostInitialize from the settings read at
+            // startup; now the background-job engine re-evaluates it whenever the enabler or cron setting changes. The id is the
+            // one the Hangfire recurring job used, so on the Hangfire engine this replaces the old entry. The same handler also
+            // serves manual runs from the admin UI.
+            serviceCollection.AddRecurringJob<OrdersSynchronizationJob, OrdersSynchronizationJobPayload>(schedule => schedule
+                .WithId("SendOrdersToAvaTaxJob")
+                .FromSettings(
+                    ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled,
+                    ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression));
+
             serviceCollection.AddOptions<AvaTaxSecureOptions>().Bind(Configuration.GetSection("Tax:Avalara")).ValidateDataAnnotations();
         }
 
@@ -64,19 +74,6 @@ namespace AvaTax.TaxModule.Web
 
             var permissionsRegistrar = appBuilder.ApplicationServices.GetRequiredService<IPermissionsRegistrar>();
             permissionsRegistrar.RegisterPermissions(ModuleInfo.Id, "Avalara Tax", ModuleConstants.Security.Permissions.AllPermissions);
-
-            var settingsManager = appBuilder.ApplicationServices.GetRequiredService<ISettingsManager>();
-
-            var processJobEnabled = settingsManager.GetValue<bool>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationIsEnabled);
-            if (processJobEnabled)
-            {
-                var cronExpression = settingsManager.GetValue<string>(ModuleConstants.Settings.ScheduledOrdersSynchronization.SynchronizationCronExpression);
-                RecurringJob.AddOrUpdate<OrdersSynchronizationJob>("SendOrdersToAvaTaxJob", x => x.RunScheduled(JobCancellationToken.Null, null), cronExpression);
-            }
-            else
-            {
-                RecurringJob.RemoveIfExists("SendOrdersToAvaTaxJob");
-            }
         }
         public void Uninstall()
         {

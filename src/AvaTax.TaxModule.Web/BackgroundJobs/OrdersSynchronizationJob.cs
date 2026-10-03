@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using AvaTax.TaxModule.Core;
 using AvaTax.TaxModule.Core.Models;
 using AvaTax.TaxModule.Core.Services;
 using AvaTax.TaxModule.Data.Services;
 using AvaTax.TaxModule.Web.Models.PushNotifications;
-using Hangfire;
-using Hangfire.Server;
 using VirtoCommerce.OrdersModule.Core.Services;
 using VirtoCommerce.Platform.Core.ChangeLog;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Settings;
 using VirtoCommerce.SearchModule.Core.Model;
@@ -19,7 +19,7 @@ using VirtoCommerce.SearchModule.Data.Services;
 
 namespace AvaTax.TaxModule.Web.BackgroundJobs
 {
-    public class OrdersSynchronizationJob
+    public class OrdersSynchronizationJob : IBackgroundJobHandler<OrdersSynchronizationJobPayload>
     {
         private const int BatchSize = 50;
 
@@ -39,7 +39,18 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             _settingsManager = settingsManager;
         }
 
-        public async Task RunScheduled(IJobCancellationToken cancellationToken, PerformContext context)
+        /// <summary>
+        /// Runs a synchronization. A payload with a <see cref="OrdersSynchronizationJobPayload.Notification"/> is a manual
+        /// run for the given orders; a payload without one is the scheduled run over orders changed since the last run.
+        /// </summary>
+        public virtual Task Execute(OrdersSynchronizationJobPayload payload, IJobExecutionContext context, CancellationToken cancellationToken = default)
+        {
+            return payload?.Notification is null
+                ? RunScheduled(cancellationToken)
+                : RunManually(payload.OrderIds, payload.Notification, context.JobId, cancellationToken);
+        }
+
+        public async Task RunScheduled(CancellationToken cancellationToken)
         {
             var currentTime = DateTime.UtcNow;
 
@@ -56,7 +67,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         }
 
         public async Task RunManually(string[] orderIds, OrdersSynchronizationPushNotification notification,
-            IJobCancellationToken cancellationToken, PerformContext context)
+            string jobId, CancellationToken cancellationToken)
         {
             var ordersFeed = new InMemoryIndexDocumentChangeFeed(orderIds, IndexDocumentChangeType.Modified, BatchSize);
 
@@ -67,7 +78,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
                 notification.ErrorCount = notification.Errors.Count;
                 notification.TotalCount = x.TotalCount ?? 0;
                 notification.ProcessedCount = x.ProcessedCount ?? 0;
-                notification.JobId = context.BackgroundJob.Id;
+                notification.JobId = jobId;
 
                 _pushNotificationManager.Send(notification);
             }
@@ -76,7 +87,7 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
             {
                 await PerformOrderSynchronization(ordersFeed, ProgressCallback, cancellationToken);
             }
-            catch (JobAbortedException)
+            catch (OperationCanceledException)
             {
                 //do nothing
             }
@@ -94,9 +105,9 @@ namespace AvaTax.TaxModule.Web.BackgroundJobs
         }
 
         private Task PerformOrderSynchronization(IIndexDocumentChangeFeed ordersFeed, Action<AvaTaxOrdersSynchronizationProgress> progressCallback,
-            IJobCancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            return _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationToken.ShutdownToken);
+            return _ordersSynchronizationService.SynchronizeOrdersAsync(ordersFeed, progressCallback, cancellationToken);
         }
     }
 }
