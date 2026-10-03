@@ -10,7 +10,6 @@
     <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.Platform.Hangfire" Version="3.1039.0" />
     <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.1004.0" />
   </ItemGroup>
   <ItemGroup>
