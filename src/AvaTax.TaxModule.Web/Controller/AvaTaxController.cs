@@ -9,13 +9,14 @@ using AvaTax.TaxModule.Web.BackgroundJobs;
 using AvaTax.TaxModule.Web.Models;
 using AvaTax.TaxModule.Web.Models.PushNotifications;
 using AvaTax.TaxModule.Web.Services;
-using Hangfire;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using VirtoCommerce.Platform.Core.Common;
+using VirtoCommerce.Platform.Core.Jobs;
 using VirtoCommerce.Platform.Core.PushNotifications;
 using VirtoCommerce.Platform.Core.Security;
 
@@ -121,9 +122,9 @@ namespace AvaTax.TaxModule.Web.Controller
         [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
         [Route("orders/{jobId}/cancel")]
         [Authorize(ModuleConstants.Security.Permissions.TaxManage)]
-        public ActionResult CancelOrdersSynchronization(string jobId)
+        public async Task<ActionResult> CancelOrdersSynchronization(string jobId)
         {
-            BackgroundJob.Delete(jobId);
+            await BackgroundJob.Cancel(jobId);
             return NoContent();
         }
 
@@ -153,8 +154,12 @@ namespace AvaTax.TaxModule.Web.Controller
             };
             await _pushNotificationManager.SendAsync(notification);
 
-            var jobId = BackgroundJob.Enqueue<OrdersSynchronizationJob>(x => x.RunManually(request.OrderIds, notification, JobCancellationToken.Null, null));
-            notification.JobId = jobId;
+            var payload = AbstractTypeFactory<OrdersSynchronizationJobPayload>.TryCreateInstance();
+            payload.OrderIds = request.OrderIds;
+            payload.Notification = notification;
+
+            // The static facade rather than an injected IBackgroundJob keeps the controller's constructor unchanged.
+            notification.JobId = await BackgroundJob.Enqueue<OrdersSynchronizationJob>(payload);
 
             return notification;
         }
