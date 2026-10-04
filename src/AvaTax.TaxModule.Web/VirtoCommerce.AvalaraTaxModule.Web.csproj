@@ -10,7 +10,7 @@
     <SonarQubeTestProject>false</SonarQubeTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.1004.0" />
+    <PackageReference Include="VirtoCommerce.SearchModule.Data" Version="3.1010.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvaTax.TaxModule.Core\VirtoCommerce.AvalaraTaxModule.Core.csproj" />
