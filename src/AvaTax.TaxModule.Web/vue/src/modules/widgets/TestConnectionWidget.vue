@@ -29,15 +29,12 @@ const form = inject(BladeFormKey, null);
 
 const testing = ref(false);
 const result = ref<"ok" | "error">();
-const icon = computed(() =>
-  testing.value
-    ? "lucide-loader-circle"
-    : result.value === "ok"
-      ? "lucide-circle-check"
-      : result.value === "error"
-        ? "lucide-circle-alert"
-        : "lucide-plug-zap",
-);
+const icon = computed(() => {
+  if (testing.value) return "lucide-loader-circle";
+  if (result.value === "ok") return "lucide-circle-check";
+  if (result.value === "error") return "lucide-circle-alert";
+  return "lucide-plug-zap";
+});
 
 async function test() {
   const provider = ctx?.value.item as { settings?: ObjectSettingEntry[] } | undefined;

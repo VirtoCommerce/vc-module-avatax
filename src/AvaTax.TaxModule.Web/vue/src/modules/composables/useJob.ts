@@ -44,7 +44,7 @@ export function useJob() {
   // the most advanced snapshot wins: finished first, then the most processed
   const job = computed<JobNotification | undefined>(() => {
     const candidates = [live.value, polled.value, started.value].filter(Boolean) as JobNotification[];
-    const best = candidates.find((x) => x.finished) ?? candidates.sort((a, b) => (b.processedCount ?? 0) - (a.processedCount ?? 0))[0];
+    const best = candidates.find((x) => x.finished) ?? [...candidates].sort((a, b) => (b.processedCount ?? 0) - (a.processedCount ?? 0))[0];
     if (!best || best.finished) return best;
     if (cancelled.value) return { ...best, finished: new Date(), description: cancelled.value };
     if (!deadState.value) return best;
