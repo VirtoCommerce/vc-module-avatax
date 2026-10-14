@@ -16,4 +16,17 @@
     <ProjectReference Include="..\AvaTax.TaxModule.Core\VirtoCommerce.AvalaraTaxModule.Core.csproj" />
     <ProjectReference Include="..\AvaTax.TaxModule.Data\VirtoCommerce.AvalaraTaxModule.Data.csproj" />
   </ItemGroup>
+  <!-- Admin Shell module UI: Vue sources in vue/, built into plugins/admin-shell/ -->
+  <ItemGroup>
+    <Compile Remove="vue\**" />
+    <Content Remove="vue\**" />
+    <EmbeddedResource Remove="vue\**" />
+    <None Remove="vue\**" />
+    <Content Remove="plugins\**" />
+    <None Remove="plugins\**" />
+    <AdminShellPlugin Include="plugins\**" />
+  </ItemGroup>
+  <Target Name="CopyAdminShellPluginOnPublish" AfterTargets="Publish">
+    <Copy SourceFiles="@(AdminShellPlugin)" DestinationFiles="$(PublishDir)\..\%(Identity)" />
+  </Target>
 </Project>
