@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "Test connection with AvaTax",
+      "CONNECTED": "Connected to AvaTax successfully",
+      "SAVE_FIRST": "Save the settings first: the connection is tested with the saved values",
+      "ORDER": {
+        "CHECKING": "AvaTax: checking…",
+        "NOT_USED": "AvaTax: not used",
+        "ERROR": "AvaTax: error",
+        "NOT_SENT": "Send to AvaTax",
+        "SENT": "Sent to AvaTax",
+        "OUTDATED": "AvaTax: outdated"
+      }
+    },
+    "STATUS": {
+      "TITLE": "Order in AvaTax",
+      "TITLE_NEW": "AvaTax transaction missing",
+      "SUBTITLE": "Details of the AvaTax transaction",
+      "TRANSACTION": "Transaction in AvaTax",
+      "LAST_SENT": "Last sent to AvaTax",
+      "LINK": "Link to the transaction",
+      "RAW": "Raw transaction",
+      "NOT_SENT": "The order was not sent to AvaTax",
+      "NOT_USED": "AvaTax is not enabled for this order's store",
+      "ERROR": "Failed to get the date of the last synchronization with AvaTax"
+    },
+    "PROGRESS": {
+      "TITLE": "Sending orders to AvaTax",
+      "CANCELLED": "Cancelled"
+    },
+    "JOB": {
+      "STARTED": "Start",
+      "FINISHED": "End",
+      "ELAPSED": "Elapsed",
+      "PROCESSED": "Processed",
+      "ERRORS": "Errors"
+    },
+    "TOOLBAR": {
+      "SEND": "Send to AvaTax",
+      "REFRESH": "Refresh",
+      "CANCEL": "Cancel"
+    }
+  }
+}
