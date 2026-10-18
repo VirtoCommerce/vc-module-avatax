@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "测试与 AvaTax 的连接",
+      "CONNECTED": "已成功连接到 AvaTax",
+      "SAVE_FIRST": "请先保存设置：连接测试使用已保存的值",
+      "ORDER": {
+        "CHECKING": "AvaTax：正在检查…",
+        "NOT_USED": "AvaTax：未使用",
+        "ERROR": "AvaTax：错误",
+        "NOT_SENT": "发送到 AvaTax",
+        "SENT": "已发送到 AvaTax",
+        "OUTDATED": "AvaTax：已过期"
+      }
+    },
+    "STATUS": {
+      "TITLE": "AvaTax 中的订单",
+      "TITLE_NEW": "缺少 AvaTax 交易",
+      "SUBTITLE": "AvaTax 交易详情",
+      "TRANSACTION": "AvaTax 中的交易",
+      "LAST_SENT": "最后一次发送到 AvaTax",
+      "LINK": "交易链接",
+      "RAW": "原始交易内容",
+      "NOT_SENT": "订单未发送到 AvaTax",
+      "NOT_USED": "此订单的商店未启用 AvaTax",
+      "ERROR": "获取最后一次 AvaTax 同步日期失败"
+    },
+    "PROGRESS": {
+      "TITLE": "正在将订单发送到 AvaTax",
+      "CANCELLED": "已取消"
+    },
+    "JOB": {
+      "STARTED": "开始",
+      "FINISHED": "结束",
+      "ELAPSED": "已用时间",
+      "PROCESSED": "已处理",
+      "ERRORS": "错误"
+    },
+    "TOOLBAR": {
+      "SEND": "发送到 AvaTax",
+      "REFRESH": "刷新",
+      "CANCEL": "取消"
+    }
+  }
+}
