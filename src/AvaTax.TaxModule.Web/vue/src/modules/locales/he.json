@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "בדיקת החיבור ל-AvaTax",
+      "CONNECTED": "החיבור ל-AvaTax הצליח",
+      "SAVE_FIRST": "יש לשמור קודם את ההגדרות: החיבור נבדק עם הערכים השמורים",
+      "ORDER": {
+        "CHECKING": "AvaTax: בבדיקה…",
+        "NOT_USED": "AvaTax: לא בשימוש",
+        "ERROR": "AvaTax: שגיאה",
+        "NOT_SENT": "שליחה ל-AvaTax",
+        "SENT": "נשלחה ל-AvaTax",
+        "OUTDATED": "AvaTax: לא עדכני"
+      }
+    },
+    "STATUS": {
+      "TITLE": "ההזמנה ב-AvaTax",
+      "TITLE_NEW": "חסרה עסקה ב-AvaTax",
+      "SUBTITLE": "פרטי העסקה ב-AvaTax",
+      "TRANSACTION": "עסקה ב-AvaTax",
+      "LAST_SENT": "שליחה אחרונה ל-AvaTax",
+      "LINK": "קישור לעסקה",
+      "RAW": "העסקה בפורמט גולמי",
+      "NOT_SENT": "ההזמנה לא נשלחה ל-AvaTax",
+      "NOT_USED": "AvaTax לא מופעל בחנות של הזמנה זו",
+      "ERROR": "קבלת תאריך הסנכרון האחרון עם AvaTax נכשלה"
+    },
+    "PROGRESS": {
+      "TITLE": "שליחת הזמנות ל-AvaTax",
+      "CANCELLED": "בוטל"
+    },
+    "JOB": {
+      "STARTED": "התחלה",
+      "FINISHED": "סיום",
+      "ELAPSED": "זמן שחלף",
+      "PROCESSED": "עובדו",
+      "ERRORS": "שגיאות"
+    },
+    "TOOLBAR": {
+      "SEND": "שליחה ל-AvaTax",
+      "REFRESH": "רענון",
+      "CANCEL": "ביטול"
+    }
+  }
+}
