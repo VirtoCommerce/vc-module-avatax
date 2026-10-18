@@ -1,4 +1,41 @@
 {
+  "avaTax": {
+    "blades": {
+      "order-synchronization-status": {
+        "title": "ההזמנה ב-AvaTax",
+        "title-new": "חסרה עסקה ב-AvaTax",
+        "subtitle": "פרטי העסקה ב-AvaTax",
+        "labels": {
+          "last-sync-date": "שליחה אחרונה ל-AvaTax",
+          "transaction-in-avatax": "עסקה ב-AvaTax",
+          "link-to-transaction": "קישור לעסקה:",
+          "raw-transaction-content": "העסקה בפורמט גולמי",
+          "not-sent-to-avatax": "ההזמנה לא נשלחה ל-AvaTax"
+        }
+      },
+      "orders-synchronization-progress": {
+        "labels": {
+          "start": "התחלה",
+          "end": "סיום",
+          "stats": "הזמנות שעובדו: {{ processedCount }} מתוך {{ totalCount }}",
+          "errors": "שגיאות"
+        }
+      }
+    },
+    "commands": {
+      "test-connection": "בדיקת החיבור ל-AvaTax",
+      "send-to-avatax": "שליחה ל-AvaTax",
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "בהמתנה לסטטוס מ-AvaTax...",
+          "store-does-not-use-avatax": "AvaTax לא מופעל בחנות של הזמנה זו",
+          "sent-to-avatax": "נשלחה ל-AvaTax:",
+          "error": "קבלת תאריך הסנכרון האחרון עם AvaTax נכשלה",
+          "send-to-avatax": "יש ללחוץ כדי לשלוח הזמנה זו ל-AvaTax"
+        }
+      }
+    }
+  },
   "settings": {
     "Avalara": {
       "Credentials": {

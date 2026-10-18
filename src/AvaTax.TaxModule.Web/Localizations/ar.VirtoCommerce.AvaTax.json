@@ -1,4 +1,41 @@
 {
+  "avaTax": {
+    "blades": {
+      "order-synchronization-status": {
+        "title": "الطلب في AvaTax",
+        "title-new": "معاملة AvaTax غير موجودة",
+        "subtitle": "تفاصيل معاملة AvaTax",
+        "labels": {
+          "last-sync-date": "آخر إرسال إلى AvaTax",
+          "transaction-in-avatax": "المعاملة في AvaTax",
+          "link-to-transaction": "رابط المعاملة:",
+          "raw-transaction-content": "بيانات المعاملة الخام",
+          "not-sent-to-avatax": "لم يُرسَل الطلب إلى AvaTax"
+        }
+      },
+      "orders-synchronization-progress": {
+        "labels": {
+          "start": "البداية",
+          "end": "النهاية",
+          "stats": "الطلبات المعالَجة: {{ processedCount }} من {{ totalCount }}",
+          "errors": "الأخطاء"
+        }
+      }
+    },
+    "commands": {
+      "test-connection": "اختبار الاتصال بـ AvaTax",
+      "send-to-avatax": "إرسال إلى AvaTax",
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "في انتظار حالة AvaTax...",
+          "store-does-not-use-avatax": "AvaTax غير مفعّل لمتجر هذا الطلب",
+          "sent-to-avatax": "تم الإرسال إلى AvaTax:",
+          "error": "تعذّر الحصول على تاريخ آخر مزامنة مع AvaTax",
+          "send-to-avatax": "انقر لإرسال هذا الطلب إلى AvaTax"
+        }
+      }
+    }
+  },
   "settings": {
     "Avalara": {
       "Credentials": {
