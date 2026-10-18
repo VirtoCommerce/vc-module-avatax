@@ -1,0 +1,50 @@
+{
+  "settings": {
+    "Avalara": {
+      "Credentials": {
+        "CompanyCode": {
+          "description": "יש להזין את קוד החברה התואם לקוד שהוקצה לחברה ב-Avalara Admin Manager",
+          "title": "קוד החברה במערכת Avalara"
+        },
+        "ServiceUrl": {
+          "description": "יש להזין את הקישור לשירות Avalara API",
+          "title": "קישור לשירות Avalara API"
+        },
+        "AdminAreaUrl": {
+          "description": "יש להזין את הקישור לדף הניהול של Avalara לבניית קישורים לעסקאות AvaTax",
+          "title": "קישור לדף הניהול של Avalara"
+        }
+      },
+      "ScheduledOrdersSynchronization": {
+        "IsEnabled": {
+          "description": "הפעלת סנכרון מתוזמן של הזמנות VC Platform עם AvaTax (נדרשת הפעלה מחדש)",
+          "title": "סנכרון אוטומטי של הזמנות עם AvaTax"
+        },
+        "CronExpression": {
+          "description": "יש להשתמש ב-'0/x * * * *' להרצה כל x דקות, ב-'0 */x * * *' להרצה כל x שעות, ב-'15 */x * * *' לציון הדקות בתוך x שעות, או ב-'0 0 */x * *' להרצה כל x ימים",
+          "title": "לוח זמנים לסנכרון אוטומטי של הזמנות (נדרשת הפעלה מחדש)"
+        },
+        "LastExecutionDate": {
+          "description": "יש להגדיר תאריך כדי לעבד הזמנות מתאריך זה ואילך. יש להשאיר ריק כדי לעבד את כל ההזמנות",
+          "title": "תאריך הסנכרון האחרון"
+        }
+      }
+    },
+    "module": {
+      "VirtoCommerce.AvalaraTax": {
+        "description": "ממשקי API וממשק משתמש לאינטגרציית המס של Avalara"
+      }
+    },
+    "permissions": {
+      "tax:manage": "הרשאה לניהול הגדרות המס של Avalara"
+    }
+  },
+  "tax": {
+    "labels": {
+      "AvaTaxRateProvider": {
+        "name": "ספק המס Avalara",
+        "description": "ספק המס Avalara"
+      }
+    }
+  }
+}
