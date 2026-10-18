@@ -1,0 +1,50 @@
+{
+  "settings": {
+    "Avalara": {
+      "Credentials": {
+        "CompanyCode": {
+          "description": "أدخل رمز الشركة المطابق للرمز المعيَّن للشركة في Avalara Admin Manager",
+          "title": "رمز الشركة في نظام Avalara"
+        },
+        "ServiceUrl": {
+          "description": "أدخل رابط خدمة Avalara API",
+          "title": "رابط خدمة Avalara API"
+        },
+        "AdminAreaUrl": {
+          "description": "أدخل رابط صفحة إدارة Avalara لإنشاء روابط إلى معاملات AvaTax",
+          "title": "رابط صفحة إدارة Avalara"
+        }
+      },
+      "ScheduledOrdersSynchronization": {
+        "IsEnabled": {
+          "description": "تفعيل المزامنة المجدولة لطلبات منصة Virto Commerce مع AvaTax (تتطلب إعادة التشغيل)",
+          "title": "المزامنة التلقائية للطلبات مع AvaTax"
+        },
+        "CronExpression": {
+          "description": "استخدم '0/x * * * *' للتشغيل كل x دقيقة، و'0 */x * * *' للتشغيل كل x ساعة، و'15 */x * * *' لتحديد الدقائق ضمن كل x ساعة، أو '0 0 */x * *' للتشغيل كل x يوم",
+          "title": "جدول المزامنة التلقائية للطلبات (تتطلب إعادة التشغيل)"
+        },
+        "LastExecutionDate": {
+          "description": "حدد تاريخًا لمعالجة الطلبات اعتبارًا منه. اتركه فارغًا لمعالجة كل الطلبات",
+          "title": "تاريخ آخر مزامنة"
+        }
+      }
+    },
+    "module": {
+      "VirtoCommerce.AvalaraTax": {
+        "description": "واجهات API وواجهة مستخدم لتكامل ضرائب Avalara"
+      }
+    },
+    "permissions": {
+      "tax:manage": "صلاحية إدارة إعدادات ضرائب Avalara"
+    }
+  },
+  "tax": {
+    "labels": {
+      "AvaTaxRateProvider": {
+        "name": "مزوّد ضرائب Avalara",
+        "description": "مزوّد ضرائب Avalara"
+      }
+    }
+  }
+}
