@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "AvaTax との接続をテスト",
+      "CONNECTED": "AvaTax に正常に接続しました",
+      "SAVE_FIRST": "先に設定を保存してください。接続は保存済みの値でテストされます",
+      "ORDER": {
+        "CHECKING": "AvaTax: 確認中…",
+        "NOT_USED": "AvaTax: 未使用",
+        "ERROR": "AvaTax: エラー",
+        "NOT_SENT": "AvaTax に送信",
+        "SENT": "AvaTax に送信済み",
+        "OUTDATED": "AvaTax: 古いデータ"
+      }
+    },
+    "STATUS": {
+      "TITLE": "AvaTax の注文",
+      "TITLE_NEW": "AvaTax の取引がありません",
+      "SUBTITLE": "AvaTax の取引の詳細",
+      "TRANSACTION": "AvaTax の取引",
+      "LAST_SENT": "AvaTax への最終送信",
+      "LINK": "取引へのリンク",
+      "RAW": "取引の生データ",
+      "NOT_SENT": "注文は AvaTax に送信されていません",
+      "NOT_USED": "この注文のストアでは AvaTax が有効になっていません",
+      "ERROR": "AvaTax との最終同期日時を取得できませんでした"
+    },
+    "PROGRESS": {
+      "TITLE": "注文を AvaTax に送信中",
+      "CANCELLED": "キャンセルされました"
+    },
+    "JOB": {
+      "STARTED": "開始",
+      "FINISHED": "終了",
+      "ELAPSED": "経過時間",
+      "PROCESSED": "処理済み",
+      "ERRORS": "エラー"
+    },
+    "TOOLBAR": {
+      "SEND": "AvaTax に送信",
+      "REFRESH": "更新",
+      "CANCEL": "キャンセル"
+    }
+  }
+}
