@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "Testa la connessione con AvaTax",
+      "CONNECTED": "Connessione ad AvaTax riuscita",
+      "SAVE_FIRST": "Salvare prima le impostazioni: la connessione viene testata con i valori salvati",
+      "ORDER": {
+        "CHECKING": "AvaTax: verifica in corso…",
+        "NOT_USED": "AvaTax: non utilizzato",
+        "ERROR": "AvaTax: errore",
+        "NOT_SENT": "Invia ad AvaTax",
+        "SENT": "Inviato ad AvaTax",
+        "OUTDATED": "AvaTax: non aggiornato"
+      }
+    },
+    "STATUS": {
+      "TITLE": "Ordine in AvaTax",
+      "TITLE_NEW": "Transazione AvaTax mancante",
+      "SUBTITLE": "Dettagli della transazione AvaTax",
+      "TRANSACTION": "Transazione in AvaTax",
+      "LAST_SENT": "Ultimo invio ad AvaTax",
+      "LINK": "Link alla transazione",
+      "RAW": "Transazione grezza",
+      "NOT_SENT": "L'ordine non è stato inviato ad AvaTax",
+      "NOT_USED": "AvaTax non è abilitato per il negozio di questo ordine",
+      "ERROR": "Impossibile ottenere la data dell'ultima sincronizzazione con AvaTax"
+    },
+    "PROGRESS": {
+      "TITLE": "Invio degli ordini ad AvaTax",
+      "CANCELLED": "Annullato"
+    },
+    "JOB": {
+      "STARTED": "Inizio",
+      "FINISHED": "Fine",
+      "ELAPSED": "Trascorso",
+      "PROCESSED": "Elaborati",
+      "ERRORS": "Errori"
+    },
+    "TOOLBAR": {
+      "SEND": "Invia ad AvaTax",
+      "REFRESH": "Aggiorna",
+      "CANCEL": "Annulla"
+    }
+  }
+}

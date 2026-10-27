@@ -271,3 +271,5 @@ __pycache__/
 # Webpack output
 dist/
 /build/Build.cs
+# Admin Shell module UI build output (built from src/AvaTax.TaxModule.Web/vue)
+src/AvaTax.TaxModule.Web/plugins/

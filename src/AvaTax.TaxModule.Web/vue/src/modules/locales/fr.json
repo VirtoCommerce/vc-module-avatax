@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "Tester la connexion avec AvaTax",
+      "CONNECTED": "Connexion à AvaTax réussie",
+      "SAVE_FIRST": "Enregistrez d'abord les paramètres : la connexion est testée avec les valeurs enregistrées",
+      "ORDER": {
+        "CHECKING": "AvaTax : vérification…",
+        "NOT_USED": "AvaTax : non utilisé",
+        "ERROR": "AvaTax : erreur",
+        "NOT_SENT": "Envoyer à AvaTax",
+        "SENT": "Envoyé à AvaTax",
+        "OUTDATED": "AvaTax : obsolète"
+      }
+    },
+    "STATUS": {
+      "TITLE": "Commande dans AvaTax",
+      "TITLE_NEW": "Transaction AvaTax manquante",
+      "SUBTITLE": "Détails de la transaction AvaTax",
+      "TRANSACTION": "Transaction dans AvaTax",
+      "LAST_SENT": "Dernier envoi à AvaTax",
+      "LINK": "Lien vers la transaction",
+      "RAW": "Transaction brute",
+      "NOT_SENT": "La commande n'a pas été envoyée à AvaTax",
+      "NOT_USED": "AvaTax n'est pas activé pour le magasin de cette commande",
+      "ERROR": "Échec de la récupération de la date de la dernière synchronisation avec AvaTax"
+    },
+    "PROGRESS": {
+      "TITLE": "Envoi des commandes à AvaTax",
+      "CANCELLED": "Annulé"
+    },
+    "JOB": {
+      "STARTED": "Début",
+      "FINISHED": "Fin",
+      "ELAPSED": "Écoulé",
+      "PROCESSED": "Traités",
+      "ERRORS": "Erreurs"
+    },
+    "TOOLBAR": {
+      "SEND": "Envoyer à AvaTax",
+      "REFRESH": "Actualiser",
+      "CANCEL": "Annuler"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "avaTax": {
+    "blades": {
+      "order-synchronization-status": {
+        "title": "Tilaus AvaTaxissa",
+        "title-new": "AvaTax-tapahtuma puuttuu",
+        "subtitle": "AvaTax-tapahtuman tiedot",
+        "labels": {
+          "last-sync-date": "Viimeksi lähetetty AvaTaxiin",
+          "transaction-in-avatax": "Tapahtuma AvaTaxissa",
+          "link-to-transaction": "Linkki tapahtumaan:",
+          "raw-transaction-content": "Raakatapahtuma",
+          "not-sent-to-avatax": "Tilausta ei lähetetty AvaTaxiin"
+        }
+      },
+      "orders-synchronization-progress": {
+        "labels": {
+          "start": "Alku",
+          "end": "Loppu",
+          "stats": "Käsitelty — {{ processedCount }}/{{ totalCount }} tilausta",
+          "errors": "Virheet"
+        }
+      }
+    },
+    "commands": {
+      "test-connection": "Testaa yhteys AvaTaxiin",
+      "send-to-avatax": "Lähetä AvaTaxiin",
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "Odotetaan AvaTaxin tilaa...",
+          "store-does-not-use-avatax": "AvaTax ei ole käytössä tämän tilauksen kaupassa",
+          "sent-to-avatax": "Lähetetty AvaTaxiin:",
+          "error": "AvaTaxin viimeisimmän synkronoinnin päivämäärän haku epäonnistui",
+          "send-to-avatax": "Lähetä tämä tilaus AvaTaxiin napsauttamalla"
+        }
+      }
+    }
+  },
+  "settings": {
+    "Avalara": {
+      "Credentials": {
+        "CompanyCode": {
+          "description": "Anna yrityskoodi, joka vastaa yritykselle Avalara Admin Managerissa määritettyä koodia",
+          "title": "Yrityskoodi Avalara-järjestelmässä"
+        },
+        "ServiceUrl": {
+          "description": "Anna linkki Avalara API -palveluun",
+          "title": "Linkki Avalara API -palveluun"
+        },
+        "AdminAreaUrl": {
+          "description": "Anna linkki Avalaran hallintasivulle AvaTax-tapahtumien linkkien muodostamista varten",
+          "title": "Linkki Avalaran hallintasivulle"
+        }
+      },
+      "ScheduledOrdersSynchronization": {
+        "IsEnabled": {
+          "description": "Ota käyttöön VC Platformin tilausten ajoitettu synkronointi AvaTaxin kanssa (vaatii uudelleenkäynnistyksen)",
+          "title": "Tilausten automaattinen synkronointi AvaTaxin kanssa"
+        },
+        "CronExpression": {
+          "description": "Käytä lauseketta '0/x * * * *' x minuutin välein, '0 */x * * *' x tunnin välein, '15 */x * * *' minuuttien määrittämiseen x tunnin välein tai '0 0 */x * *' x päivän välein",
+          "title": "Tilausten automaattisen synkronoinnin aikataulu (vaatii uudelleenkäynnistyksen)"
+        },
+        "LastExecutionDate": {
+          "description": "Määritä päivämäärä, josta alkaen tilaukset käsitellään. Jätä tyhjäksi, jos haluat käsitellä kaikki tilaukset",
+          "title": "Viimeisimmän synkronoinnin päivämäärä"
+        }
+      }
+    },
+    "module": {
+      "VirtoCommerce.AvalaraTax": {
+        "description": "API-rajapinnat ja käyttöliittymä Avalara-verointegraatiota varten"
+      }
+    },
+    "permissions": {
+      "tax:manage": "Oikeus hallita Avalaran veroasetuksia"
+    }
+  },
+  "tax": {
+    "labels": {
+      "AvaTaxRateProvider": {
+        "name": "Avalaran veropalveluntarjoaja",
+        "description": "Avalaran veropalveluntarjoaja"
+      }
+    }
+  }
+}

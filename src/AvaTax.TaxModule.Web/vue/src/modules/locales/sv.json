@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "Testa anslutningen till AvaTax",
+      "CONNECTED": "Anslutningen till AvaTax lyckades",
+      "SAVE_FIRST": "Spara inställningarna först: anslutningen testas med de sparade värdena",
+      "ORDER": {
+        "CHECKING": "AvaTax: kontrollerar…",
+        "NOT_USED": "AvaTax: används inte",
+        "ERROR": "AvaTax: fel",
+        "NOT_SENT": "Skicka till AvaTax",
+        "SENT": "Skickad till AvaTax",
+        "OUTDATED": "AvaTax: inaktuell"
+      }
+    },
+    "STATUS": {
+      "TITLE": "Order i AvaTax",
+      "TITLE_NEW": "AvaTax-transaktion saknas",
+      "SUBTITLE": "Detaljer om AvaTax-transaktionen",
+      "TRANSACTION": "Transaktion i AvaTax",
+      "LAST_SENT": "Senast skickad till AvaTax",
+      "LINK": "Länk till transaktionen",
+      "RAW": "Rå transaktion",
+      "NOT_SENT": "Ordern har inte skickats till AvaTax",
+      "NOT_USED": "AvaTax är inte aktiverat för den här orderns butik",
+      "ERROR": "Det gick inte att hämta datumet för den senaste synkroniseringen med AvaTax"
+    },
+    "PROGRESS": {
+      "TITLE": "Skickar order till AvaTax",
+      "CANCELLED": "Avbruten"
+    },
+    "JOB": {
+      "STARTED": "Start",
+      "FINISHED": "Slut",
+      "ELAPSED": "Förfluten tid",
+      "PROCESSED": "Bearbetade",
+      "ERRORS": "Fel"
+    },
+    "TOOLBAR": {
+      "SEND": "Skicka till AvaTax",
+      "REFRESH": "Uppdatera",
+      "CANCEL": "Avbryt"
+    }
+  }
+}

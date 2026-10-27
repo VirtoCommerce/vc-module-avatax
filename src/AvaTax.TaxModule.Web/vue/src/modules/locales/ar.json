@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "اختبار الاتصال بـ AvaTax",
+      "CONNECTED": "تم الاتصال بـ AvaTax بنجاح",
+      "SAVE_FIRST": "احفظ الإعدادات أولًا: يُختبر الاتصال باستخدام القيم المحفوظة",
+      "ORDER": {
+        "CHECKING": "AvaTax: جارٍ التحقق…",
+        "NOT_USED": "AvaTax: غير مستخدم",
+        "ERROR": "AvaTax: خطأ",
+        "NOT_SENT": "إرسال إلى AvaTax",
+        "SENT": "تم الإرسال إلى AvaTax",
+        "OUTDATED": "AvaTax: غير محدّث"
+      }
+    },
+    "STATUS": {
+      "TITLE": "الطلب في AvaTax",
+      "TITLE_NEW": "معاملة AvaTax غير موجودة",
+      "SUBTITLE": "تفاصيل معاملة AvaTax",
+      "TRANSACTION": "المعاملة في AvaTax",
+      "LAST_SENT": "آخر إرسال إلى AvaTax",
+      "LINK": "رابط المعاملة",
+      "RAW": "بيانات المعاملة الخام",
+      "NOT_SENT": "لم يُرسَل الطلب إلى AvaTax",
+      "NOT_USED": "AvaTax غير مفعّل لمتجر هذا الطلب",
+      "ERROR": "تعذّر الحصول على تاريخ آخر مزامنة مع AvaTax"
+    },
+    "PROGRESS": {
+      "TITLE": "إرسال الطلبات إلى AvaTax",
+      "CANCELLED": "تم الإلغاء"
+    },
+    "JOB": {
+      "STARTED": "البداية",
+      "FINISHED": "النهاية",
+      "ELAPSED": "المدة المنقضية",
+      "PROCESSED": "تمت المعالجة",
+      "ERRORS": "الأخطاء"
+    },
+    "TOOLBAR": {
+      "SEND": "إرسال إلى AvaTax",
+      "REFRESH": "تحديث",
+      "CANCEL": "إلغاء"
+    }
+  }
+}

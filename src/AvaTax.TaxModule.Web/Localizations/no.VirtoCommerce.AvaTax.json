@@ -1,0 +1,87 @@
+{
+  "avaTax": {
+    "blades": {
+      "order-synchronization-status": {
+        "title": "Ordre i AvaTax",
+        "title-new": "AvaTax-transaksjon mangler",
+        "subtitle": "Detaljer om AvaTax-transaksjonen",
+        "labels": {
+          "last-sync-date": "Sist sendt til AvaTax",
+          "transaction-in-avatax": "Transaksjon i AvaTax",
+          "link-to-transaction": "Lenke til transaksjonen:",
+          "raw-transaction-content": "Rå transaksjon",
+          "not-sent-to-avatax": "Ordren ble ikke sendt til AvaTax"
+        }
+      },
+      "orders-synchronization-progress": {
+        "labels": {
+          "start": "Start",
+          "end": "Slutt",
+          "stats": "Behandlet — {{ processedCount }} av {{ totalCount }} ordrer",
+          "errors": "Feil"
+        }
+      }
+    },
+    "commands": {
+      "test-connection": "Test tilkoblingen til AvaTax",
+      "send-to-avatax": "Send til AvaTax",
+      "run-order-synchronization": {
+        "labels": {
+          "waiting-for-status": "Venter på AvaTax-status...",
+          "store-does-not-use-avatax": "AvaTax er ikke aktivert for butikken til denne ordren",
+          "sent-to-avatax": "Sendt til AvaTax:",
+          "error": "Kunne ikke hente datoen for siste synkronisering med AvaTax",
+          "send-to-avatax": "Klikk for å sende denne ordren til AvaTax"
+        }
+      }
+    }
+  },
+  "settings": {
+    "Avalara": {
+      "Credentials": {
+        "CompanyCode": {
+          "description": "Angi firmakoden som samsvarer med koden firmaet er tildelt i Avalara Admin Manager",
+          "title": "Firmakode i Avalara-systemet"
+        },
+        "ServiceUrl": {
+          "description": "Angi lenken til Avalara API-tjenesten",
+          "title": "Lenke til Avalara API-tjenesten"
+        },
+        "AdminAreaUrl": {
+          "description": "Angi lenken til Avalaras administrasjonsside for å lage lenker til AvaTax-transaksjoner",
+          "title": "Lenke til Avalaras administrasjonsside"
+        }
+      },
+      "ScheduledOrdersSynchronization": {
+        "IsEnabled": {
+          "description": "Aktiver planlagt synkronisering av VC Platform-ordrer med AvaTax (krever omstart)",
+          "title": "Automatisk ordresynkronisering med AvaTax"
+        },
+        "CronExpression": {
+          "description": "Bruk '0/x * * * *' for hvert x. minutt, '0 */x * * *' for hver x. time, '15 */x * * *' for å angi minutter innenfor x timer, eller '0 0 */x * *' for hver x. dag",
+          "title": "Tidsplan for automatisk ordresynkronisering (krever omstart)"
+        },
+        "LastExecutionDate": {
+          "description": "Angi datoen ordrer skal behandles fra og med. La feltet stå tomt for å behandle alle ordrer",
+          "title": "Dato for siste synkronisering"
+        }
+      }
+    },
+    "module": {
+      "VirtoCommerce.AvalaraTax": {
+        "description": "API-er og brukergrensesnitt for Avalara-skatteintegrasjon"
+      }
+    },
+    "permissions": {
+      "tax:manage": "Tillatelse til å administrere skatteinnstillinger for Avalara"
+    }
+  },
+  "tax": {
+    "labels": {
+      "AvaTaxRateProvider": {
+        "name": "Avalara-skatteleverandør",
+        "description": "Avalara-skatteleverandør"
+      }
+    }
+  }
+}
