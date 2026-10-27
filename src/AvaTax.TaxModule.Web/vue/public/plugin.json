@@ -1,0 +1,3 @@
+{
+  "remote": { "name": "avalara_tax_admin", "exposed": "./Module" }
+}

@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "Проверить подключение к AvaTax",
+      "CONNECTED": "Подключение к AvaTax выполнено успешно",
+      "SAVE_FIRST": "Сначала сохраните настройки: подключение проверяется с сохраненными значениями",
+      "ORDER": {
+        "CHECKING": "AvaTax: проверка…",
+        "NOT_USED": "AvaTax: не используется",
+        "ERROR": "AvaTax: ошибка",
+        "NOT_SENT": "Отправить в AvaTax",
+        "SENT": "Отправлено в AvaTax",
+        "OUTDATED": "AvaTax: устарело"
+      }
+    },
+    "STATUS": {
+      "TITLE": "Заказ в AvaTax",
+      "TITLE_NEW": "Транзакция AvaTax отсутствует",
+      "SUBTITLE": "Детали транзакции AvaTax",
+      "TRANSACTION": "Транзакция в AvaTax",
+      "LAST_SENT": "Последняя отправка в AvaTax",
+      "LINK": "Ссылка на транзакцию",
+      "RAW": "Исходные данные транзакции",
+      "NOT_SENT": "Заказ не был отправлен в AvaTax",
+      "NOT_USED": "AvaTax не включен для магазина этого заказа",
+      "ERROR": "Не удалось получить дату последней синхронизации с AvaTax"
+    },
+    "PROGRESS": {
+      "TITLE": "Отправка заказов в AvaTax",
+      "CANCELLED": "Отменено"
+    },
+    "JOB": {
+      "STARTED": "Начало",
+      "FINISHED": "Конец",
+      "ELAPSED": "Прошло",
+      "PROCESSED": "Обработано",
+      "ERRORS": "Ошибки"
+    },
+    "TOOLBAR": {
+      "SEND": "Отправить в AvaTax",
+      "REFRESH": "Обновить",
+      "CANCEL": "Отменить"
+    }
+  }
+}

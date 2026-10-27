@@ -1,0 +1,45 @@
+{
+  "AVALARA": {
+    "WIDGETS": {
+      "TEST_CONNECTION": "Testaa yhteys AvaTaxiin",
+      "CONNECTED": "Yhteys AvaTaxiin muodostettiin onnistuneesti",
+      "SAVE_FIRST": "Tallenna asetukset ensin: yhteys testataan tallennetuilla arvoilla",
+      "ORDER": {
+        "CHECKING": "AvaTax: tarkistetaan…",
+        "NOT_USED": "AvaTax: ei käytössä",
+        "ERROR": "AvaTax: virhe",
+        "NOT_SENT": "Lähetä AvaTaxiin",
+        "SENT": "Lähetetty AvaTaxiin",
+        "OUTDATED": "AvaTax: vanhentunut"
+      }
+    },
+    "STATUS": {
+      "TITLE": "Tilaus AvaTaxissa",
+      "TITLE_NEW": "AvaTax-tapahtuma puuttuu",
+      "SUBTITLE": "AvaTax-tapahtuman tiedot",
+      "TRANSACTION": "Tapahtuma AvaTaxissa",
+      "LAST_SENT": "Viimeksi lähetetty AvaTaxiin",
+      "LINK": "Linkki tapahtumaan",
+      "RAW": "Raakatapahtuma",
+      "NOT_SENT": "Tilausta ei lähetetty AvaTaxiin",
+      "NOT_USED": "AvaTax ei ole käytössä tämän tilauksen kaupassa",
+      "ERROR": "AvaTaxin viimeisimmän synkronoinnin päivämäärän haku epäonnistui"
+    },
+    "PROGRESS": {
+      "TITLE": "Tilauksia lähetetään AvaTaxiin",
+      "CANCELLED": "Peruutettu"
+    },
+    "JOB": {
+      "STARTED": "Alku",
+      "FINISHED": "Loppu",
+      "ELAPSED": "Kulunut aika",
+      "PROCESSED": "Käsitelty",
+      "ERRORS": "Virheet"
+    },
+    "TOOLBAR": {
+      "SEND": "Lähetä AvaTaxiin",
+      "REFRESH": "Päivitä",
+      "CANCEL": "Peruuta"
+    }
+  }
+}
